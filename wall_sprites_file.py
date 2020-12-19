@@ -10,19 +10,19 @@ class Wal_sprite(sprite.Group):
         self.rect_size = rect_size
         self.decor_sprites = decor_sprites
         self.screen = screen
-        self.cords_not_round = [13 * rect_size, 13 * rect_size]
-        self.cords = [13, 13]
+        self.cords = [11, -25]
+        self.cords_not_round = [self.cords[0] * rect_size, self.cords[1] * rect_size]
         with open("data_file.json", "r") as read_file:
             data = load(read_file)
             self.maps = {}
             for i in data:
                 x, y = tuple([int(j) for j in i.split(';')])
                 if data[i]['type'] == 'wall':
-                    obj = Brick([x * self.rect_size, y * self.rect_size], (
+                    obj = Brick([x, y], (
                         round(self.rect_size * data[i]['size'][0]), round(self.rect_size * data[i]['size'][1])),
                                 'tiles\\grass\\' + data[i]['name'])
                 else:
-                    obj = Brick([x * self.rect_size, y * self.rect_size], (
+                    obj = Brick([x, y], (
                         round(self.rect_size * data[i]['size'][0]), round(self.rect_size * data[i]['size'][1])),
                                 'tiles\\decor\\' + data[i]['name'])
                 self.maps[tuple([int(j) for j in i.split(';')])] = (obj, data[i]['type'])
@@ -40,12 +40,16 @@ class Wal_sprite(sprite.Group):
 
         if self.cords != [i // self.rect_size for i in self.cords_not_round]:
             self.cords = [i // self.rect_size for i in self.cords_not_round]
-            print(self.cords)
+            self.render()
 
     def render(self):
+        self.empty()
         for i in self.maps:
-            # if self.cords[0] - 5 <= i[0] <= self.cords[0] + 5 and self.cords[1] - 25 <= i[1] <= self.cords[1] + 25:
-            if self.maps[i][1] == 'wall':
-                self.add(self.maps[i][0])
-            else:
-                self.decor_sprites.add(self.maps[i][0])
+            if self.cords[0] - 10 <= self.maps[i][0].cords[0] - 15 <= self.cords[0] + 10 and\
+                    self.cords[1] - 10 <= self.maps[i][0].cords[1] - 15 <= self.cords[1]:
+                if self.maps[i][1] == 'wall':
+                    self.maps[i][0].rect.x = self.maps[i][0].cords[0] * self.rect_size - self.cords_not_round[0]
+                    self.maps[i][0].rect.y = self.maps[i][0].cords[1] * self.rect_size - self.cords_not_round[1]
+                    self.add(self.maps[i][0])
+                else:
+                    self.decor_sprites.add(self.maps[i][0])

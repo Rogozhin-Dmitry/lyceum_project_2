@@ -35,8 +35,8 @@ class Wal_sprite(sprite.Group):
         self.empty()
         self.decor_sprites.empty()
         for i in self.maps:
-            if self.cords[0] - 10 <= self.maps[i][0].cords[0] - 15 <= self.cords[0] + 10 and\
-                    self.cords[1] - 10 <= self.maps[i][0].cords[1] - 15 <= self.cords[1]:
+            if self.cords[0] - 15 <= self.maps[i][0].cords[0] - 15 <= self.cords[0] + 15 and\
+                    self.cords[1] - 15 <= self.maps[i][0].cords[1] - 15 <= self.cords[1] + 5:
                 self.maps[i][0].rect.x = self.maps[i][0].cords[0] * self.rect_size - self.cords_not_round[0]
                 self.maps[i][0].rect.y = self.maps[i][0].cords[1] * self.rect_size - self.cords_not_round[1]
                 if self.maps[i][1] == 'wall':

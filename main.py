@@ -201,14 +201,14 @@ if x > y:
     SIZE_OF_RECT = int(y)
 else:
     SIZE_OF_RECT = int(x)
-# SIZE_OF_RECT //= 2
+SIZE_OF_RECT //= 2
 WIDTH = SIZE_OF_RECT * 30
 HEIGHT = SIZE_OF_RECT * 17
 WIDTH_SHIFT = inf.current_w - WIDTH
 HEIGHT_SHIFT = inf.current_h - HEIGHT
 FPS = 60
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
-# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
+# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
 clock = pygame.time.Clock()
 while True:
     result = menu()

@@ -1,4 +1,4 @@
-from pygame import sprite, image, transform, key, time
+from pygame import sprite, image, transform, key
 
 
 def up_collision(obj_1, obj_2):
@@ -24,11 +24,11 @@ class Player(sprite.Sprite):
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
-                                               (rect_size - 2, rect_size * 2 - 5))
+                                               (rect_size - 5, rect_size * 2 - 5))
         self.player_img_right = transform.flip(self.player_img_left, True, False)
         for i in range(6):
             self.player_img_left_run.append(transform.scale(image.load('player\\' + str(i + 1) + '.png').convert(),
-                                                            (rect_size - 2, rect_size * 2 - 5)))
+                                                            (rect_size - 5, rect_size * 2 - 5)))
             self.player_img_right_run.append(transform.flip(self.player_img_left_run[-1], True, False))
         self.image = self.player_img_left
         self.image.set_colorkey((255, 255, 255))

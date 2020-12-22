@@ -16,11 +16,13 @@ def down_collision(obj_1, obj_2):
 
 
 class Player(sprite.Sprite):
-    def __init__(self, cords, sprites, wall_sprites, rect_size):
+    def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
+        self.bonus_sprites = bonus_sprites
         self.wall_sprites = wall_sprites
+        self.gui_sprites = gui_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
@@ -142,3 +144,10 @@ class Player(sprite.Sprite):
                 self.jump_speed = 30
 
         self.timer += 1
+
+        spr = sprite.spritecollideany(self, self.bonus_sprites)
+        if spr:
+            del self.wall_sprites.maps[tuple(spr.cords)]
+            spr.kill()
+            self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
+            del spr

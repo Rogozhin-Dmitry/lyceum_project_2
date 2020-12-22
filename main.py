@@ -56,7 +56,11 @@ def load_1(*args):
                 obj = Brick([x, y], (
                     round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
                             'tiles\\grass\\' + data[i]['name'])
-            else:
+            elif data[i]['type'] == 'decor':
+                obj = Brick([x, y], (
+                    round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
+                            'tiles\\decor\\' + data[i]['name'])
+            elif data[i]['type'] == 'bonus':
                 obj = Brick([x, y], (
                     round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
                             'tiles\\decor\\' + data[i]['name'])
@@ -67,14 +71,16 @@ def load_1(*args):
 
 def main(wer):
     decor_sprites = pygame.sprite.Group()
-    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, screen)
+    bonus_sprites = pygame.sprite.Group()
+    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, screen)
     wall_sprites.load(wer)
     player_sprites = pygame.sprite.Group()
     gui_sprites = Gui(SIZE_OF_RECT)
     gui_sprites.set_hearts(6)
-    render = Render(screen, player_sprites, wall_sprites, decor_sprites, gui_sprites)
+    render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites)
 
-    Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, SIZE_OF_RECT)
+    Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
+           SIZE_OF_RECT)
 
     running = True
     while running:
@@ -215,7 +221,7 @@ while True:
     if result == 'new_game':
         q = [True]
         t1 = threading.Thread(target=load)
-        t2 = threading.Thread(target=load_1, args=('data_file_3.json', q))
+        t2 = threading.Thread(target=load_1, args=('data_file.json', q))
         t1.start()
         t2.start()
         t1.join()

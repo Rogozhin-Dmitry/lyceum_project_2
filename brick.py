@@ -10,3 +10,4 @@ class Brick(sprite.Sprite):
         self.image = transform.scale(self.player_img, rect_size)
         self.image.set_colorkey((255, 255, 255))
         self.rect = Rect(0, 0, *rect_size)
+        self.image_name = image_name

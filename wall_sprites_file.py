@@ -2,10 +2,11 @@ from brick import *
 
 
 class Wal_sprite(sprite.Group):
-    def __init__(self, rect_size, decor_sprites, screen):
+    def __init__(self, rect_size, decor_sprites, bonus_sprites, screen):
         super().__init__()
         self.rect_size = rect_size
         self.decor_sprites = decor_sprites
+        self.bonus_sprites = bonus_sprites
         self.screen = screen
         self.cords = [0, 0]
         self.cords_not_round = [self.cords[0] * rect_size, self.cords[1] * rect_size]
@@ -19,11 +20,11 @@ class Wal_sprite(sprite.Group):
 
     def move(self, param, x_or_y):
         if x_or_y:
-            for i in [*self, *self.decor_sprites]:
+            for i in [*self, *self.decor_sprites, *self.bonus_sprites]:
                 i.rect.y += param
             self.cords_not_round[1] -= param
         else:
-            for i in [*self, *self.decor_sprites]:
+            for i in [*self, *self.decor_sprites, *self.bonus_sprites]:
                 i.rect.x += param
             self.cords_not_round[0] -= param
 
@@ -34,6 +35,7 @@ class Wal_sprite(sprite.Group):
     def render(self):
         self.empty()
         self.decor_sprites.empty()
+        self.bonus_sprites.empty()
         for i in self.maps:
             if self.cords[0] - 15 <= self.maps[i][0].cords[0] - 15 <= self.cords[0] + 15 and\
                     self.cords[1] - 15 <= self.maps[i][0].cords[1] - 15 <= self.cords[1] + 5:
@@ -41,5 +43,7 @@ class Wal_sprite(sprite.Group):
                 self.maps[i][0].rect.y = self.maps[i][0].cords[1] * self.rect_size - self.cords_not_round[1]
                 if self.maps[i][1] == 'wall':
                     self.add(self.maps[i][0])
-                else:
+                elif self.maps[i][1] == 'decor':
                     self.decor_sprites.add(self.maps[i][0])
+                elif self.maps[i][1] == 'bonus':
+                    self.bonus_sprites.add(self.maps[i][0])

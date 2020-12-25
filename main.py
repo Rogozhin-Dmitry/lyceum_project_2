@@ -63,7 +63,7 @@ def load_1(*args):
             elif data[i]['type'] == 'bonus':
                 obj = Brick([x, y], (
                     round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
-                            'tiles\\decor\\' + data[i]['name'])
+                            'tiles\\bonus\\' + data[i]['name'])
             maps[tuple([int(j) for j in i.split(';')])] = (obj, data[i]['type'])
     q[0] = False
     q.append(maps)
@@ -101,7 +101,7 @@ def menu():
     background_image = pygame.transform.scale(pygame.image.load('fons\\menu_background.png').convert(), (WIDTH, HEIGHT))
     decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                               (SIZE_OF_RECT * 8, SIZE_OF_RECT * 2))
-    decoration_image.set_colorkey((255, 255, 255))
+    decoration_image.set_colorkey((0, 0, 0))
 
     buttons_sprites = pygame.sprite.Group()
     font = pygame.font.Font('fonts\\f1.ttf', SIZE_OF_RECT)
@@ -139,7 +139,7 @@ def settings():
                                               (WIDTH, HEIGHT))
     decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                               (SIZE_OF_RECT * 12, SIZE_OF_RECT * 3))
-    decoration_image.set_colorkey((255, 255, 255))
+    decoration_image.set_colorkey((0, 0, 0))
 
     buttons_sprites = pygame.sprite.Group()
     font = pygame.font.Font('fonts\\f1.ttf', SIZE_OF_RECT)

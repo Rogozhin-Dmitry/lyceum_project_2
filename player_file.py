@@ -52,6 +52,7 @@ class Player(sprite.Sprite):
         self.rl = False
         self.timer = 0
         self.last_timer = 0
+        self.jump_speed_last = self.jump_speed
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -147,7 +148,15 @@ class Player(sprite.Sprite):
 
         spr = sprite.spritecollideany(self, self.bonus_sprites)
         if spr:
+            if spr.image_name == 'tiles\\bonus\\heart_bonus.png':
+                self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
+            elif spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
+                self.gui_sprites.set_bombs(self.gui_sprites.bomb + 1)
             del self.wall_sprites.maps[tuple(spr.cords)]
             spr.kill()
-            self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
             del spr
+
+        if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last) or \
+                (self.jump_speed == -1 and self.jump_speed_last):  # срабатывает при падении с зажатием пробела
+            print('персоонаж на земле, ура, частички, частички, частички, частички')
+        self.jump_speed_last = self.jump_speed

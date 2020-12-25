@@ -1,5 +1,5 @@
 from pygame import sprite, image, transform, key, Surface, draw
-from random import randint
+from random import randint, choice
 
 
 def up_collision(obj_1, obj_2):
@@ -158,6 +158,7 @@ class Player(sprite.Sprite):
             del self.wall_sprites.maps[tuple(spr.cords)]
             spr.kill()
             del spr
+
             for i in range(10):
                 cords = randint(cords[0] - 5, cords[0] + 5),  randint(cords[1] - 5, cords[1] + 5)
                 spr = sprite.Sprite()
@@ -167,12 +168,31 @@ class Player(sprite.Sprite):
                 spr.image.set_colorkey((0, 0, 0))
                 spr.rect = spr.image.get_rect()
                 spr.rect.center = cords
-                spr.down = cords[1] + self.rect_size * 2
-                spr.shift, spr.shift_down = randint(0, 40) / 10 - 1, -5
+                spr.x, spr.y = cords
+                spr.down = cords[1] + self.rect_size * 0.5
+                spr.shift_up = 0.3
+                spr.shift, spr.shift_down = randint(-20, 20) / 10, -4
 
                 self.particle_sprites.add(spr)
 
-        if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last) or \
-                (self.jump_speed == -1 and self.jump_speed_last):  # срабатывает при падении с зажатием пробела
+        # if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1   and self.jump_speed_last) or \
+        #         (self.jump_speed == -1 and self.jump_speed_last):  # срабатывает при падении с зажатием пробела
+        if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last):
+            cords = self.rect.center[0], self.rect.y + self.rect.h - 15
+            for i in range((self.jump_speed_last - self.jump_speed) // 2):
+                spr = sprite.Sprite()
+                r = randint(5, 9)
+                spr.image = Surface([r, r])
+                draw.circle(spr.image, (5, 5, 5), (r // 2, r // 2), r // 2)
+                spr.image.set_colorkey((0, 0, 0))
+                spr.rect = spr.image.get_rect()
+                spr.rect.center = cords
+                spr.rect.y = cords[1]
+                spr.x, spr.y = cords
+                spr.down = cords[1] + 15
+                spr.shift_up = 0.1
+                spr.shift, spr.shift_down = randint(-20, 20) / 20, -1
+
+                self.particle_sprites.add(spr)
             print('персоонаж на земле, ура, частички, частички, частички, частички')
         self.jump_speed_last = self.jump_speed

@@ -14,9 +14,11 @@ class Render:
         self.wall_sprites.update()
         self.decor_sprites.update()
         for i in self.particle_sprites:
-            i.rect.x += i.shift
-            i.rect.y += i.shift_down
-            i.shift_down += 0.3
+            i.x += i.shift
+            i.y += i.shift_down
+            i.shift_down += i.shift_up
+            i.rect.x = i.x
+            i.rect.y = i.y
             if i.down < i.rect.y + i.rect.h:
                 i.kill()
                 del i
@@ -24,6 +26,6 @@ class Render:
         self.wall_sprites.draw(self.screen)
         self.bonus_sprites.draw(self.screen)
         self.decor_sprites.draw(self.screen)
-        self.particle_sprites.draw(self.screen)
         self.player_sprites.draw(self.screen)
+        self.particle_sprites.draw(self.screen)
         self.gui_sprites.draw(self.screen)

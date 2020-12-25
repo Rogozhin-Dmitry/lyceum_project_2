@@ -222,7 +222,7 @@ while True:
     if result == 'new_game':
         q = [True]
         t1 = threading.Thread(target=load)
-        t2 = threading.Thread(target=load_1, args=('data_file_2.json', q))
+        t2 = threading.Thread(target=load_1, args=('data_file.json', q))
         t1.start()
         t2.start()
         t1.join()

@@ -2,11 +2,12 @@ from brick import *
 
 
 class Wal_sprite(sprite.Group):
-    def __init__(self, rect_size, decor_sprites, bonus_sprites, screen):
+    def __init__(self, rect_size, decor_sprites, bonus_sprites, particle_sprites, screen):
         super().__init__()
         self.rect_size = rect_size
         self.decor_sprites = decor_sprites
         self.bonus_sprites = bonus_sprites
+        self.particle_sprites = particle_sprites
         self.screen = screen
         self.cords = [0, 0]
         self.cords_not_round = [self.cords[0] * rect_size, self.cords[1] * rect_size]
@@ -20,11 +21,11 @@ class Wal_sprite(sprite.Group):
 
     def move(self, param, x_or_y):
         if x_or_y:
-            for i in [*self, *self.decor_sprites, *self.bonus_sprites]:
+            for i in [*self, *self.decor_sprites, *self.bonus_sprites, *self.particle_sprites]:
                 i.rect.y += param
             self.cords_not_round[1] -= param
         else:
-            for i in [*self, *self.decor_sprites, *self.bonus_sprites]:
+            for i in [*self, *self.decor_sprites, *self.bonus_sprites, *self.particle_sprites]:
                 i.rect.x += param
             self.cords_not_round[0] -= param
 

@@ -1,4 +1,5 @@
-from pygame import sprite, image, transform, key
+from pygame import sprite, image, transform, key, Surface, draw
+from random import randint
 
 
 def up_collision(obj_1, obj_2):
@@ -16,13 +17,14 @@ def down_collision(obj_1, obj_2):
 
 
 class Player(sprite.Sprite):
-    def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, rect_size):
+    def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
         self.bonus_sprites = bonus_sprites
         self.wall_sprites = wall_sprites
         self.gui_sprites = gui_sprites
+        self.particle_sprites = particle_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
@@ -152,9 +154,23 @@ class Player(sprite.Sprite):
                 self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
             elif spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
                 self.gui_sprites.set_bombs(self.gui_sprites.bomb + 1)
+            cords = spr.rect.center
             del self.wall_sprites.maps[tuple(spr.cords)]
             spr.kill()
             del spr
+            for i in range(10):
+                cords = randint(cords[0] - 5, cords[0] + 5),  randint(cords[1] - 5, cords[1] + 5)
+                spr = sprite.Sprite()
+                r = randint(9, 15)
+                spr.image = Surface([r, r])
+                draw.circle(spr.image, (120, 255, 255), (r // 2, r // 2), r // 2)
+                spr.image.set_colorkey((0, 0, 0))
+                spr.rect = spr.image.get_rect()
+                spr.rect.center = cords
+                spr.down = cords[1] + self.rect_size * 2
+                spr.shift, spr.shift_down = randint(0, 40) / 10 - 1, -5
+
+                self.particle_sprites.add(spr)
 
         if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last) or \
                 (self.jump_speed == -1 and self.jump_speed_last):  # срабатывает при падении с зажатием пробела

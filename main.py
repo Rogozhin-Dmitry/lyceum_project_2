@@ -72,15 +72,16 @@ def load_1(*args):
 def main(wer):
     decor_sprites = pygame.sprite.Group()
     bonus_sprites = pygame.sprite.Group()
-    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, screen)
+    particle_sprites = pygame.sprite.Group()
+    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, screen)
     wall_sprites.load(wer)
     player_sprites = pygame.sprite.Group()
     gui_sprites = Gui(SIZE_OF_RECT)
     gui_sprites.set_hearts(6)
-    render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites)
+    render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites, particle_sprites)
 
     Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-           SIZE_OF_RECT)
+           particle_sprites, SIZE_OF_RECT)
 
     running = True
     while running:
@@ -207,21 +208,21 @@ if x > y:
     SIZE_OF_RECT = int(y)
 else:
     SIZE_OF_RECT = int(x)
-SIZE_OF_RECT //= 2
+# SIZE_OF_RECT //= 2
 WIDTH = SIZE_OF_RECT * 30
 HEIGHT = SIZE_OF_RECT * 17
 WIDTH_SHIFT = inf.current_w - WIDTH
 HEIGHT_SHIFT = inf.current_h - HEIGHT
 FPS = 60
-# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
+# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
 clock = pygame.time.Clock()
 while True:
     result = menu()
     if result == 'new_game':
         q = [True]
         t1 = threading.Thread(target=load)
-        t2 = threading.Thread(target=load_1, args=('data_file.json', q))
+        t2 = threading.Thread(target=load_1, args=('data_file_2.json', q))
         t1.start()
         t2.start()
         t1.join()

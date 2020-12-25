@@ -12,7 +12,7 @@ class Button(pygame.sprite.Sprite):
     def __init__(self, button_image, button_rect, button_type):
         super().__init__()
         self.image = button_image
-        self.image.set_colorkey((255, 255, 255))l
+        self.image.set_colorkey((255, 255, 255))
         self.rect = button_rect
         self.type = button_type
 

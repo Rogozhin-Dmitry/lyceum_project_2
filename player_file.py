@@ -191,8 +191,8 @@ class Player(sprite.Sprite):
                 spr.x, spr.y = cords
                 spr.down = cords[1] + 15
                 spr.shift_up = 0.1
-                spr.shift, spr.shift_down = randint(-20, 20) / 20, -1
+                spr.shift, spr.shift_down = randint(-50, 50) / 20, -1
 
                 self.particle_sprites.add(spr)
-            print('персоонаж на земле, ура, частички, частички, частички, частички')
+            # print('персоонаж на земле, ура, частички, частички, частички, частички')
         self.jump_speed_last = self.jump_speed

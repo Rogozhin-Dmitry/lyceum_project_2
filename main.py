@@ -173,7 +173,7 @@ def settings():
 
 
 def load_func():
-    # Тимоша, дерзай)
+    # Тимоша, дерзай))
     return 'data_file.json'
 
 

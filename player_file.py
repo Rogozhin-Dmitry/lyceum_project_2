@@ -19,7 +19,7 @@ def down_collision(obj_1, obj_2):
 
 class Player(sprite.Sprite):
     def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites,
-                 dust_particle_sprites, rect_size, spike_sprites):
+                 dust_particle_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
@@ -28,7 +28,6 @@ class Player(sprite.Sprite):
         self.gui_sprites = gui_sprites
         self.particle_sprites = particle_sprites
         self.dust_particle_sprites = dust_particle_sprites
-        self.spike_sprites = spike_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
@@ -141,12 +140,12 @@ class Player(sprite.Sprite):
                 self.rect.y -= 1
             self.jump_speed = 0
 
-        if sprite.spritecollideany(self, self.spike_sprites, collided=down_collision):
-
-            while sprite.spritecollideany(self, self.spike_sprites, collided=down_collision):
-                self.rect.y -= 1
-            self.jump_speed = 0
-            self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+        # if sprite.spritecollideany(self, self.spike_sprites, collided=down_collision):
+        #
+        #     while sprite.spritecollideany(self, self.spike_sprites, collided=down_collision):
+        #         self.rect.y -= 1
+        #     self.jump_speed = 0
+        #     self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
 
         while self.rect.y + self.rect.h > self.down_scroll:  # TODO плавное передвижение камеры
             self.rect.y -= 1

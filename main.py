@@ -115,7 +115,7 @@ def settings():
     buttons_sprites = pygame.sprite.Group()
     font = pygame.font.Font('fonts\\f1.ttf', SIZE_OF_RECT)
     count = 1
-    for i, j in [("Звук", 'settings'), ("Назад", 'exit'), ("Ещё пункт, длинный пункт", 'exit')]:
+    for i, j in [("Звук", 'settings'), ("Назад", 'menu'), ("Ещё пункт, длинный пункт", 'exit')]:
         text = font.render(i, True, (245, 245, 245))
         buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                        y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
@@ -142,8 +142,8 @@ def settings():
                 keys = pygame.key.get_pressed()
                 for i in buttons_sprites:
                     if i.is_clicked() or keys[pygame.K_RETURN]:
-                        if i.type == 'exit':
-                            return None
+                        if i.type == 'menu':
+                            return 'menu'
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     if cursor_position + 1 < len(buttons_sprites.sprites()):
@@ -252,8 +252,10 @@ while True:
         t1.join()
         t2.join()
         result = 'main'
+    elif result == 'menu':
+        result = menu()
     elif result == 'settings':
-        settings()
+        result = settings()
     elif result == 'main':
         main(map_dict)
     elif result == 'exit':

@@ -22,12 +22,6 @@ class Button(pygame.sprite.Sprite):
 
 
 def load():
-    background_image = transform.scale(image.load('fons\\load_background.png').convert(), (WIDTH, HEIGHT))
-    font_sh = pygame.font.Font('fonts\\f1.ttf', 36)
-    text = [font_sh.render("Загрузка...", True, (20, 23, 61)),
-            font_sh.render("Загрузка..", True, (20, 23, 61)),
-            font_sh.render("Загрузка.", True, (20, 23, 61))]
-    running = True
     count = 0
     while q[0]:
         # Держим цикл на правильной скорости
@@ -36,10 +30,9 @@ def load():
         for event in pygame.event.get():
             # проверка для закрытия окна
             if event.type == pygame.QUIT:
-                return True
-
+                return None
         screen.blit(background_image, (0, 0))
-        screen.blit(text[count % len(text)], (1650, 1000))
+        screen.blit(text_loading[count % len(text_loading)], (1650, 1000))
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
         count += 1
@@ -69,49 +62,21 @@ def load_1(*args):
     q.append(maps)
 
 
-def main(wer):
-    decor_sprites = pygame.sprite.Group()
-    bonus_sprites = pygame.sprite.Group()
-    particle_sprites = pygame.sprite.Group()
-    dust_particle_sprites = pygame.sprite.Group()
-    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
-                              screen)
-    wall_sprites.load(wer)
-    player_sprites = pygame.sprite.Group()
-    gui_sprites = Gui(SIZE_OF_RECT)
-    gui_sprites.set_hearts(6)
-    render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
-                    dust_particle_sprites, particle_sprites)
-
-    Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-           particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
-
-    background_image = pygame.transform.chop(pygame.image.load('fons\\menu_background.png').convert(),
-                                             (0, 0, WIDTH // 3, HEIGHT // 2))
-    decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
-                                              (SIZE_OF_RECT * 8, SIZE_OF_RECT * 2))
-
-    menu_render = False
-    running = True
-    while running:
+def main(map_dict):
+    wall_sprites.load(map_dict)
+    while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
         for event in pygame.event.get():
             # проверка для закрытия окна
             if event.type == pygame.QUIT:
-                running = False
+                return None
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    if menu_render:
-                        menu_render = False
-                    else:
-                        menu_render = True
+                    return None
 
         render.render_funk()
-        if menu_render:
-            screen.blit(decoration_image, (SIZE_OF_RECT // 4, SIZE_OF_RECT // 4))
-            screen.blit(background_image, ((WIDTH - WIDTH // 3) // 2, (HEIGHT - HEIGHT // 2) // 2))
 
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
@@ -236,6 +201,31 @@ FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 # screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
 clock = pygame.time.Clock()
+
+#  общие константы
+font_sh = pygame.font.Font('fonts\\f1.ttf', 36)
+
+#  load func
+background_image = transform.scale(image.load('fons\\load_background.png').convert(), (WIDTH, HEIGHT))
+text_loading = [font_sh.render("Загрузка...", True, (20, 23, 61)),
+                font_sh.render("Загрузка..", True, (20, 23, 61)),
+                font_sh.render("Загрузка.", True, (20, 23, 61))]
+
+#  main func
+decor_sprites = pygame.sprite.Group()
+bonus_sprites = pygame.sprite.Group()
+particle_sprites = pygame.sprite.Group()
+dust_particle_sprites = pygame.sprite.Group()
+wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
+                          screen)
+player_sprites = pygame.sprite.Group()
+gui_sprites = Gui(SIZE_OF_RECT)
+gui_sprites.set_hearts(6)
+render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
+                dust_particle_sprites, particle_sprites)
+
+Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
+       particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
 while True:
     result = menu()
     if result == 'new_game':
@@ -249,8 +239,19 @@ while True:
         main(q[1])
         pygame.quit()
         sys.exit()
+    elif result.startswith('load_game'):
+        q = [True]
+        t1 = threading.Thread(target=load)
+        t2 = threading.Thread(target=load_1, args=('data_file.json', q))
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+        print('wtf')
     elif result == 'settings':
         settings()
+    elif result == 'main':
+        main(q[1])
     elif result == 'exit':
         pygame.quit()
         sys.exit()

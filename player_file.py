@@ -1,5 +1,5 @@
 from pygame import sprite, image, transform, key, Surface, draw
-from random import randint, choice
+from random import randint
 
 
 def up_collision(obj_1, obj_2):
@@ -17,7 +17,8 @@ def down_collision(obj_1, obj_2):
 
 
 class Player(sprite.Sprite):
-    def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites, rect_size):
+    def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites,
+                 dust_particle_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
@@ -25,6 +26,7 @@ class Player(sprite.Sprite):
         self.wall_sprites = wall_sprites
         self.gui_sprites = gui_sprites
         self.particle_sprites = particle_sprites
+        self.dust_particle_sprites = dust_particle_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
@@ -164,7 +166,7 @@ class Player(sprite.Sprite):
                 spr = sprite.Sprite()
                 r = randint(9, 15)
                 spr.image = Surface([r, r])
-                draw.circle(spr.image, (120, 255, 255), (r // 2, r // 2), r // 2)
+                draw.circle(spr.image, (120, 235, 255), (r // 2, r // 2), r // 2)
                 spr.image.set_colorkey((0, 0, 0))
                 spr.rect = spr.image.get_rect()
                 spr.rect.center = cords
@@ -192,7 +194,6 @@ class Player(sprite.Sprite):
                 spr.down = cords[1] + 15
                 spr.shift_up = 0.1
                 spr.shift, spr.shift_down = randint(-50, 50) / 20, -1
-
-                self.particle_sprites.add(spr)
+                self.dust_particle_sprites.add(spr)
             # print('персоонаж на земле, ура, частички, частички, частички, частички')
         self.jump_speed_last = self.jump_speed

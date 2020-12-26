@@ -23,10 +23,10 @@ class Button(pygame.sprite.Sprite):
 
 def load():
     background_image = transform.scale(image.load('fons\\load_background.png').convert(), (WIDTH, HEIGHT))
-    font = pygame.font.Font('fonts\\f1.ttf', 36)
-    text = [font.render("Загрузка...", True, (20, 23, 61)),
-            font.render("Загрузка..", True, (20, 23, 61)),
-            font.render("Загрузка.", True, (20, 23, 61))]
+    font_sh = pygame.font.Font('fonts\\f1.ttf', 36)
+    text = [font_sh.render("Загрузка...", True, (20, 23, 61)),
+            font_sh.render("Загрузка..", True, (20, 23, 61)),
+            font_sh.render("Загрузка.", True, (20, 23, 61))]
     running = True
     count = 0
     while q[0]:
@@ -51,17 +51,17 @@ def load_1(*args):
         data = json.load(read_file)
         maps = {}
         for i in data:
-            x, y = tuple([int(j) for j in i.split(';')])
+            x_1, y_1 = tuple([int(j) for j in i.split(';')])
             if data[i]['type'] == 'wall':
-                obj = Brick([x, y], (
+                obj = Brick([x_1, y_1], (
                     round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
                             'tiles\\grass\\' + data[i]['name'])
             elif data[i]['type'] == 'decor':
-                obj = Brick([x, y], (
+                obj = Brick([x_1, y_1], (
                     round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
                             'tiles\\decor\\' + data[i]['name'])
             elif data[i]['type'] == 'bonus':
-                obj = Brick([x, y], (
+                obj = Brick([x_1, y_1], (
                     round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
                             'tiles\\bonus\\' + data[i]['name'])
             maps[tuple([int(j) for j in i.split(';')])] = (obj, data[i]['type'])
@@ -73,16 +73,24 @@ def main(wer):
     decor_sprites = pygame.sprite.Group()
     bonus_sprites = pygame.sprite.Group()
     particle_sprites = pygame.sprite.Group()
-    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, screen)
+    dust_particle_sprites = pygame.sprite.Group()
+    wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
+                              screen)
     wall_sprites.load(wer)
     player_sprites = pygame.sprite.Group()
     gui_sprites = Gui(SIZE_OF_RECT)
     gui_sprites.set_hearts(6)
-    render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites, particle_sprites)
+    render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
+                    dust_particle_sprites, particle_sprites)
 
     Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-           particle_sprites, SIZE_OF_RECT)
+           particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
 
+    background_image = pygame.transform.scale(pygame.image.load('fons\\menu_background.png').convert(), (WIDTH, HEIGHT))
+    decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
+                                              (SIZE_OF_RECT * 8, SIZE_OF_RECT * 2))
+
+    menu_render = False
     running = True
     while running:
         # Держим цикл на правильной скорости
@@ -92,8 +100,17 @@ def main(wer):
             # проверка для закрытия окна
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                print(event.key)
+                if event.key == pygame.K_ESCAPE:
+                    if menu_render:
+                        menu_render = False
+                    else:
+                        menu_render = True
 
         render.render_funk()
+        if menu_render:
+            print('menu')
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
 

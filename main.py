@@ -1,4 +1,3 @@
-import pygame
 from player_file import *
 from wall_sprites_file import *
 from render_file import *
@@ -40,26 +39,33 @@ def load():
 
 def load_1(*args):
     global map_dict
+    particle_sprites.empty()
+    dust_particle_sprites.empty()
     with open(args[0], "r") as read_file:
         data = json.load(read_file)
         maps = {}
         for obj_1 in data:
-            x_1, y_1 = tuple([int(j) for j in obj_1.split(';')])
-            if data[obj_1]['type'] == 'wall':
-                obj = Brick([x_1, y_1], (
-                    round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                            'tiles\\grass\\' + data[obj_1]['name'])
-            elif data[obj_1]['type'] == 'decor':
-                obj = Brick([x_1, y_1], (
-                    round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                            'tiles\\decor\\' + data[obj_1]['name'])
-            elif data[obj_1]['type'] == 'bonus':
-                obj = Brick([x_1, y_1], (
-                    round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                            'tiles\\bonus\\' + data[obj_1]['name'])
-            maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
+            if obj_1 not in ['cords']:
+                x_1, y_1 = tuple([int(j) for j in obj_1.split(';')])
+                if data[obj_1]['type'] == 'wall':
+                    obj = Brick([x_1, y_1], (
+                        round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                                'tiles\\grass\\' + data[obj_1]['name'])
+                elif data[obj_1]['type'] == 'decor':
+                    obj = Brick([x_1, y_1], (
+                        round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                                'tiles\\decor\\' + data[obj_1]['name'])
+                elif data[obj_1]['type'] == 'bonus':
+                    obj = Brick([x_1, y_1], (
+                        round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                                'tiles\\bonus\\' + data[obj_1]['name'])
+                maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
+            else:
+                cords = data[obj_1]
     pygame.event.post(pygame.event.Event(26, {}))
     map_dict = maps
+    player.rect.x, player.rect.y = (SIZE_OF_RECT * 14, SIZE_OF_RECT * 8)
+    wall_sprites.load(map_dict, cords)
 
 
 def main():
@@ -114,6 +120,10 @@ def esc_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for but in esc_menu_buttons_sprites:
                     if but.is_clicked():
+                        if but.type == 'settings':
+                            for ob in settings_buttons_sprites:
+                                if ob.type == 'menu':
+                                    ob.type = 'esc_menu'
                         return but.type
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return 'main'
@@ -144,8 +154,8 @@ def settings():
                 keys = pygame.key.get_pressed()
                 for i in settings_buttons_sprites:
                     if i.is_clicked() or keys[pygame.K_RETURN]:
-                        if i.type == 'menu':
-                            return 'menu'
+                        if i.type == 'menu' or i.type == 'esc_menu':
+                            return i.type
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     if cursor_position + 1 < len(settings_buttons_sprites.sprites()):
@@ -157,9 +167,9 @@ def settings():
                         cursor_position -= 1
                     else:
                         cursor_position = len(settings_buttons_sprites.sprites()) - 1
-                cursor.rect.x =\
+                cursor.rect.x = \
                     settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[
-                                    0].rect.w // 2 - 5
+                        0].rect.w // 2 - 5
                 cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
 
         screen.blit(settings_background_image, (0, 0))
@@ -218,8 +228,8 @@ gui_sprites.set_hearts(6)
 render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
                 dust_particle_sprites, particle_sprites)
 
-Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-       particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
+player = Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
+                particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
 map_dict = []
 
 # menu func
@@ -287,11 +297,14 @@ while True:
             t2.join()
             t1.join()
             result = 'main'
-            wall_sprites.load(map_dict)
     elif result == 'menu':
         result = menu()
     elif result == 'settings':
         result = settings()
+        print(result)
+        for i in settings_buttons_sprites:
+            if i.type == 'esc_menu':
+                i.type = 'menu'
     elif result == 'main':
         result = main()
     elif result == 'esc_menu':

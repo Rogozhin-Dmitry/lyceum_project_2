@@ -202,7 +202,6 @@ decor_sprites = pygame.sprite.Group()
 bonus_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 dust_particle_sprites = pygame.sprite.Group()
-spike_sprites = pygame.sprite.Group()
 wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
                           screen)
 player_sprites = pygame.sprite.Group()
@@ -212,7 +211,7 @@ render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprit
                 dust_particle_sprites, particle_sprites)
 
 Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-       particle_sprites, dust_particle_sprites, SIZE_OF_RECT, spike_sprites)
+       particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
 map_dict = []
 
 # func

@@ -101,7 +101,6 @@ def main(wer):
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                print(event.key)
                 if event.key == pygame.K_ESCAPE:
                     if menu_render:
                         menu_render = False
@@ -110,7 +109,7 @@ def main(wer):
 
         render.render_funk()
         if menu_render:
-            print('menu')
+            screen.blit(decoration_image, (SIZE_OF_RECT // 4, SIZE_OF_RECT // 4))
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
 

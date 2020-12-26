@@ -1,5 +1,6 @@
 from pygame import sprite, image, transform, key, Surface, draw
 from random import randint
+import pygame
 
 
 def up_collision(obj_1, obj_2):
@@ -57,6 +58,7 @@ class Player(sprite.Sprite):
         self.timer = 0
         self.last_timer = 0
         self.jump_speed_last = self.jump_speed
+        self.test_damage = True
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -118,6 +120,12 @@ class Player(sprite.Sprite):
                 self.jump_speed = -17
             self.rect.y -= 1
 
+        if keys[pygame.K_k] and self.test_damage:
+            self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+            self.test_damage = False
+        elif not keys[pygame.K_k]:
+            self.test_damage = True
+
         self.rect.y += self.jump_speed + self.g // 2
 
         if sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
@@ -153,9 +161,11 @@ class Player(sprite.Sprite):
         spr = sprite.spritecollideany(self, self.bonus_sprites)
         if spr:
             if spr.image_name == 'tiles\\bonus\\heart_bonus.png':
-                self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
+                self.gui_sprites.max_hp = self.gui_sprites.max_hp + 1
+                self.gui_sprites.set_hearts(self.gui_sprites.max_hp)
             elif spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
-                self.gui_sprites.set_bombs(self.gui_sprites.bomb + 1)
+                self.gui_sprites.max_bomb = self.gui_sprites.max_bomb + 1
+                self.gui_sprites.set_bombs(self.gui_sprites.max_bomb)
             cords = spr.rect.center
             del self.wall_sprites.maps[tuple(spr.cords)]
             spr.kill()
@@ -185,7 +195,7 @@ class Player(sprite.Sprite):
                 spr = sprite.Sprite()
                 r = randint(5, 9)
                 spr.image = Surface([r, r])
-                draw.circle(spr.image, (5, 5, 5), (r // 2, r // 2), r // 2)
+                draw.circle(spr.image, (150,75, 0), (r // 2, r // 2), r // 2)
                 spr.image.set_colorkey((0, 0, 0))
                 spr.rect = spr.image.get_rect()
                 spr.rect.center = cords

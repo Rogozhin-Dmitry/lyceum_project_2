@@ -86,7 +86,8 @@ def main(wer):
     Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
            particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
 
-    background_image = pygame.transform.scale(pygame.image.load('fons\\menu_background.png').convert(), (WIDTH, HEIGHT))
+    background_image = pygame.transform.chop(pygame.image.load('fons\\menu_background.png').convert(),
+                                             (0, 0, WIDTH // 3, HEIGHT // 2))
     decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                               (SIZE_OF_RECT * 8, SIZE_OF_RECT * 2))
 
@@ -110,6 +111,8 @@ def main(wer):
         render.render_funk()
         if menu_render:
             screen.blit(decoration_image, (SIZE_OF_RECT // 4, SIZE_OF_RECT // 4))
+            screen.blit(background_image, ((WIDTH - WIDTH // 3) // 2, (HEIGHT - HEIGHT // 2) // 2))
+
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
 

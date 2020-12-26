@@ -301,7 +301,6 @@ while True:
         result = menu()
     elif result == 'settings':
         result = settings()
-        print(result)
         for i in settings_buttons_sprites:
             if i.type == 'esc_menu':
                 i.type = 'menu'

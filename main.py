@@ -18,53 +18,51 @@ class Button(pygame.sprite.Sprite):
 
     def is_clicked(self):
         return self.rect.x <= pygame.mouse.get_pos()[0] <= self.rect.x + self.rect.w and \
-            (self.rect.y <= pygame.mouse.get_pos()[1] <= self.rect.y + self.rect.h)
+               (self.rect.y <= pygame.mouse.get_pos()[1] <= self.rect.y + self.rect.h)
 
 
 def load():
-    count = 0
-    while q[0]:
+    counter = 0
+    while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS // 16)
         # Ввод процесса (события)
         for event in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or event.type == 26:
                 return None
         screen.blit(background_image, (0, 0))
-        screen.blit(text_loading[count % len(text_loading)], (1650, 1000))
+        screen.blit(text_loading[counter % len(text_loading)], (1650, 1000))
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
-        count += 1
+        counter += 1
 
 
 def load_1(*args):
-    global q, map_dict
+    global map_dict
     with open(args[0], "r") as read_file:
         data = json.load(read_file)
         maps = {}
-        for i in data:
-            x_1, y_1 = tuple([int(j) for j in i.split(';')])
-            if data[i]['type'] == 'wall':
+        for obj_1 in data:
+            x_1, y_1 = tuple([int(j) for j in obj_1.split(';')])
+            if data[obj_1]['type'] == 'wall':
                 obj = Brick([x_1, y_1], (
-                    round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
-                            'tiles\\grass\\' + data[i]['name'])
-            elif data[i]['type'] == 'decor':
+                    round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                            'tiles\\grass\\' + data[obj_1]['name'])
+            elif data[obj_1]['type'] == 'decor':
                 obj = Brick([x_1, y_1], (
-                    round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
-                            'tiles\\decor\\' + data[i]['name'])
-            elif data[i]['type'] == 'bonus':
+                    round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                            'tiles\\decor\\' + data[obj_1]['name'])
+            elif data[obj_1]['type'] == 'bonus':
                 obj = Brick([x_1, y_1], (
-                    round(SIZE_OF_RECT * data[i]['size'][0]), round(SIZE_OF_RECT * data[i]['size'][1])),
-                            'tiles\\bonus\\' + data[i]['name'])
-            maps[tuple([int(j) for j in i.split(';')])] = (obj, data[i]['type'])
-    q[0] = False
+                    round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                            'tiles\\bonus\\' + data[obj_1]['name'])
+            maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
+    pygame.event.post(pygame.event.Event(26, {}))
     map_dict = maps
-    return 'main'
 
 
-def main(map_dict_1):
-    wall_sprites.load(map_dict_1)
+def main():
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -72,10 +70,9 @@ def main(map_dict_1):
         for event in pygame.event.get():
             # проверка для закрытия окна
             if event.type == pygame.QUIT:
-                return None
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return None
+                return 'exit'
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return 'esc_menu'
 
         render.render_funk()
 
@@ -93,9 +90,9 @@ def menu():
             if event.type == pygame.QUIT:
                 return 'exit'
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for i in menu_buttons_sprites:
-                    if i.is_clicked():
-                        return i.type
+                for but in menu_buttons_sprites:
+                    if but.is_clicked():
+                        return but.type
 
         screen.blit(menu_background_image, (0, 0))
         screen.blit(menu_decoration_image, (SIZE_OF_RECT // 4, SIZE_OF_RECT // 4))
@@ -105,31 +102,36 @@ def menu():
         pygame.display.flip()
 
 
+def esc_menu():
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for but in esc_menu_buttons_sprites:
+                    if but.is_clicked():
+                        return but.type
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return 'main'
+
+        screen.blit(settings_background_image, (0, 0))
+        screen.blit(settings_decoration_image, (SIZE_OF_RECT * 9, SIZE_OF_RECT * 17 // 15))
+
+        esc_menu_buttons_sprites.draw(screen)
+        # переворот изображения, это чтобы не отрисовывались отдльные части
+        pygame.display.flip()
+
+
 def settings():
-    background_image = pygame.transform.scale(pygame.image.load('fons\\option_background.png').convert(),
-                                              (WIDTH, HEIGHT))
-    decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
-                                              (SIZE_OF_RECT * 12, SIZE_OF_RECT * 3))
-    decoration_image.set_colorkey((0, 0, 0))
-
-    buttons_sprites = pygame.sprite.Group()
-    font = pygame.font.Font('fonts\\f1.ttf', SIZE_OF_RECT)
-    count = 1
-    for i, j in [("Звук", 'settings'), ("Назад", 'menu'), ("Ещё пункт, длинный пункт", 'exit')]:
-        text = font.render(i, True, (245, 245, 245))
-        buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                       y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
-        count += 1
-
+    global cursor_position
     cursor_position = 0
-    cursor = pygame.sprite.Sprite()
-    cursor.image = pygame.transform.scale(pygame.image.load('fons\\cursor.png').convert(), (SIZE_OF_RECT, SIZE_OF_RECT))
-    cursor.image.set_colorkey((255, 255, 255))
-    cursor.rect = cursor.image.get_rect()
-    cursor.rect.x = buttons_sprites.sprites()[cursor_position].rect.x - buttons_sprites.sprites()[0].rect.w // 2 - 5
-    cursor.rect.y = buttons_sprites.sprites()[cursor_position].rect.y
-    cursor_sprites = pygame.sprite.Group(cursor)
-
+    cursor.rect.x = settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[
+        0].rect.w // 2 - 5
+    cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -140,13 +142,13 @@ def settings():
                 return 'exit'
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 keys = pygame.key.get_pressed()
-                for i in buttons_sprites:
+                for i in settings_buttons_sprites:
                     if i.is_clicked() or keys[pygame.K_RETURN]:
                         if i.type == 'menu':
                             return 'menu'
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
-                    if cursor_position + 1 < len(buttons_sprites.sprites()):
+                    if cursor_position + 1 < len(settings_buttons_sprites.sprites()):
                         cursor_position += 1
                     else:
                         cursor_position = 0
@@ -154,15 +156,16 @@ def settings():
                     if cursor_position - 1 >= 0:
                         cursor_position -= 1
                     else:
-                        cursor_position = len(buttons_sprites.sprites()) - 1
-                cursor.rect.x = buttons_sprites.sprites()[cursor_position].rect.x - buttons_sprites.sprites()[
-                    0].rect.w // 2 - 5
-                cursor.rect.y = buttons_sprites.sprites()[cursor_position].rect.y
+                        cursor_position = len(settings_buttons_sprites.sprites()) - 1
+                cursor.rect.x =\
+                    settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[
+                                    0].rect.w // 2 - 5
+                cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
 
-        screen.blit(background_image, (0, 0))
-        screen.blit(decoration_image, (SIZE_OF_RECT * 9, SIZE_OF_RECT * 17 // 15))
+        screen.blit(settings_background_image, (0, 0))
+        screen.blit(settings_decoration_image, (SIZE_OF_RECT * 9, SIZE_OF_RECT * 17 // 15))
 
-        buttons_sprites.draw(screen)
+        settings_buttons_sprites.draw(screen)
         cursor_sprites.draw(screen)
 
         # переворот изображения, это чтобы не отрисовывались отдльные части
@@ -214,8 +217,9 @@ Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonu
        particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
 map_dict = []
 
-# func
-menu_background_image = pygame.transform.scale(pygame.image.load('fons\\menu_background.png').convert(), (WIDTH, HEIGHT))
+# menu func
+menu_background_image = pygame.transform.scale(pygame.image.load('fons\\menu_background.png').convert(),
+                                               (WIDTH, HEIGHT))
 menu_decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                                (SIZE_OF_RECT * 8, SIZE_OF_RECT * 2))
 menu_decoration_image.set_colorkey((0, 0, 0))
@@ -228,36 +232,64 @@ for i, j in [("Новая игра", 'new_game'), ("Загрузить игру"
     menu_buttons_sprites.add(Button(text, text.get_rect(x=SIZE_OF_RECT // 4,
                                                         y=SIZE_OF_RECT // 4 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
+# esc_menu func
+esc_menu_buttons_sprites = pygame.sprite.Group()
+count = 1
+for i, j in [("Продолжить", 'main'), ("Загрузить игру", 'load_game'), ("Настройки", 'settings'),
+             ("Выход в меню", 'menu')]:
+    text = font_sh.render(i, True, (245, 245, 245))
+    esc_menu_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
+    count += 1
+
+#  settings funk
+settings_background_image = pygame.transform.scale(pygame.image.load('fons\\option_background.png').convert(),
+                                                   (WIDTH, HEIGHT))
+settings_decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
+                                                   (SIZE_OF_RECT * 12, SIZE_OF_RECT * 3))
+settings_decoration_image.set_colorkey((0, 0, 0))
+
+settings_buttons_sprites = pygame.sprite.Group()
+count = 1
+for i, j in [("Звук", 'settings'), ("Назад", 'menu'), ("Ещё пункт, длинный пункт", 'exit')]:
+    text = font_sh.render(i, True, (245, 245, 245))
+    settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
+    count += 1
+
+cursor_position = 0
+cursor = pygame.sprite.Sprite()
+cursor.image = pygame.transform.scale(pygame.image.load('fons\\cursor.png').convert(), (SIZE_OF_RECT, SIZE_OF_RECT))
+cursor.image.set_colorkey((255, 255, 255))
+cursor.rect = cursor.image.get_rect()
+cursor.rect.x = settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[
+    0].rect.w // 2 - 5
+cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
+cursor_sprites = pygame.sprite.Group(cursor)
 
 result = menu()
 while True:
     if result == 'new_game':
-        q = [True]
-        t1 = threading.Thread(target=load)
-        t2 = threading.Thread(target=load_1, args=('data_file_3.json', q))
-        t1.start()
-        t2.start()
-        t1.join()
-        t2.join()
-        main(map_dict)
-        pygame.quit()
-        sys.exit()
+        result = 'exit'
     elif result.startswith('load_game'):
-        name = 'data_file_3.json'
+        name = 'data_file.json'
         q = [True]
         t1 = threading.Thread(target=load)
         t2 = threading.Thread(target=load_1, args=(name, q))
         t1.start()
         t2.start()
-        t1.join()
         t2.join()
+        t1.join()
         result = 'main'
+        wall_sprites.load(map_dict)
     elif result == 'menu':
         result = menu()
     elif result == 'settings':
         result = settings()
     elif result == 'main':
-        main(map_dict)
+        result = main()
+    elif result == 'esc_menu':
+        result = esc_menu()
     elif result == 'exit':
         pygame.quit()
         sys.exit()

@@ -172,6 +172,11 @@ def settings():
         pygame.display.flip()
 
 
+def load_func():
+    # Тимоша, дерзай)
+    return 'data_file.json'
+
+
 pygame.init()
 pygame.mixer.init()
 
@@ -271,17 +276,18 @@ result = menu()
 while True:
     if result == 'new_game':
         result = 'exit'
-    elif result.startswith('load_game'):
-        name = 'data_file.json'
-        q = [True]
-        t1 = threading.Thread(target=load)
-        t2 = threading.Thread(target=load_1, args=(name, q))
-        t1.start()
-        t2.start()
-        t2.join()
-        t1.join()
-        result = 'main'
-        wall_sprites.load(map_dict)
+    elif result == 'load_game':
+        result = load_func()
+        if not result == 'menu':
+            q = [True]
+            t1 = threading.Thread(target=load)
+            t2 = threading.Thread(target=load_1, args=(result, q))
+            t1.start()
+            t2.start()
+            t2.join()
+            t1.join()
+            result = 'main'
+            wall_sprites.load(map_dict)
     elif result == 'menu':
         result = menu()
     elif result == 'settings':

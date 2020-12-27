@@ -217,8 +217,6 @@ def load_func():
         load_btn_sprites.draw(screen)
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
-    return 'saves\\data_file.json'
-
 
 pygame.init()
 pygame.mixer.init()

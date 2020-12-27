@@ -184,12 +184,37 @@ def settings():
         pygame.display.flip()
 
 
+def new_game():
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for but in diff_btns:
+                    if but.is_clicked():
+                        if but.type == 'settings':
+                            for ob in diff_btns:
+                                if ob.type == 'menu':
+                                    ob.type = 'esc_menu'
+                        return but.type
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return 'main'
+
+        screen.blit(dif_set_image, (0, 0))
+        diff_btns.draw(screen)
+        pygame.display.flip()
+    print('робит')
+
+
 def load_func():
     closed_mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
     saves_names = []
     for elem in closed_mass:
         saves_names.append(f"Точка сохранения №{closed_mass.index(elem) + 1}")
-    print(saves_names)
     load_btn_sprites = pygame.sprite.Group()
     load_count = 0
     for load_i, load_j in [*[(saves_names[closed_mass.index(el)], el) for el in closed_mass], ("Выход", 'exit')]:
@@ -213,10 +238,10 @@ def load_func():
 
         screen.blit(menu_background_image, (0, 0))
         screen.blit(menu_decoration_image, (SIZE_OF_RECT // 4, SIZE_OF_RECT // 4))
-
         load_btn_sprites.draw(screen)
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
+
 
 pygame.init()
 pygame.mixer.init()
@@ -271,6 +296,8 @@ menu_background_image = pygame.transform.scale(pygame.image.load('fons\\menu_bac
                                                (WIDTH, HEIGHT))
 menu_decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                                (SIZE_OF_RECT * 8, SIZE_OF_RECT * 2))
+dif_set_image = pygame.transform.scale(pygame.image.load('fons\\bg_diff_selector.png').convert(),
+                                       (WIDTH, HEIGHT))
 menu_decoration_image.set_colorkey((0, 0, 0))
 
 menu_buttons_sprites = pygame.sprite.Group()
@@ -290,6 +317,17 @@ for i, j in [("Продолжить", 'main'), ("Загрузить игру", '
     esc_menu_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
+# diff func
+diff_btns = pygame.sprite.Group()
+count = 1
+for i, j in [("Начать", 'main'), ("Сложность", 'load_game'), ("Доп", 'settings'),
+             ("Выход в меню", 'menu')]:
+    text = font_sh.render(i, True, (245, 245, 245))
+    diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
+    count += 1
+
+
 
 #  settings funk
 settings_background_image = pygame.transform.scale(pygame.image.load('fons\\option_background.png').convert(),
@@ -319,7 +357,7 @@ cursor_sprites = pygame.sprite.Group(cursor)
 result = menu()
 while True:
     if result == 'new_game':
-        result = 'exit'
+        result = new_game()
     elif result == 'load_game':
         result = load_func()
         if not result == 'menu':

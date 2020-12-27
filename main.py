@@ -1,7 +1,9 @@
 from player_file import *
 from wall_sprites_file import *
 from render_file import *
+import pygame
 import sys
+import os
 from gui_file import *
 import threading
 import json
@@ -183,15 +185,48 @@ def settings():
 
 
 def load_func():
-    # Тимоша, дерзай))
-    return 'data_file.json'
+    closed_mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
+    saves_names = []
+    for elem in closed_mass:
+        saves_names.append(f"Точка сохранения №{closed_mass.index(elem) + 1}")
+    print(saves_names)
+    load_btn_sprites = pygame.sprite.Group()
+    load_count = 0
+    for load_i, load_j in [*[(saves_names[closed_mass.index(el)], el) for el in closed_mass], ("Выход", 'exit')]:
+        saves_text = font_sh.render(load_i, True, (245, 245, 245))
+        load_btn_sprites.add(Button(saves_text, saves_text.get_rect(x=SIZE_OF_RECT // 4,
+                                                                    y=SIZE_OF_RECT // 4 + SIZE_OF_RECT * (
+                                                                            2 + load_count)), load_j))
+        load_count += 1
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for but in load_btn_sprites:
+                    if but.is_clicked():
+                        return but.type
+
+        screen.blit(menu_background_image, (0, 0))
+        screen.blit(menu_decoration_image, (SIZE_OF_RECT // 4, SIZE_OF_RECT // 4))
+
+        load_btn_sprites.draw(screen)
+        # переворот изображения, это чтобы не отрисовывались отдльные части
+        pygame.display.flip()
+    return 'saves\\data_file.json'
 
 
 pygame.init()
 pygame.mixer.init()
 
 inf = pygame.display.Info()
+print(inf.current_w, inf.current_h)
 x, y = inf.current_w // 30, inf.current_h // 17
+print(x, y)
 if x > y:
     SIZE_OF_RECT = int(y)
 else:
@@ -199,6 +234,7 @@ else:
 # SIZE_OF_RECT //= 2
 WIDTH = SIZE_OF_RECT * 30
 HEIGHT = SIZE_OF_RECT * 17
+print(WIDTH, HEIGHT)
 WIDTH_SHIFT = inf.current_w - WIDTH
 HEIGHT_SHIFT = inf.current_h - HEIGHT
 FPS = 60

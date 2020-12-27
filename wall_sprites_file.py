@@ -13,12 +13,12 @@ class Wal_sprite(sprite.Group):
         self.cords = [0, 0]
         self.cords_not_round = [self.cords[0] * rect_size, self.cords[1] * rect_size]
         self.maps = {}
-        self.render()
 
-    def load(self, maps):
-        self.cords = [11, -25]
+    def load(self, maps, cords):
+        self.cords = cords
         self.cords_not_round = [self.cords[0] * self.rect_size, self.cords[1] * self.rect_size]
         self.maps = maps
+        self.render()
 
     def move(self, param, x_or_y):
         if x_or_y:

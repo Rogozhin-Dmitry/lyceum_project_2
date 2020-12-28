@@ -19,7 +19,7 @@ def down_collision(obj_1, obj_2):
 
 class Player(sprite.Sprite):
     def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites,
-                 dust_particle_sprites, rect_size):
+                 dust_particle_sprites, saves_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
@@ -28,6 +28,7 @@ class Player(sprite.Sprite):
         self.gui_sprites = gui_sprites
         self.particle_sprites = particle_sprites
         self.dust_particle_sprites = dust_particle_sprites
+        self.saves_sprites = saves_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),

@@ -39,9 +39,19 @@ class Player(sprite.Sprite):
             self.player_img_right_run.append(transform.flip(self.player_img_left_run[-1], True, False))
         self.image = self.player_img_left
         self.image.set_colorkey((255, 255, 255))
+        self.bun_image_left = transform.scale(image.load('mini_bun\\1.png').convert(),
+                                              (rect_size - 5, rect_size - 5))
+        self.bun_image_right = transform.flip(self.bun_image_left, True, False)
+        self.bun_image_left_run = []
+        self.bun_image_right_run = []
+        for i in range(3):
+            self.bun_image_left_run.append(transform.scale(image.load('mini_bun\\' + str(i + 1) + '.png').convert(),
+                                                           (rect_size - 5, rect_size - 5)))
+            self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = cords
         self.sprite_group.add(self)
+        self.rect_size = rect_size
 
         self.step = 5
         self.left_scroll = rect_size * 12
@@ -59,18 +69,52 @@ class Player(sprite.Sprite):
         self.last_timer = 0
         self.jump_speed_last = self.jump_speed
         self.test_damage = True
+        self.bunny_mode = False
+        self.mode_changed = False
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
         super().update()
 
         keys = key.get_pressed()
-        if keys[100]:
+
+        if keys[pygame.K_c] and not self.mode_changed:
+            if not self.bunny_mode:
+                last_x = self.rect.x
+                last_y = self.rect.y
+                self.bunny_mode = True
+                self.image = self.bun_image_left
+                self.rect = self.image.get_rect()
+                self.rect.x = last_x
+                self.rect.y = last_y + self.rect_size
+            else:
+                last_x = self.rect.x
+                last_y = self.rect.y
+                self.bunny_mode = False
+                self.image = self.player_img_left
+                self.rect = self.image.get_rect()
+                self.rect.x = last_x
+                self.rect.y = last_y - self.rect_size
+                if sprite.spritecollideany(self, self.wall_sprites):
+                    self.bunny_mode = True
+                    self.image = self.bun_image_left
+                    self.rect = self.image.get_rect()
+                    self.rect.y = last_y
+                    self.rect.x = last_x
+
+            self.mode_changed = True
+        elif not keys[pygame.K_c]:
+            self.mode_changed = False
+
+        if keys[100] or keys[pygame.K_RIGHT]:
             if self.rl:
                 self.rl = False
                 self.count = 0
             if self.timer - self.last_timer >= 5:
-                self.image = self.player_img_right_run[self.count % 6]
+                if not self.bunny_mode:
+                    self.image = self.player_img_right_run[self.count % 6]
+                else:
+                    self.image = self.bun_image_right_run[self.count % 3]
                 self.image.set_colorkey((255, 255, 255))
                 self.count += 1
                 self.last_timer = self.timer
@@ -84,12 +128,15 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(-self.step, 0)
                 self.rect.x -= self.step
 
-        if keys[97]:
+        if keys[97] or keys[pygame.K_LEFT]:
             if not self.rl:
                 self.rl = True
                 self.count = 0
             if self.timer - self.last_timer >= 5:
-                self.image = self.player_img_left_run[self.count % 6]
+                if not self.bunny_mode:
+                    self.image = self.player_img_left_run[self.count % 6]
+                else:
+                    self.image = self.bun_image_left_run[self.count % 3]
                 self.image.set_colorkey((255, 255, 255))
                 self.count += 1
                 self.last_timer = self.timer
@@ -104,16 +151,22 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(self.step, 0)
                 self.rect.x += self.step
 
-        if not keys[100] and not keys[97]:
+        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             if self.rl:
-                self.image = self.player_img_left
+                if not self.bunny_mode:
+                    self.image = self.player_img_left
+                else:
+                    self.image = self.bun_image_left
                 self.image.set_colorkey((255, 255, 255))
             else:
-                self.image = self.player_img_right
+                if not self.bunny_mode:
+                    self.image = self.player_img_right
+                else:
+                    self.image = self.bun_image_right
                 self.image.set_colorkey((255, 255, 255))
             self.last_timer = 0
 
-        if keys[32] and not self.jump:
+        if (keys[32] or keys[pygame.K_z]) and not self.jump:
             self.rect.y += 1
             if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
                 self.jump = True

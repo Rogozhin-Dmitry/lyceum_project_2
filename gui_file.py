@@ -38,7 +38,7 @@ class Gui(sprite.Group):
             self.bomb = num
             self.bomb_sprites.empty()
             spr = sprite.Sprite()
-            spr.image = transform.scale(image.load('GUI\\bomb.png').convert(), (self.rect_size, self.rect_size))
+            spr.image = transform.scale(image.load('GUI\\carrot_bomb.png').convert(), (self.rect_size, self.rect_size))
             spr.image.set_colorkey((255, 255, 255))
             spr.rect = spr.image.get_rect()
             spr.rect.center = (int(self.rect_size * 1.5), self.rect_size * 2.5)

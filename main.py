@@ -207,7 +207,6 @@ def new_game():
         screen.blit(dif_set_image, (0, 0))
         diff_btns.draw(screen)
         pygame.display.flip()
-    print('робит')
 
 
 def load_func():
@@ -217,7 +216,7 @@ def load_func():
         saves_names.append(f"Точка сохранения №{closed_mass.index(elem) + 1}")
     load_btn_sprites = pygame.sprite.Group()
     load_count = 0
-    for load_i, load_j in [*[(saves_names[closed_mass.index(el)], el) for el in closed_mass], ("Выход", 'exit')]:
+    for load_i, load_j in [*[(saves_names[closed_mass.index(el)], el) for el in closed_mass], ("Выход", 'menu')]:
         saves_text = font_sh.render(load_i, True, (245, 245, 245))
         load_btn_sprites.add(Button(saves_text, saves_text.get_rect(x=SIZE_OF_RECT // 4,
                                                                     y=SIZE_OF_RECT // 4 + SIZE_OF_RECT * (
@@ -326,8 +325,6 @@ for i, j in [("Начать", 'main'), ("Сложность", 'load_game'), ("Д
     diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
-
-
 
 #  settings funk
 settings_background_image = pygame.transform.scale(pygame.image.load('fons\\option_background.png').convert(),

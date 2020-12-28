@@ -7,6 +7,7 @@ import os
 from gui_file import *
 import threading
 import json
+from save_point_file import SavePoint
 
 
 class Button(pygame.sprite.Sprite):
@@ -56,13 +57,14 @@ def load_1(*args):
                 elif data[obj_1]['type'] == 'decor':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\decor\\' + data[obj_1]['name'])
+                                'tiles\\decaor\\' + data[obj_1]['name'])
                 elif data[obj_1]['type'] == 'bonus':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                 'tiles\\bonus\\' + data[obj_1]['name'])
                 elif data[obj_1]['type'] == 'save':
-                    obj = ''
+                    obj = SavePoint([x_1, y_1], (
+                        round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
             else:
                 cords = data[obj_1]
@@ -70,6 +72,10 @@ def load_1(*args):
     map_dict = maps
     player.rect.x, player.rect.y = (SIZE_OF_RECT * 14, SIZE_OF_RECT * 8)
     wall_sprites.load(map_dict, cords)
+
+
+def save():
+    pass
 
 
 def main():
@@ -83,6 +89,8 @@ def main():
                 return 'exit'
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return 'esc_menu'
+            if event.type == 30:
+                return 'save'
 
         render.render_funk()
 
@@ -326,7 +334,7 @@ for i, j in [("Начать", 'main'), ("Сложность", 'load_game'), ("Д
              ("Выход в меню", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
+                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
 
 #  settings funk

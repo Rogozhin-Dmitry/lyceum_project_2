@@ -16,6 +16,7 @@ class Render:
         self.player_sprites.update()
         self.wall_sprites.update()
         self.decor_sprites.update()
+        self.saves_sprites.update()
         for i in [*self.particle_sprites, *self.dust_particle_sprites]:
             i.x += i.shift
             i.y += i.shift_down

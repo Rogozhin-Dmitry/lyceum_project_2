@@ -72,6 +72,10 @@ class Player(sprite.Sprite):
         self.test_damage = True
         self.bunny_mode = False
         self.mode_changed = False
+        self.save_counter = 0
+        self.on_save_point = False
+        self.current_save_point = None
+        self.rect_size = rect_size
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -79,7 +83,33 @@ class Player(sprite.Sprite):
 
         keys = key.get_pressed()
 
-        if keys[pygame.K_c] and not self.mode_changed:
+        if keys[pygame.K_e] and not self.on_save_point and sprite.spritecollideany(self, self.saves_sprites):
+            self.on_save_point = True
+            self.timer = 0
+            for save in self.saves_sprites.sprites():
+                if sprite.collide_rect(self, save):
+                    self.current_save_point = save
+                    self.current_save_point.player_is_sitting = True
+                    last_x = self.rect.x
+                    last_y = self.rect.y
+                    last_w = self.rect.w
+                    last_h = self.rect.h
+                    self.image = transform.scale(image.load('player\\help.png').convert(),
+                                                 (self.rect_size - 5, self.rect_size * 2 - 5))
+                    self.rect = self.image.get_rect()
+                    self.image.set_colorkey((255, 255, 255))
+                    self.rect.x, self.rect.y, self.rect.w, self.rect.h = last_x, last_y, last_w, last_h
+        if self.on_save_point and self.timer == 120:
+            self.on_save_point = False
+            last_rect = self.rect
+            self.image = self.player_img_left
+            self.image.set_colorkey((255, 255, 255))
+            self.rect = self.image.get_rect()
+            self.rect = last_rect
+            self.current_save_point.player_is_sitting = False
+            pygame.event.post(pygame.event.Event(30, {}))
+
+        if keys[pygame.K_c] and not self.mode_changed and not self.on_save_point:
             if not self.bunny_mode:
                 last_x = self.rect.x
                 last_y = self.rect.y
@@ -107,7 +137,7 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_c]:
             self.mode_changed = False
 
-        if keys[100] or keys[pygame.K_RIGHT]:
+        if (keys[100] or keys[pygame.K_RIGHT]) and not self.on_save_point:
             if self.rl:
                 self.rl = False
                 self.count = 0
@@ -129,7 +159,7 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(-self.step, 0)
                 self.rect.x -= self.step
 
-        if keys[97] or keys[pygame.K_LEFT]:
+        if (keys[97] or keys[pygame.K_LEFT]) and not self.on_save_point:
             if not self.rl:
                 self.rl = True
                 self.count = 0
@@ -152,7 +182,8 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(self.step, 0)
                 self.rect.x += self.step
 
-        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
+        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT] and \
+                not self.on_save_point:
             if self.rl:
                 if not self.bunny_mode:
                     self.image = self.player_img_left
@@ -167,7 +198,7 @@ class Player(sprite.Sprite):
                 self.image.set_colorkey((255, 255, 255))
             self.last_timer = 0
 
-        if (keys[32] or keys[pygame.K_z]) and not self.jump:
+        if (keys[32] or keys[pygame.K_z]) and not self.jump and not self.on_save_point:
             self.rect.y += 1
             if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
                 self.jump = True

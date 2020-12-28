@@ -61,6 +61,8 @@ def load_1(*args):
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                 'tiles\\bonus\\' + data[obj_1]['name'])
+                elif data[obj_1]['type'] == 'save':
+                    obj = ''
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
             else:
                 cords = data[obj_1]
@@ -276,18 +278,19 @@ text_loading = [font_sh.render("Загрузка...", True, (20, 23, 61)),
 #  main func
 decor_sprites = pygame.sprite.Group()
 bonus_sprites = pygame.sprite.Group()
+saves_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 dust_particle_sprites = pygame.sprite.Group()
 wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
-                          screen)
+                          saves_sprites, screen)
 player_sprites = pygame.sprite.Group()
 gui_sprites = Gui(SIZE_OF_RECT)
 gui_sprites.set_hearts(6)
 render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
-                dust_particle_sprites, particle_sprites)
+                dust_particle_sprites, particle_sprites, saves_sprites)
 
 player = Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-                particle_sprites, dust_particle_sprites, SIZE_OF_RECT)
+                particle_sprites, dust_particle_sprites, saves_sprites, SIZE_OF_RECT)
 map_dict = []
 
 # menu func

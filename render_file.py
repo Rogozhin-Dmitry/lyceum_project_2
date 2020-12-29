@@ -1,6 +1,6 @@
 class Render:
     def __init__(self, screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
-                 dust_particle_sprites, particle_sprites, saves_sprites):
+                 dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites):
         self.screen = screen
         self.player_sprites = player_sprites
         self.wall_sprites = wall_sprites
@@ -10,6 +10,7 @@ class Render:
         self.particle_sprites = particle_sprites
         self.dust_particle_sprites = dust_particle_sprites
         self.saves_sprites = saves_sprites
+        self.damage_sprites = damage_sprites
 
     def render_funk(self):
         self.screen.fill((0, 255, 255))
@@ -32,6 +33,7 @@ class Render:
         self.bonus_sprites.draw(self.screen)
         self.decor_sprites.draw(self.screen)
         self.dust_particle_sprites.draw(self.screen)
+        self.damage_sprites.draw(self.screen)
         self.player_sprites.draw(self.screen)
         self.particle_sprites.draw(self.screen)
         self.gui_sprites.draw(self.screen)

@@ -19,7 +19,7 @@ def down_collision(obj_1, obj_2):
 
 class Player(sprite.Sprite):
     def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites,
-                 dust_particle_sprites, saves_sprites, rect_size):
+                 dust_particle_sprites, saves_sprites, damage_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
@@ -29,6 +29,7 @@ class Player(sprite.Sprite):
         self.particle_sprites = particle_sprites
         self.dust_particle_sprites = dust_particle_sprites
         self.saves_sprites = saves_sprites
+        self.damage_sprites = damage_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
@@ -76,6 +77,7 @@ class Player(sprite.Sprite):
         self.on_save_point = False
         self.current_save_point = None
         self.rect_size = rect_size
+        self.invulnerable_count = 0  # будет отвечать за урон, пока не равен нулю, персонаж не может получать урон
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -225,12 +227,15 @@ class Player(sprite.Sprite):
                 self.rect.y -= 1
             self.jump_speed = 0
 
-        # if sprite.spritecollideany(self, self.spike_sprites, collided=down_collision):
-        #
-        #     while sprite.spritecollideany(self, self.spike_sprites, collided=down_collision):
-        #         self.rect.y -= 1
-        #     self.jump_speed = 0
-        #     self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+        if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+            while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+                self.rect.y -= 1
+            self.jump_speed = 0
+            if self.invulnerable_count == 0:
+                self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+                self.invulnerable_count = 30
+        if self.invulnerable_count != 0:
+            self.invulnerable_count = self.invulnerable_count - 1
 
         while self.rect.y + self.rect.h > self.down_scroll:  # TODO плавное передвижение камеры
             self.rect.y -= 1

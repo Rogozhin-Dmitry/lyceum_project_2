@@ -178,12 +178,50 @@ def esc_menu():
         pygame.display.flip()
 
 
+def settings_processor(obj):
+    global type_of_btn, sound_open, cursor_position
+    if obj.type == 'sound':
+        sound_open = True
+        for obj_1 in settings_buttons_sprites:
+            if obj_1.type == 'menu' or obj_1.type == 'esc_menu':
+                obj_1.kill()
+                type_of_btn = obj_1.type
+                text_but = font_sh.render('Готово', True, (245, 245, 245))
+                settings_buttons_sprites.add(
+                    Button(text_but,
+                           text_but.get_rect(centerx=SIZE_OF_RECT * 15,
+                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 5),
+                           'close'))
+                break
+        cursor_position = 0
+        cursor.rect.right = \
+            settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
+        cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
+    elif obj.type == 'close':
+        for obj_1 in settings_buttons_sprites:
+            if obj_1.type == 'close':
+                obj_1.kill()
+                text_but = font_sh.render('Назад', True, (245, 245, 245))
+                settings_buttons_sprites.add(
+                    Button(text_but,
+                           text_but.get_rect(centerx=SIZE_OF_RECT * 15,
+                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                           type_of_btn))
+                break
+        sound_open = False
+        cursor_position = 0
+        cursor.rect.right = \
+            settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
+        cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
+
+
 def settings():
-    global cursor_position
+    global cursor_position, sound_count, type_of_btn, sound_open
     cursor_position = 0
-    cursor.rect.x = settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[
-        0].rect.w // 2 - 5
-    cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
+    cursor.rect.right = settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
+    cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
+    type_of_btn = ''
+    sound_open = False
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -193,11 +231,21 @@ def settings():
             if event.type == pygame.QUIT:
                 return 'exit'
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                keys = pygame.key.get_pressed()
-                for i in settings_buttons_sprites:
-                    if i.is_clicked() or keys[pygame.K_RETURN]:
-                        if i.type == 'menu' or i.type == 'esc_menu':
-                            return i.type
+                for obj in settings_buttons_sprites:
+                    if obj.is_clicked():
+                        if obj.type == 'menu' or obj.type == 'esc_menu':
+                            return obj.type
+                        settings_processor(obj)
+                if sound_open:
+                    for i in settings_buttons_sprites_sound:
+                        if i.rect.x <= pygame.mouse.get_pos()[0] <= i.rect.x + i.rect.w and (
+                                i.rect.y <= pygame.mouse.get_pos()[1] <= i.rect.y + i.rect.h):
+                            if i.type == '+':
+                                if sound_count != 10:
+                                    sound_count += 1
+                            elif i.type == '-':
+                                if sound_count != 0:
+                                    sound_count -= 1
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     if cursor_position + 1 < len(settings_buttons_sprites.sprites()):
@@ -209,17 +257,31 @@ def settings():
                         cursor_position -= 1
                     else:
                         cursor_position = len(settings_buttons_sprites.sprites()) - 1
-                cursor.rect.x = \
-                    settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[
-                        0].rect.w // 2 - 5
-                cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
+                elif event.key == pygame.K_RETURN:
+                    obj = settings_buttons_sprites.sprites()[cursor_position]
+                    if obj.type == 'menu' or obj.type == 'esc_menu':
+                        return obj.type
+                    settings_processor(obj)
+
+                cursor.rect.right = \
+                    settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
+                cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
 
         screen.blit(settings_background_image, (0, 0))
         screen.blit(settings_decoration_image, (SIZE_OF_RECT * 9, SIZE_OF_RECT * 17 // 15))
 
         settings_buttons_sprites.draw(screen)
         cursor_sprites.draw(screen)
-
+        if sound_open:
+            for i in range(sound_count):
+                pygame.draw.rect(screen, (255, 255, 255), (int(SIZE_OF_RECT * 13.3) + i * small_size_1 * 2,
+                                                           SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
+                                                           small_size_2, small_size_1))
+            for i in range(sound_count, 10):
+                pygame.draw.rect(screen, (120, 120, 120), (int(SIZE_OF_RECT * 13.3) + i * small_size_1 * 2,
+                                                           SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
+                                                           small_size_2, small_size_1))
+            settings_buttons_sprites_sound.draw(screen)
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
 
@@ -372,10 +434,35 @@ settings_background_image = pygame.transform.scale(pygame.image.load('fons\\opti
 settings_decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                                    (SIZE_OF_RECT * 12, SIZE_OF_RECT * 3))
 settings_decoration_image.set_colorkey((0, 0, 0))
-
+sound_count = 5
+type_of_btn = ''
+sound_open = False
+small_size_2 = SIZE_OF_RECT // 8
+small_size_1 = SIZE_OF_RECT // 5
 settings_buttons_sprites = pygame.sprite.Group()
+settings_buttons_sprites_sound = pygame.sprite.Group()
+
+spr = sprite.Sprite()
+spr.image = pygame.Surface((SIZE_OF_RECT // 2, SIZE_OF_RECT // 2))
+spr.rect = spr.image.get_rect()
+spr.rect.x = int(SIZE_OF_RECT * 13.3) + 10 * small_size_1 * 2 - small_size_1 // 2
+spr.rect.centery = SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4 + small_size_1 // 2
+pygame.draw.rect(spr.image, (255, 255, 255), (0, SIZE_OF_RECT // 6, SIZE_OF_RECT, SIZE_OF_RECT // 6))
+pygame.draw.rect(spr.image, (255, 255, 255), (SIZE_OF_RECT // 6, 0, SIZE_OF_RECT // 6, SIZE_OF_RECT))
+spr.type = '+'
+settings_buttons_sprites_sound.add(spr)
+
+spr = sprite.Sprite()
+spr.image = pygame.Surface((SIZE_OF_RECT // 2, SIZE_OF_RECT // 2))
+spr.rect = spr.image.get_rect()
+spr.rect.x = int(SIZE_OF_RECT * 13.3) - SIZE_OF_RECT // 3 * 2
+spr.rect.centery = SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4 + small_size_1 // 2
+pygame.draw.rect(spr.image, (255, 255, 255), (0, SIZE_OF_RECT // 6, SIZE_OF_RECT, SIZE_OF_RECT // 6))
+spr.type = '-'
+settings_buttons_sprites_sound.add(spr)
+
 count = 1
-for i, j in [("Звук", 'settings'), ("Назад", 'menu'), ("Ещё пункт, длинный пункт", 'exit')]:
+for i, j in [("Звук", 'sound'), ("Назад", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))

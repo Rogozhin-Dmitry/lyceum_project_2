@@ -15,6 +15,7 @@ class SavePoint(sprite.Sprite):
         self.animation_with_player = []
         self.count = 0
         self.timer = 0
+        self.shift = (0, 0)
         for i in range(4):
             self.animation.append(
                 transform.scale(image.load('save_point\\' + str(i + 1) + '.png').convert(), rect_size))

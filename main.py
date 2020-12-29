@@ -50,7 +50,7 @@ def load_1(*args):
         maps = {}
         for obj_1 in data:
             if obj_1 not in ['cords']:
-                x_1, y_1 = tuple([int(j) for j in obj_1.split(';')])
+                x_1, y_1 = tuple([int(xy) for xy in obj_1.split(';')])
                 if data[obj_1]['type'] == 'wall':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
@@ -73,7 +73,7 @@ def load_1(*args):
                 # elif data[obj_1]['type'] == 'enemy':
                 #     if data[obj_1]['name'] == 'chesboy':
                 #         obj = ChesBoy([x_1, y_1], (
-            #             round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
+                #          round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
             else:
                 cords = data[obj_1]
@@ -188,10 +188,8 @@ def settings_processor(obj):
                 type_of_btn = obj_1.type
                 text_but = font_sh.render('Готово', True, (245, 245, 245))
                 settings_buttons_sprites.add(
-                    Button(text_but,
-                           text_but.get_rect(centerx=SIZE_OF_RECT * 15,
-                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 5),
-                           'close'))
+                    Button(text_but, text_but.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                       y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 5), 'close'))
                 break
         cursor_position = 0
         cursor.rect.right = \
@@ -237,13 +235,13 @@ def settings():
                             return obj.type
                         settings_processor(obj)
                 if sound_open:
-                    for i in settings_buttons_sprites_sound:
-                        if i.rect.x <= pygame.mouse.get_pos()[0] <= i.rect.x + i.rect.w and (
-                                i.rect.y <= pygame.mouse.get_pos()[1] <= i.rect.y + i.rect.h):
-                            if i.type == '+':
+                    for obj_1 in settings_buttons_sprites_sound:
+                        if obj_1.rect.x <= pygame.mouse.get_pos()[0] <= obj_1.rect.x + obj_1.rect.w and (
+                                obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h):
+                            if obj_1.type == '+':
                                 if sound_count != 10:
                                     sound_count += 1
-                            elif i.type == '-':
+                            elif obj_1.type == '-':
                                 if sound_count != 0:
                                     sound_count -= 1
             elif event.type == pygame.KEYDOWN:
@@ -273,12 +271,12 @@ def settings():
         settings_buttons_sprites.draw(screen)
         cursor_sprites.draw(screen)
         if sound_open:
-            for i in range(sound_count):
-                pygame.draw.rect(screen, (255, 255, 255), (int(SIZE_OF_RECT * 13.3) + i * small_size_1 * 2,
+            for obj_1 in range(sound_count):
+                pygame.draw.rect(screen, (255, 255, 255), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
                                                            SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
                                                            small_size_2, small_size_1))
-            for i in range(sound_count, 10):
-                pygame.draw.rect(screen, (120, 120, 120), (int(SIZE_OF_RECT * 13.3) + i * small_size_1 * 2,
+            for obj_1 in range(sound_count, 10):
+                pygame.draw.rect(screen, (120, 120, 120), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
                                                            SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
                                                            small_size_2, small_size_1))
             settings_buttons_sprites_sound.draw(screen)

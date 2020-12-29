@@ -2,34 +2,40 @@ from pygame import sprite, image, transform, Rect
 
 
 class Enemy(sprite.Sprite):  # общий класс всех врагов
-    def __init__(self, cords, rect_size, damage, type):
+    def __init__(self, cords, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.cords = cords
         self.rect = Rect(0, 0, *rect_size)
-        self.damage = damage
         self.type = type
-
-    def deal_damage(self):
-        if sprite.spritecollideany(self, self.player_sprites):
-            self.player_sprites.gui_sprites.set_heart(self.player_sprites.hp - 1)
+        self.count = 0
+        self.timer = 0
+        self.last_timer = 0
 
 
 # Заготовки врагов, чтобы не забыть
 
-class Chesnut(sprite.Sprite,
-              Enemy):
-    def __init__(self, cords, rect_size, damage, type):
-        super().__init__()
+class ChesBoy(Enemy):
+    def __init__(self, cords, rect_size):
+        super().__init__(cords, rect_size)
+        self.damage = 1
+        self.step = 2
+        self.type = 'chesboy'
+        self.img_left = transform.scale(image.load('enemies\\chesboy.png').convert(), rect_size)
+        self.img_right = transform.flip(self.img_left, True, False)
+        self.image = transform.scale(image.load('enemies\\chesboy.png').convert(), rect_size)
+        self.image.set_colorkey((255, 255, 255))
 
-    # будущий класс для врага каштанчика, ходит пока не встретит препятствие (пропасть или стену), при встрече поворачивает обратно
     def update(self):
-        def __init__(self, cords, rect_size, damage, type):
-            super().__init__()
-
-    pass
+        self.rect.x = self.rect.x + self.step
 
 
-class Fly(sprite.Sprite,
-          Enemy):  # тоже самое что каштанчик, но в воздухе. Пропасть препятствием не считает, но имеет ограничение по дальности - 10 блоков
-    pass
+class Fly(Enemy):
+    def __init__(self, cords, rect_size):
+        super().__init__(cords, rect_size)
+        self.damage = 1
+        self.step = 2
+        self.type = 'fly'
+
+    def update(self):
+        pass

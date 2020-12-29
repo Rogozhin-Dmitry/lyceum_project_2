@@ -8,6 +8,7 @@ from gui_file import *
 import threading
 import json
 from save_point_file import SavePoint
+from enemy_file import *
 
 
 class Button(pygame.sprite.Sprite):
@@ -68,7 +69,11 @@ def load_1(*args):
                 elif data[obj_1]['type'] == 'damage':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\bonus\\' + data[obj_1]['name'])
+                                'tiles\\damage\\' + data[obj_1]['name'])
+                elif data[obj_1]['type'] == 'enemy':
+                    if data[obj_1]['name'] == 'chesboy':
+                        obj = ChesBoy([x_1, y_1], (
+                            round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
             else:
                 cords = data[obj_1]
@@ -294,16 +299,17 @@ saves_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 dust_particle_sprites = pygame.sprite.Group()
 damage_sprites = pygame.sprite.Group()
+enemies_sprites = pygame.sprite.Group()
 wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
-                          saves_sprites, damage_sprites, screen)
+                          saves_sprites, damage_sprites, enemies_sprites, screen)
 player_sprites = pygame.sprite.Group()
 gui_sprites = Gui(SIZE_OF_RECT)
 gui_sprites.set_hearts(6)
 render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
-                dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites)
+                dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites, enemies_sprites)
 
 player = Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-                particle_sprites, dust_particle_sprites, saves_sprites, damage_sprites, SIZE_OF_RECT)
+                particle_sprites, dust_particle_sprites, saves_sprites, damage_sprites, enemies_sprites, SIZE_OF_RECT)
 map_dict = []
 
 # menu func

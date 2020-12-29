@@ -19,7 +19,7 @@ def down_collision(obj_1, obj_2):
 
 class Player(sprite.Sprite):
     def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites,
-                 dust_particle_sprites, saves_sprites, damage_sprites, rect_size):
+                 dust_particle_sprites, saves_sprites, damage_sprites, enemies_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
@@ -30,6 +30,7 @@ class Player(sprite.Sprite):
         self.dust_particle_sprites = dust_particle_sprites
         self.saves_sprites = saves_sprites
         self.damage_sprites = damage_sprites
+        self.enemies_sprites = enemies_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
@@ -233,7 +234,7 @@ class Player(sprite.Sprite):
             self.jump_speed = 0
             if self.invulnerable_count == 0:
                 self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
-                self.invulnerable_count = 30
+                self.invulnerable_count = 120
         if self.invulnerable_count != 0:
             self.invulnerable_count = self.invulnerable_count - 1
 
@@ -254,6 +255,11 @@ class Player(sprite.Sprite):
             self.jump_speed += self.g
             if self.jump_speed >= 30:
                 self.jump_speed = 30
+        if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 or \
+                75 < self.invulnerable_count <= 90 or 105 < self.invulnerable_count <= 120:
+            self.image = self.image = transform.scale(image.load('player\\help.png').convert(),
+                                                      (self.rect_size - 5, self.rect_size * 2 - 5))
+            self.image.set_colorkey((255, 255, 255))
 
         self.timer += 1
 

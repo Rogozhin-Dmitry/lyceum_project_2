@@ -7,6 +7,7 @@
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/player_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/player_file.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/render_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/render_file.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saves/data_file.json" beforeDir="false" afterPath="$PROJECT_DIR$/saves/data_file.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wall_sprites_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/wall_sprites_file.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -95,7 +96,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609177680645</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Типа шип">
+      <created>1609227038110</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1609227038110</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -103,7 +111,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -112,41 +122,42 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Добавлено превращение в мини зайца, изменены спрайты бомб, добавлна новая раскладка, начата разработка класса точки сохранения" />
     <MESSAGE value="сделана механика костра (без сохранения)" />
-    <option name="LAST_COMMIT_MESSAGE" value="сделана механика костра (без сохранения)" />
+    <MESSAGE value="Типа шип" />
+    <option name="LAST_COMMIT_MESSAGE" value="Типа шип" />
   </component>
   <component name="WindowStateProjectService">
     <state x="691" y="195" key="#main" timestamp="1609155808479">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="691" y="195" key="#main/0.0.1920.1160@0.0.1920.1160" timestamp="1609155808479" />
-    <state x="614" y="175" key="CommitChangelistDialog2" timestamp="1609177679790">
+    <state x="614" y="175" key="CommitChangelistDialog2" timestamp="1609244576899">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="614" y="175" key="CommitChangelistDialog2/0.0.1920.1160@0.0.1920.1160" timestamp="1609177679790" />
-    <state width="942" height="321" key="GridCell.Tab.0.bottom" timestamp="1609186755348">
+    <state x="614" y="175" key="CommitChangelistDialog2/0.0.1920.1160@0.0.1920.1160" timestamp="1609244576899" />
+    <state width="1882" height="321" key="GridCell.Tab.0.bottom" timestamp="1609240149273">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="942" height="321" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1609186755348" />
-    <state width="942" height="321" key="GridCell.Tab.0.center" timestamp="1609186755348">
+    <state width="1882" height="321" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1609240149273" />
+    <state width="1882" height="321" key="GridCell.Tab.0.center" timestamp="1609240149273">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="942" height="321" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1609186755348" />
-    <state width="942" height="321" key="GridCell.Tab.0.left" timestamp="1609186755348">
+    <state width="1882" height="321" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1609240149273" />
+    <state width="1882" height="321" key="GridCell.Tab.0.left" timestamp="1609240149273">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="942" height="321" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1609186755348" />
-    <state width="942" height="321" key="GridCell.Tab.0.right" timestamp="1609186755348">
+    <state width="1882" height="321" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1609240149273" />
+    <state width="1882" height="321" key="GridCell.Tab.0.right" timestamp="1609240149273">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="942" height="321" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1609186755348" />
+    <state width="1882" height="321" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1609240149273" />
     <state x="461" y="223" key="SettingsEditor" timestamp="1609155813496">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="461" y="223" key="SettingsEditor/0.0.1920.1160@0.0.1920.1160" timestamp="1609155813496" />
-    <state x="599" y="354" key="Vcs.Push.Dialog.v2" timestamp="1609177693216">
+    <state x="599" y="354" key="Vcs.Push.Dialog.v2" timestamp="1609227088251">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="599" y="354" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1609177693216" />
+    <state x="599" y="354" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1609227088251" />
     <state x="662" y="405" key="com.intellij.ide.util.TipDialog" timestamp="1609227021314">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

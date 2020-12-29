@@ -2,7 +2,7 @@ from pygame import sprite, image, transform, Rect
 
 
 class Brick(sprite.Sprite):
-    def __init__(self, cords, rect_size, image_name):
+    def __init__(self, cords, rect_size, image_name, mask=False):
         super().__init__()
         self.rect_size = rect_size
         self.cords = cords

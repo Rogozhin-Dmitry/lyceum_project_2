@@ -77,7 +77,7 @@ class Player(sprite.Sprite):
         self.test_damage = True  # TODO удалить это
         self.bunny_mode = False
         self.mode_changed = False
-        self.invulnerable_count = 0  # будет отвечать за урон, пока не равен нулю, персонаж не может получать урон
+        self.last_timer_damage = -121
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -137,6 +137,12 @@ class Player(sprite.Sprite):
                 while sprite.spritecollideany(self, self.wall_sprites):
                     self.rect.x -= 1
 
+            spr = sprite.spritecollideany(self, self.damage_sprites)
+            if spr:
+                if spr.image_name == 'tiles\\damage\\spike.png':
+                    while sprite.spritecollideany(self, self.damage_sprites):
+                        self.rect.x -= 1
+
             while self.right_scroll < self.rect.x:
                 self.wall_sprites.move(-self.step, 0)
                 self.rect.x -= self.step
@@ -159,6 +165,12 @@ class Player(sprite.Sprite):
             if sprite.spritecollideany(self, self.wall_sprites):
                 while sprite.spritecollideany(self, self.wall_sprites):
                     self.rect.x += 1
+
+            spr = sprite.spritecollideany(self, self.damage_sprites)
+            if spr:
+                if spr.image_name == 'tiles\\damage\\spike.png':
+                    while sprite.spritecollideany(self, self.damage_sprites):
+                        self.rect.x += 1
 
             while self.left_scroll > self.rect.x:
                 self.wall_sprites.move(self.step, 0)
@@ -203,16 +215,6 @@ class Player(sprite.Sprite):
                 self.rect.y -= 1
             self.jump_speed = 0
 
-        # if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
-        #     while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
-        #         self.rect.y -= 1
-        #     self.jump_speed = 0
-        #     if self.invulnerable_count == 0:
-        #         self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
-        #         self.invulnerable_count = 120
-        # if self.invulnerable_count != 0:
-        #     self.invulnerable_count = self.invulnerable_count - 1
-
         while self.rect.y + self.rect.h > self.down_scroll:  # TODO плавное передвижение камеры
             self.rect.y -= 1
             self.wall_sprites.move(-1, 1)
@@ -231,10 +233,18 @@ class Player(sprite.Sprite):
             if self.jump_speed >= 30:
                 self.jump_speed = 30
 
-        # if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 or \
-        #         75 < self.invulnerable_count <= 90 or 105 < self.invulnerable_count <= 120:
-        #     self.image = self.player_clear_img
-        #     self.image.set_colorkey((255, 255, 255))
+        if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+            while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+                self.rect.y -= 1
+            self.jump_speed = 0
+            if self.timer - self.last_timer_damage >= 120:
+                self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+                self.last_timer_damage = self.timer
+
+        if 15 < self.timer - self.last_timer_damage <= 30 or 45 < self.timer - self.last_timer_damage <= 60\
+                or 75 < self.timer - self.last_timer_damage <= 90 or 105 < self.timer - self.last_timer_damage <= 120:
+            self.image = self.player_clear_img
+            self.image.set_colorkey((255, 255, 255))
 
         spr = sprite.spritecollideany(self, self.bonus_sprites)
         if spr:

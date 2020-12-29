@@ -75,11 +75,8 @@ class Player(sprite.Sprite):
         self.last_timer = 0
         self.jump_speed_last = self.jump_speed
         self.test_damage = True  # TODO удалить это
-        self.bunny_mode = False  # тут вопросов нет, умно
-        self.mode_changed = False  # тоже самое
-        self.save_counter = 0  # скорее всего бесполезный счётчик
-        self.on_save_point = False  # про это вообще молчу
-        self.current_save_point = None  # ничего говорить не буду
+        self.bunny_mode = False
+        self.mode_changed = False
         self.invulnerable_count = 0  # будет отвечать за урон, пока не равен нулю, персонаж не может получать урон
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
@@ -284,7 +281,6 @@ class Player(sprite.Sprite):
                 spr.shift_up = 0.1
                 spr.shift, spr.shift_down = randint(-50, 50) / 20, -1
                 self.dust_particle_sprites.add(spr)
-            # print('персоонаж на земле, ура, частички, частички, частички, частички')
         self.jump_speed_last = self.jump_speed
 
         self.timer += 1

@@ -70,10 +70,10 @@ def load_1(*args):
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                 'tiles\\damage\\' + data[obj_1]['name'])
-                elif data[obj_1]['type'] == 'enemy':
-                    if data[obj_1]['name'] == 'chesboy':
-                        obj = ChesBoy([x_1, y_1], (
-                            round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
+                # elif data[obj_1]['type'] == 'enemy':
+                #     if data[obj_1]['name'] == 'chesboy':
+                #         obj = ChesBoy([x_1, y_1], (
+                #             round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
             else:
                 cords = data[obj_1]
@@ -402,3 +402,5 @@ while True:
     elif result == 'exit':
         pygame.quit()
         sys.exit()
+    elif result == 'save':
+        result = 'exit'

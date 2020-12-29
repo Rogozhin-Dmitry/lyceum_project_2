@@ -33,6 +33,9 @@ class Player(sprite.Sprite):
         self.enemies_sprites = enemies_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
+        self.player_clear_img = pygame.Surface((rect_size - 5, rect_size * 2 - 5))
+        pygame.draw.rect(self.player_clear_img, (255, 255, 255), (0, 0, rect_size - 5, rect_size * 2 - 5))
+
         self.player_img_left = transform.scale(image.load('player\\player.png').convert(),
                                                (rect_size - 5, rect_size * 2 - 5))
         self.player_img_right = transform.flip(self.player_img_left, True, False)
@@ -97,12 +100,12 @@ class Player(sprite.Sprite):
                     last_y = self.rect.y
                     last_w = self.rect.w
                     last_h = self.rect.h
-                    self.image = transform.scale(image.load('player\\help.png').convert(),
-                                                 (self.rect_size - 5, self.rect_size * 2 - 5))
+                    self.image = self.player_clear_img
                     self.rect = self.image.get_rect()
                     self.image.set_colorkey((255, 255, 255))
                     self.rect.x, self.rect.y, self.rect.w, self.rect.h = last_x, last_y, last_w, last_h
-        if self.on_save_point and self.timer == 120:
+
+        if self.on_save_point and self.timer >= 120:
             self.on_save_point = False
             last_rect = self.rect
             self.image = self.player_img_left
@@ -257,8 +260,7 @@ class Player(sprite.Sprite):
                 self.jump_speed = 30
         if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 or \
                 75 < self.invulnerable_count <= 90 or 105 < self.invulnerable_count <= 120:
-            self.image = self.image = transform.scale(image.load('player\\help.png').convert(),
-                                                      (self.rect_size - 5, self.rect_size * 2 - 5))
+            self.image = self.player_clear_img
             self.image.set_colorkey((255, 255, 255))
 
         self.timer += 1

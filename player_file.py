@@ -74,13 +74,12 @@ class Player(sprite.Sprite):
         self.timer = 0
         self.last_timer = 0
         self.jump_speed_last = self.jump_speed
-        self.test_damage = True
-        self.bunny_mode = False
-        self.mode_changed = False
-        self.save_counter = 0
-        self.on_save_point = False
-        self.current_save_point = None
-        self.rect_size = rect_size
+        self.test_damage = True  # TODO удалить это
+        self.bunny_mode = False  # тут вопросов нет, умно
+        self.mode_changed = False  # тоже самое
+        self.save_counter = 0  # скорее всего бесполезный счётчик
+        self.on_save_point = False  # про это вообще молчу
+        self.current_save_point = None  # ничего говорить не буду
         self.invulnerable_count = 0  # будет отвечать за урон, пока не равен нулю, персонаж не может получать урон
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
@@ -89,33 +88,13 @@ class Player(sprite.Sprite):
 
         keys = key.get_pressed()
 
-        if keys[pygame.K_e] and not self.on_save_point and sprite.spritecollideany(self, self.saves_sprites):
-            self.on_save_point = True
-            self.timer = 0
+        if sprite.spritecollideany(self, self.saves_sprites) and keys[pygame.K_e]:
+            pygame.event.post(pygame.event.Event(30, {}))
             for save in self.saves_sprites.sprites():
                 if sprite.collide_rect(self, save):
-                    self.current_save_point = save
-                    self.current_save_point.player_is_sitting = True
-                    last_x = self.rect.x
-                    last_y = self.rect.y
-                    last_w = self.rect.w
-                    last_h = self.rect.h
-                    self.image = self.player_clear_img
-                    self.rect = self.image.get_rect()
-                    self.image.set_colorkey((255, 255, 255))
-                    self.rect.x, self.rect.y, self.rect.w, self.rect.h = last_x, last_y, last_w, last_h
+                    save.player_is_sitting = True
 
-        if self.on_save_point and self.timer >= 120:
-            self.on_save_point = False
-            last_rect = self.rect
-            self.image = self.player_img_left
-            self.image.set_colorkey((255, 255, 255))
-            self.rect = self.image.get_rect()
-            self.rect = last_rect
-            self.current_save_point.player_is_sitting = False
-            pygame.event.post(pygame.event.Event(30, {}))
-
-        if keys[pygame.K_c] and not self.mode_changed and not self.on_save_point:
+        if keys[pygame.K_c] and not self.mode_changed:
             if not self.bunny_mode:
                 last_x = self.rect.x
                 last_y = self.rect.y
@@ -143,7 +122,7 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_c]:
             self.mode_changed = False
 
-        if (keys[100] or keys[pygame.K_RIGHT]) and not self.on_save_point:
+        if keys[100] or keys[pygame.K_RIGHT]:
             if self.rl:
                 self.rl = False
                 self.count = 0
@@ -165,7 +144,7 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(-self.step, 0)
                 self.rect.x -= self.step
 
-        if (keys[97] or keys[pygame.K_LEFT]) and not self.on_save_point:
+        if keys[97] or keys[pygame.K_LEFT]:
             if not self.rl:
                 self.rl = True
                 self.count = 0
@@ -188,8 +167,7 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(self.step, 0)
                 self.rect.x += self.step
 
-        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT] and \
-                not self.on_save_point:
+        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             if self.rl:
                 if not self.bunny_mode:
                     self.image = self.player_img_left
@@ -204,7 +182,7 @@ class Player(sprite.Sprite):
                 self.image.set_colorkey((255, 255, 255))
             self.last_timer = 0
 
-        if (keys[32] or keys[pygame.K_z]) and not self.jump and not self.on_save_point:
+        if (keys[32] or keys[pygame.K_z]) and not self.jump:
             self.rect.y += 1
             if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
                 self.jump = True
@@ -223,23 +201,20 @@ class Player(sprite.Sprite):
             while sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
                 self.rect.y += 1
             self.jump_speed = self.jump_speed
-
-        if sprite.spritecollideany(self, self.wall_sprites,
-                                   collided=down_collision):  # столкновение с шипами (добавить шипы и проверить)
-
+        if sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
             while sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
                 self.rect.y -= 1
             self.jump_speed = 0
 
-        if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
-            while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
-                self.rect.y -= 1
-            self.jump_speed = 0
-            if self.invulnerable_count == 0:
-                self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
-                self.invulnerable_count = 120
-        if self.invulnerable_count != 0:
-            self.invulnerable_count = self.invulnerable_count - 1
+        # if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+        #     while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+        #         self.rect.y -= 1
+        #     self.jump_speed = 0
+        #     if self.invulnerable_count == 0:
+        #         self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+        #         self.invulnerable_count = 120
+        # if self.invulnerable_count != 0:
+        #     self.invulnerable_count = self.invulnerable_count - 1
 
         while self.rect.y + self.rect.h > self.down_scroll:  # TODO плавное передвижение камеры
             self.rect.y -= 1
@@ -258,12 +233,11 @@ class Player(sprite.Sprite):
             self.jump_speed += self.g
             if self.jump_speed >= 30:
                 self.jump_speed = 30
-        if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 or \
-                75 < self.invulnerable_count <= 90 or 105 < self.invulnerable_count <= 120:
-            self.image = self.player_clear_img
-            self.image.set_colorkey((255, 255, 255))
 
-        self.timer += 1
+        # if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 or \
+        #         75 < self.invulnerable_count <= 90 or 105 < self.invulnerable_count <= 120:
+        #     self.image = self.player_clear_img
+        #     self.image.set_colorkey((255, 255, 255))
 
         spr = sprite.spritecollideany(self, self.bonus_sprites)
         if spr:
@@ -294,8 +268,6 @@ class Player(sprite.Sprite):
 
                 self.particle_sprites.add(spr)
 
-        # if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1   and self.jump_speed_last) or \
-        #         (self.jump_speed == -1 and self.jump_speed_last):  # срабатывает при падении с зажатием пробела
         if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last):
             cords = self.rect.center[0], self.rect.y + self.rect.h - 15
             for i in range((self.jump_speed_last - self.jump_speed) // 2):
@@ -314,3 +286,5 @@ class Player(sprite.Sprite):
                 self.dust_particle_sprites.add(spr)
             # print('персоонаж на земле, ура, частички, частички, частички, частички')
         self.jump_speed_last = self.jump_speed
+
+        self.timer += 1

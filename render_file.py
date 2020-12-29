@@ -41,3 +41,30 @@ class Render:
         self.player_sprites.draw(self.screen)
         self.particle_sprites.draw(self.screen)
         self.gui_sprites.draw(self.screen)
+
+    def render_funk_1(self):
+        self.screen.fill((0, 255, 255))
+        self.wall_sprites.update()
+        self.decor_sprites.update()
+        self.saves_sprites.update()
+        self.damage_sprites.update()
+        for i in [*self.particle_sprites, *self.dust_particle_sprites]:
+            i.x += i.shift
+            i.y += i.shift_down
+            i.shift_down += i.shift_up
+            i.rect.x = i.x
+            i.rect.y = i.y
+            if i.down < i.rect.y + i.rect.h:
+                i.kill()
+                del i
+
+        self.wall_sprites.draw(self.screen)
+        self.saves_sprites.draw(self.screen)
+        self.bonus_sprites.draw(self.screen)
+        self.decor_sprites.draw(self.screen)
+        self.dust_particle_sprites.draw(self.screen)
+        self.damage_sprites.draw(self.screen)
+        self.enemies_sprites.draw(self.screen)
+        self.particle_sprites.draw(self.screen)
+        self.gui_sprites.draw(self.screen)
+

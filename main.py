@@ -99,12 +99,33 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return 'esc_menu'
             if event.type == 30:
-                return 'save'
+                return 'main_1'
 
         render.render_funk()
 
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
+
+
+def main_1():
+    timer = 0
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            if event.type == 30:
+                return 'main_1'
+
+        render.render_funk_1()
+        # переворот изображения, это чтобы не отрисовывались отдльные части
+        pygame.display.flip()
+        timer += 1
+        if timer >= 240:
+            return 'save'
 
 
 def menu():
@@ -265,9 +286,7 @@ pygame.init()
 pygame.mixer.init()
 
 inf = pygame.display.Info()
-print(inf.current_w, inf.current_h)
 x, y = inf.current_w // 30, inf.current_h // 17
-print(x, y)
 if x > y:
     SIZE_OF_RECT = int(y)
 else:
@@ -275,7 +294,6 @@ else:
 # SIZE_OF_RECT //= 2
 WIDTH = SIZE_OF_RECT * 30
 HEIGHT = SIZE_OF_RECT * 17
-print(WIDTH, HEIGHT)
 WIDTH_SHIFT = inf.current_w - WIDTH
 HEIGHT_SHIFT = inf.current_h - HEIGHT
 FPS = 60
@@ -404,3 +422,5 @@ while True:
         sys.exit()
     elif result == 'save':
         result = 'exit'
+    elif result == 'main_1':
+        result = main_1()

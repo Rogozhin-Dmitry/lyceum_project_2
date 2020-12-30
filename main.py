@@ -433,7 +433,7 @@ for i, j in [("Продолжить", 'main'), ("Загрузить игру", '
     esc_menu_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
-# diff func
+# new_game func
 diff_btns = pygame.sprite.Group()
 count = 1
 for i, j in [("Начать", 'main'), ("Сложность", 'load_game'), ("Доп", 'settings'),
@@ -508,6 +508,8 @@ while True:
             t2.join()
             t1.join()
             result = 'main'
+        else:
+            result = name_of_save
     elif result == 'menu':
         result = menu()
     elif result == 'settings':

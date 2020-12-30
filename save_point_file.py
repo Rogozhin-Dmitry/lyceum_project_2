@@ -9,6 +9,7 @@ class SavePoint(sprite.Sprite):
         self.image = transform.scale(self.image, rect_size)
         self.image.set_colorkey((255, 255, 255))
         self.rect = Rect(0, 0, *rect_size)
+        self.rect_size = rect_size
         self.image_name = 'save_point'
         self.player_is_sitting = False
         self.animation = []

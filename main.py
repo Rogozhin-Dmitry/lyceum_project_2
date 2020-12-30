@@ -24,7 +24,7 @@ class Button(pygame.sprite.Sprite):
                (self.rect.y <= pygame.mouse.get_pos()[1] <= self.rect.y + self.rect.h)
 
 
-def load():
+def screen_saver():
     counter = 0
     while True:
         # Держим цикл на правильной скорости
@@ -41,11 +41,32 @@ def load():
         counter += 1
 
 
-def load_1(*args):
+# with_player1
+def save_1(*name):
+    name = ''.join(name)
+    global map_dict
+    data = {}
+    for obj in map_dict:
+        obj_1 = ';'.join([str(xy) for xy in obj])
+        obj = map_dict[obj]
+        data[obj_1] = {}
+        data[obj_1]['name'] = obj[0].image_name.split('\\')[-1]
+        data[obj_1]['type'] = obj[1]
+        data[obj_1]['size'] = [round(xy / SIZE_OF_RECT, 3) for xy in obj[0].rect_size]
+        if obj[0].shift != (0, 0):
+            data[obj_1]['shift'] = obj[0].shift
+    data['cords'] = wall_sprites.cords
+    with open(name, "w") as write_file:
+        json.dump(data, write_file)
+    pygame.event.post(pygame.event.Event(26, {}))
+
+
+def load_1(*name):
+    name = ''.join(name)
     global map_dict
     particle_sprites.empty()
     dust_particle_sprites.empty()
-    with open(args[0], "r") as read_file:
+    with open(name, "r") as read_file:
         data = json.load(read_file)
         maps = {}
         for obj_1 in data:
@@ -81,10 +102,6 @@ def load_1(*args):
     map_dict = maps
     player.rect.x, player.rect.y = (SIZE_OF_RECT * 14, SIZE_OF_RECT * 8)
     wall_sprites.load(map_dict, cords)
-
-
-def save():
-    pass
 
 
 def main():
@@ -364,7 +381,7 @@ clock = pygame.time.Clock()
 #  общие константы
 font_sh = pygame.font.Font('fonts\\f1.ttf', 36)
 
-#  load func
+#  screen_saver func
 background_image = transform.scale(image.load('fons\\load_background.png').convert(), (WIDTH, HEIGHT))
 text_loading = [font_sh.render("Загрузка...", True, (20, 23, 61)),
                 font_sh.render("Загрузка..", True, (20, 23, 61)),
@@ -477,15 +494,15 @@ cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
 cursor_sprites = pygame.sprite.Group(cursor)
 
 result = menu()
+name_of_save = ''
 while True:
     if result == 'new_game':
         result = new_game()
     elif result == 'load_game':
-        result = load_func()
+        name_of_save = load_func()
         if not result == 'menu':
-            q = [True]
-            t1 = threading.Thread(target=load)
-            t2 = threading.Thread(target=load_1, args=(result, q))
+            t1 = threading.Thread(target=screen_saver)
+            t2 = threading.Thread(target=load_1, args=name_of_save)
             t1.start()
             t2.start()
             t2.join()
@@ -506,6 +523,12 @@ while True:
         pygame.quit()
         sys.exit()
     elif result == 'save':
-        result = 'exit'
+        t1 = threading.Thread(target=screen_saver)
+        t2 = threading.Thread(target=save_1, args=name_of_save)
+        t1.start()
+        t2.start()
+        t2.join()
+        t1.join()
+        result = 'menu'
     elif result == 'main_1':
         result = main_1()

@@ -45,14 +45,14 @@ class Player(sprite.Sprite):
             self.player_img_right_run.append(transform.flip(self.player_img_left_run[-1], True, False))
         self.image = self.player_img_left
         self.image.set_colorkey((255, 255, 255))
-        self.bun_image_left = transform.scale(image.load('mini_bun\\1.png').convert(),
+        self.bun_image_left = transform.scale(image.load('player\\mini_bun\\1.png').convert(),
                                               (rect_size - 5, rect_size - 5))
         self.bun_image_right = transform.flip(self.bun_image_left, True, False)
         self.bun_image_left_run = []
         self.bun_image_right_run = []
         for i in range(3):
-            self.bun_image_left_run.append(transform.scale(image.load('mini_bun\\' + str(i + 1) + '.png').convert(),
-                                                           (rect_size - 5, rect_size - 5)))
+            self.bun_image_left_run.append(transform.scale(
+                image.load('player\\mini_bun\\' + str(i + 1) + '.png').convert(), (rect_size - 5, rect_size - 5)))
             self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = cords

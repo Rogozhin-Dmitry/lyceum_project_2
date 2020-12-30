@@ -5,7 +5,7 @@ class SavePoint(sprite.Sprite):
     def __init__(self, cords, rect_size):
         super().__init__()
         self.cords = cords
-        self.image = image.load('save_point\\1.png').convert()
+        self.image = image.load('tiles\\save_point\\1.png').convert()
         self.image = transform.scale(self.image, rect_size)
         self.image.set_colorkey((255, 255, 255))
         self.rect = Rect(0, 0, *rect_size)
@@ -19,10 +19,10 @@ class SavePoint(sprite.Sprite):
         self.shift = (0, 0)
         for i in range(4):
             self.animation.append(
-                transform.scale(image.load('save_point\\' + str(i + 1) + '.png').convert(), rect_size))
+                transform.scale(image.load('tiles\\save_point\\' + str(i + 1) + '.png').convert(), rect_size))
         for i in range(4):
             self.animation_with_player.append(
-                transform.scale(image.load('save_point\\with_player' + str(i + 1) + '.png').convert(), rect_size))
+                transform.scale(image.load('tiles\\save_point\\with_player' + str(i + 1) + '.png').convert(), rect_size))
 
     def update(self):
         self.timer = self.timer + 1

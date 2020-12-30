@@ -500,7 +500,7 @@ while True:
         result = new_game()
     elif result == 'load_game':
         name_of_save = load_func()
-        if not result == 'menu':
+        if not name_of_save == 'menu':
             t1 = threading.Thread(target=screen_saver)
             t2 = threading.Thread(target=load_1, args=name_of_save)
             t1.start()

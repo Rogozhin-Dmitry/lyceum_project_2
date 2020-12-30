@@ -36,4 +36,3 @@ class SavePoint(sprite.Sprite):
         else:
             self.image = self.animation_with_player[self.count % 4]
         self.image.set_colorkey((255, 255, 255))
-

@@ -67,4 +67,3 @@ class Render:
         self.enemies_sprites.draw(self.screen)
         self.particle_sprites.draw(self.screen)
         self.gui_sprites.draw(self.screen)
-

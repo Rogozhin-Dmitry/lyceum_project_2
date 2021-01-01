@@ -8,6 +8,7 @@ from gui_file import *
 import threading
 import json
 from save_point_file import SavePoint
+pygame.init()
 from enemy_file import *
 
 
@@ -97,6 +98,8 @@ def load_1(*name):
                                                  round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                     'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
                                     shift=data[obj_1]['shift'])
+                obj.delay = [x_1 + data[obj_1]['size'][0] + obj.shift[0] - 15,
+                             y_1 + data[obj_1]['size'][1] + obj.shift[0] - 15]
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
             else:
                 cords = data[obj_1]
@@ -361,7 +364,6 @@ def load_func():
         pygame.display.flip()
 
 
-pygame.init()
 pygame.mixer.init()
 
 inf = pygame.display.Info()

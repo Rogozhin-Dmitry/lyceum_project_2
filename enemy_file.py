@@ -1,6 +1,14 @@
 from pygame import sprite, image, transform, Rect, key
 from brick import *
 import pygame
+inf = pygame.display.Info()
+x, y = inf.current_w // 30, inf.current_h // 17
+if x > y:
+    SIZE_OF_RECT = int(y)
+else:
+    SIZE_OF_RECT = int(x)
+WIDTH = SIZE_OF_RECT * 30
+HEIGHT = SIZE_OF_RECT * 17
 
 
 class Enemy(Brick):  # общий класс всех врагов
@@ -11,8 +19,12 @@ class Enemy(Brick):  # общий класс всех врагов
         self.timer = 0
         self.last_timer = 0
         self.step = 5
+        self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
         self.count = 0
+        self.cords = [13, 15]
+        self.cords_not_round = [self.cords[0] * SIZE_OF_RECT, self.cords[1] * SIZE_OF_RECT]
+        self.rect_s = SIZE_OF_RECT
         self.init()
 
     def init(self):
@@ -32,30 +44,39 @@ class Crash(Enemy):
                 while sprite.spritecollideany(self, self.wall_sprites):
                     self.rect.x -= 1
                 self.rl = False
-            if sprite.spritecollideany(self, self.damage_sprites):
+            elif sprite.spritecollideany(self, self.damage_sprites):
                 while sprite.spritecollideany(self, self.damage_sprites):
                     self.rect.x -= 1
                 self.rl = False
+            else:
+                self.cords_not_round[0] += 1
+                self.shift[0] += self.step_1
         else:
             self.rect.x -= self.step
             if sprite.spritecollideany(self, self.wall_sprites):
                 while sprite.spritecollideany(self, self.wall_sprites):
                     self.rect.x += 1
                 self.rl = True
-            if sprite.spritecollideany(self, self.damage_sprites):
+            elif sprite.spritecollideany(self, self.damage_sprites):
                 while sprite.spritecollideany(self, self.damage_sprites):
                     self.rect.x += 1
                 self.rl = True
-        self.rect.y += self.step
-        if sprite.spritecollideany(self, self.wall_sprites):
-            while sprite.spritecollideany(self, self.wall_sprites):
-                self.rect.y -= 1
-        else:
-            self.rect.y -= self.step
-            if self.rl:
-                self.rl = False
             else:
-                self.rl = True
+                self.cords_not_round[0] -= 1
+                self.shift[0] -= self.step_1
+        if self.rect.right >= 0 and self.rect.x <= WIDTH:
+            self.rect.x -= self.rect_s - self.step
+            self.rect.y += self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.y -= 1
+            else:
+                self.rect.y -= self.step
+                self.rl = not self.rl
+            self.rect.x += self.rect_s - self.step
+        else:
+            self.kill()
+            self.rl = not self.rl
 
 
 # Заготовки врагов, чтобы не забыть

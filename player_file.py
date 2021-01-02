@@ -293,4 +293,10 @@ class Player(sprite.Sprite):
                 self.dust_particle_sprites.add(spr)
         self.jump_speed_last = self.jump_speed
 
+        spr = sprite.spritecollideany(self, self.enemies_sprites)
+        if spr:
+            if self.timer - self.last_timer_damage >= 120:
+                self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+                self.last_timer_damage = self.timer
+
         self.timer += 1

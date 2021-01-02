@@ -11,8 +11,8 @@ HEIGHT = SIZE_OF_RECT * 17
 
 
 class Enemy(Brick):  # общий класс всех врагов
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, mask=False, shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, mask=mask, shift=shift)
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False, shift=(0, 0)):
+        super().__init__(cords, rect_size, image_name, can_be_broken, mask=mask, shift=shift)
         self.wall_sprites = wall_sprites
         self.damage_sprites = damage_sprites
         self.cords = cords
@@ -23,8 +23,10 @@ class Enemy(Brick):  # общий класс всех врагов
 
 
 class Crash(Enemy):
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, mask=False, shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, mask=mask, shift=shift)
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
+                 shift=(0, 0)):
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
+                         shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True

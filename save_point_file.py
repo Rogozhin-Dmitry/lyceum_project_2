@@ -14,6 +14,7 @@ class SavePoint(sprite.Sprite):
         self.player_is_sitting = False
         self.animation = []
         self.animation_with_player = []
+        self.can_be_broken = False
         self.count = 0
         self.timer = 0
         self.shift = (0, 0)

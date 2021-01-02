@@ -1,14 +1,14 @@
+import pygame
+pygame.init()
 from player_file import *
 from wall_sprites_file import *
 from render_file import *
-import pygame
 import sys
 import os
 from gui_file import *
 import threading
 import json
 from save_point_file import SavePoint
-pygame.init()
 from enemy_file import *
 
 
@@ -130,6 +130,8 @@ def main():
                 return 'esc_menu'
             if event.type == 30:
                 return 'main_1'
+            if event.type == 31:
+                return 'main_2'
 
         render.render_funk()
 
@@ -147,8 +149,6 @@ def main_1():
             # проверка для закрытия окна
             if event.type == pygame.QUIT:
                 return 'exit'
-            if event.type == 30:
-                return 'main_1'
 
         render.render_funk_1()
         # переворот изображения, это чтобы не отрисовывались отдльные части
@@ -156,6 +156,29 @@ def main_1():
         timer += 1
         if timer >= 240:
             return 'save'
+
+
+def main_2():
+    timer = 0
+    can_exit = False
+    print('ok')
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            elif event.type == pygame.KEYDOWN and can_exit:
+                return 'menu'
+
+        render.render_funk_2()
+        # переворот изображения, это чтобы не отрисовывались отдльные части
+        pygame.display.flip()
+        timer += 1
+        if timer >= 50:
+            can_exit = True
 
 
 def menu():
@@ -546,3 +569,5 @@ while True:
         result = 'menu'
     elif result == 'main_1':
         result = main_1()
+    elif result == 'main_2':
+        result = main_2()

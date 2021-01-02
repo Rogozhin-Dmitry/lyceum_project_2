@@ -1,4 +1,4 @@
-from pygame import sprite, transform, image, font
+from pygame import sprite, transform, image, font, event
 
 
 class Gui(sprite.Group):
@@ -19,7 +19,7 @@ class Gui(sprite.Group):
         self.set_bombs(self.bomb)
 
     def set_hearts(self, num):
-        if 0 <= num <= self.max_hp:
+        if 0 < num <= self.max_hp:
             self.hp = num
             self.heart_sprites.empty()
             for i in range(self.max_hp):
@@ -32,6 +32,8 @@ class Gui(sprite.Group):
                 spr.rect = spr.image.get_rect()
                 spr.rect.center = (int(self.rect_size * 1.5) * (i + 1), self.rect_size)
                 self.heart_sprites.add(spr)
+        elif num <= 0:
+            event.post(event.Event(31, {}))
 
     def set_bombs(self, num):
         if 0 <= num <= self.max_bomb:

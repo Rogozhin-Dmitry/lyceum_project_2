@@ -161,7 +161,6 @@ def main_1():
 def main_2():
     timer = 0
     can_exit = False
-    print('ok')
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)

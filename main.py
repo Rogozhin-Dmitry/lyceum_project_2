@@ -284,7 +284,6 @@ def settings():
 
         screen.blit(settings_background_image, (0, 0))
         screen.blit(settings_decoration_image, (SIZE_OF_RECT * 9, SIZE_OF_RECT * 17 // 15))
-
         settings_buttons_sprites.draw(screen)
         cursor_sprites.draw(screen)
         if sound_open:
@@ -358,6 +357,42 @@ def load_func():
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
 
+
+def diff_select():
+    global hardness_count
+    hardness_count = 3
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for obj_1 in diff_hardness_select_btn:
+                    if obj_1.rect.x <= pygame.mouse.get_pos()[0] <= obj_1.rect.x + obj_1.rect.w and (
+                            obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h):
+                        if obj_1.type == '+':
+                            if hardness_count != 10:
+                                hardness_count += 1
+                        elif obj_1.type == '-':
+                            if hardness_count != 0:
+                                hardness_count -= 1
+                screen.blit(dif_set_image, (0, 0))
+                for obj_1 in range(hardness_count):
+                    pygame.draw.rect(screen, (255, 255, 255), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
+                                                                SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
+                                                                small_size_2, small_size_1))
+                for obj_1 in range(hardness_count, 10):
+                    print('1')
+                    pygame.draw.rect(screen, (120, 120, 120), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
+                                                                SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
+                                                                small_size_2, small_size_1))
+                diff_hardness_select_btn.draw(screen)
+                # переворот изображения, это чтобы не отрисовывались отдльные части
+                #Недоработанное меню выбора сложности. Осталось немного, чтоб все работало. Добавил спрайт заднего фона.
+                pygame.display.flip()
 
 pygame.init()
 pygame.mixer.init()
@@ -436,7 +471,7 @@ for i, j in [("Продолжить", 'main'), ("Загрузить игру", '
 # diff func
 diff_btns = pygame.sprite.Group()
 count = 1
-for i, j in [("Начать", 'main'), ("Сложность", 'load_game'), ("Доп", 'settings'),
+for i, j in [("Начать", 'main'), ("Сложность", 'diff_select'), ("Доп", 'settings'),
              ("Выход в меню", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
@@ -475,6 +510,12 @@ spr.rect.centery = SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4 + small_size_1 // 
 pygame.draw.rect(spr.image, (255, 255, 255), (0, SIZE_OF_RECT // 6, SIZE_OF_RECT, SIZE_OF_RECT // 6))
 spr.type = '-'
 settings_buttons_sprites_sound.add(spr)
+
+
+ok_btn = font_sh.render('Готово', True, (245, 245, 245))
+diff_hardness_select_btn = settings_buttons_sprites_sound
+diff_hardness_select_btn.add(Button(ok_btn, ok_btn.get_rect(centerx=SIZE_OF_RECT * 15,
+                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
 
 count = 1
 for i, j in [("Звук", 'sound'), ("Назад", 'menu')]:
@@ -532,3 +573,5 @@ while True:
         result = 'menu'
     elif result == 'main_1':
         result = main_1()
+    elif result == 'diff_select':
+        result = diff_select()

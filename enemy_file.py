@@ -16,28 +16,31 @@ class Enemy(Brick):  # общий класс всех врагов
         super().__init__(cords, rect_size, image_name, mask=mask, shift=shift)
         self.wall_sprites = wall_sprites
         self.damage_sprites = damage_sprites
-        self.timer = 0
-        self.last_timer = 0
+        self.cords = cords
+        self.is_target = False
+        self.cords_not_round = [self.cords[0] * SIZE_OF_RECT, self.cords[1] * SIZE_OF_RECT]
+        self.delay = (0, 0)
+
+
+class Crash(Enemy):
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, mask=False, shift=(0, 0)):
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, mask=mask, shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
         self.count = 0
-        self.cords = [13, 15]
-        self.cords_not_round = [self.cords[0] * SIZE_OF_RECT, self.cords[1] * SIZE_OF_RECT]
-        self.rect_s = SIZE_OF_RECT
-        self.init()
-
-    def init(self):
-        pass
-
-
-class Crash(Enemy):
-    def init(self):
-        pass
 
     def update(self):
         super().update()
+        if self.is_target:
+            self.target()
+        else:
+            self.standard()
 
+    def target(self):
+        pass
+
+    def standard(self):
         if self.rl:
             self.rect.x += self.step
             if sprite.spritecollideany(self, self.wall_sprites):
@@ -51,6 +54,7 @@ class Crash(Enemy):
             else:
                 self.cords_not_round[0] += 1
                 self.shift[0] += self.step_1
+                self.delay[0] += self.step_1
         else:
             self.rect.x -= self.step
             if sprite.spritecollideany(self, self.wall_sprites):
@@ -64,8 +68,9 @@ class Crash(Enemy):
             else:
                 self.cords_not_round[0] -= 1
                 self.shift[0] -= self.step_1
+                self.delay[0] -= self.step_1
         if self.rect.right >= 0 and self.rect.x <= WIDTH:
-            self.rect.x -= self.rect_s - self.step
+            self.rect.x -= SIZE_OF_RECT - self.step
             self.rect.y += self.step
             if sprite.spritecollideany(self, self.wall_sprites):
                 while sprite.spritecollideany(self, self.wall_sprites):
@@ -73,10 +78,13 @@ class Crash(Enemy):
             else:
                 self.rect.y -= self.step
                 self.rl = not self.rl
-            self.rect.x += self.rect_s - self.step
-        else:
+            self.rect.x += SIZE_OF_RECT - self.step
+        elif self.rect.right < 0:
             self.kill()
-            self.rl = not self.rl
+            self.rl = True
+        elif self.rect.x > WIDTH:
+            self.kill()
+            self.rl = False
 
 
 # Заготовки врагов, чтобы не забыть

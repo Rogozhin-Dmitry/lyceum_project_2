@@ -55,8 +55,10 @@ def save_1(*name):
         data[obj_1]['type'] = obj[1]
         data[obj_1]['size'] = [round(xy / SIZE_OF_RECT, 3) for xy in obj[0].rect_size]
         if obj[0].shift != (0, 0):
-            data[obj_1]['shift'] = obj[0].shift
+            data[obj_1]['shift'] = [round(sh, 3) for sh in obj[0].shift]
     data['cords'] = wall_sprites.cords
+    data['hp'] = gui_sprites.hp
+    data['bombs'] = gui_sprites.bomb
     with open(name, "w") as write_file:
         json.dump(data, write_file)
     pygame.event.post(pygame.event.Event(26, {}))
@@ -71,7 +73,7 @@ def load_1(*name):
         data = json.load(read_file)
         maps = {}
         for obj_1 in data:
-            if obj_1 not in ['cords']:
+            if obj_1 not in ['cords', 'hp', 'bombs']:
                 x_1, y_1 = tuple([int(xy) for xy in obj_1.split(';')])
                 if data[obj_1]['type'] == 'wall':
                     obj = Brick([x_1, y_1], (
@@ -101,12 +103,18 @@ def load_1(*name):
                 obj.delay = [x_1 + data[obj_1]['size'][0] + obj.shift[0] - 15,
                              y_1 + data[obj_1]['size'][1] + obj.shift[0] - 15]
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
-            else:
+            elif obj_1 == 'cords':
                 cords = data[obj_1]
-    pygame.event.post(pygame.event.Event(26, {}))
+            elif obj_1 == 'hp':
+                hp = data[obj_1]
+            elif obj_1 == 'bombs':
+                bombs = data[obj_1]
     map_dict = maps
     player.rect.x, player.rect.y = (SIZE_OF_RECT * 14, SIZE_OF_RECT * 8)
     wall_sprites.load(map_dict, cords)
+    gui_sprites.set_hearts(hp)
+    gui_sprites.set_bombs(bombs)
+    pygame.event.post(pygame.event.Event(26, {}))
 
 
 def main():

@@ -8,7 +8,6 @@ import os
 from gui_file import *
 import threading
 import json
-from save_point_file import SavePoint
 from enemy_file import *
 
 

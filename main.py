@@ -194,8 +194,6 @@ def game_over():
 
 
 def boss_fight():
-    timer = 0
-    can_exit = False
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -204,15 +202,15 @@ def boss_fight():
             # проверка для закрытия окна
             if event.type == pygame.QUIT:
                 return 'exit'
-            elif event.type == pygame.KEYDOWN and can_exit:
-                return 'menu'
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return 'esc_menu'
+            if event.type == 31:
+                return 'game_over'
 
         render.boss_fight_render_funk()
+
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
-        timer += 1
-        if timer >= 50:
-            can_exit = True
 
 
 def menu():

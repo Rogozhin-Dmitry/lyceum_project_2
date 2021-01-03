@@ -56,9 +56,13 @@ class Player(sprite.Sprite):
             self.bun_image_left_run.append(transform.scale(
                 image.load('player\\mini_bun\\' + str(i + 1) + '.png').convert(), (rect_size - 5, rect_size - 5)))
             self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
-        self.player_hit_img_left = transform.scale(image.load('player\\hit.png').convert(),
-                                               (rect_size * 2 - 5, rect_size * 2 - 5))
-        self.player_hit_img_right = transform.flip(self.player_hit_img_left, True, False)
+        self.player_hit_img_right = []
+        self.player_hit_img_left = []
+        for i in range(4):
+            self.player_hit_img_right.append(
+                transform.scale(image.load('player\\hit\\' + str(i + 1) + '.png').convert(),
+                                (rect_size * 2 - 10, rect_size * 2 - 5)))
+            self.player_hit_img_left.append(transform.flip(self.player_hit_img_right[-1], True, False))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = cords
         self.sprite_group.add(self)
@@ -85,6 +89,12 @@ class Player(sprite.Sprite):
         self.hit_mode = False
         self.last_timer_damage = -121
         self.hit_timer = 0
+        self.hit_animation_timer = 0
+        self.hit_animation_timer_event = 15 // len(self.player_hit_img_left) + 1
+        print(self.hit_animation_timer_event)
+        self.hit_event = True
+        self.hit_animation_count = 0
+        self.hit_rect = Rect(0, 0, 0, 0)
 
         self.test_damage = True  # TODO удалить это
 
@@ -128,7 +138,7 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_c]:
             self.mode_changed = False
 
-        if keys[100] or keys[pygame.K_RIGHT]:
+        if (keys[100] or keys[pygame.K_RIGHT]) and not self.hit_mode:
             if self.rl:
                 self.rl = False
                 self.count = 0
@@ -156,7 +166,7 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(-self.step, 0)
                 self.rect.x -= self.step
 
-        if keys[97] or keys[pygame.K_LEFT]:
+        if (keys[97] or keys[pygame.K_LEFT]) and not self.hit_mode:
             if not self.rl:
                 self.rl = True
                 self.count = 0
@@ -185,7 +195,8 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(self.step, 0)
                 self.rect.x += self.step
 
-        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
+        if not keys[100] and not keys[97] and not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT] \
+                and not self.hit_mode:
             if self.rl:
                 if not self.bunny_mode:
                     self.image = self.player_img_left
@@ -200,7 +211,7 @@ class Player(sprite.Sprite):
                 self.image.set_colorkey((255, 255, 255))
             self.last_timer = 0
 
-        if (keys[32] or keys[pygame.K_z]) and not self.jump:
+        if (keys[32] or keys[pygame.K_z]) and not self.jump and not self.hit_mode:
             self.rect.y += 1
             if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
                 self.jump = True
@@ -213,25 +224,65 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_k]:
             self.test_damage = True
 
-        # if keys[pygame.K_q] and self.timer - self.hit_timer > 25:
-        #     self.hit_mode = True
-        #     if not self.rl:
-        #         rect = Rect(self.rect.right, self.rect.y, self.rect.w, self.rect.h)
-        #         self.image = self.player_hit_img_left
-        #     else:
-        #         self.rect.x -= self.rect.w
-        #         rect = Rect(self.rect.x - self.rect.w, self.rect.y, self.rect.w, self.rect.h)
-        #         self.image = self.player_hit_img_right
-        #     self.image.set_colorkey((255, 255, 255))
-        #     for i in self.enemies_sprites:
-        #         if Rect.colliderect(rect, i.rect):
-        #             del self.wall_sprites.maps[tuple(i.cords)]
-        #             i.kill()
-        #             del i
-        #     self.hit_timer = self.timer
-        # elif self.hit_mode and self.timer - self.hit_timer > 25:
-        #     self.hit_mode = False
-        #     self.rect.x += self.rect.w
+        if keys[pygame.K_q] and self.timer - self.hit_timer > 15 and self.hit_event:
+            self.rect.y += 1
+            if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
+                self.rect.y -= 1
+                if not self.rl:
+                    self.hit_rect = Rect(self.rect.right, self.rect.y, self.rect.w, self.rect.h)
+                    self.image = self.player_hit_img_left[0]
+                    self.hit_animation_count = 0
+                else:
+                    self.hit_rect = Rect(self.rect.x - self.rect.w, self.rect.y, self.rect.w, self.rect.h)
+                    self.image = self.player_hit_img_right[0]
+                    self.hit_animation_count = 0
+                    self.rect.x -= self.rect.w
+                for i in self.wall_sprites:
+                    if Rect.colliderect(self.hit_rect, i):
+                        if self.rl:
+                            self.rect.x += self.rect.w
+                            self.image = self.player_img_left
+                        else:
+                            self.image = self.player_img_right
+                        self.image.set_colorkey((255, 255, 255))
+                        self.last_timer = 0
+                        return None
+                self.image.set_colorkey((255, 255, 255))
+                self.hit_timer = self.timer
+                self.hit_event = False
+                self.hit_mode = True
+            else:
+                self.rect.y -= 1
+        elif self.hit_mode and self.timer - self.hit_timer < 15:
+            for i in self.enemies_sprites:
+                if Rect.colliderect(self.hit_rect, i.rect):
+                    del self.wall_sprites.maps[tuple(i.cords)]
+                    i.kill()
+                    del i
+            if self.timer - self.hit_animation_timer >= self.hit_animation_timer_event:
+                if not self.rl:
+                    self.image = self.player_hit_img_left[self.hit_animation_count]
+                else:
+                    self.image = self.player_hit_img_right[self.hit_animation_count]
+                self.image.set_colorkey((255, 255, 255))
+                self.hit_animation_count += 1
+                self.hit_animation_timer = self.timer
+        elif self.hit_mode and self.timer - self.hit_timer > 15:
+            self.hit_mode = False
+            for i in self.enemies_sprites:
+                if Rect.colliderect(self.hit_rect, i.rect):
+                    del self.wall_sprites.maps[tuple(i.cords)]
+                    i.kill()
+                    del i
+            if self.rl:
+                self.rect.x += self.rect.w
+                self.image = self.player_img_left
+            else:
+                self.image = self.player_img_right
+            self.image.set_colorkey((255, 255, 255))
+            self.last_timer = 0
+        elif not keys[pygame.K_q]:
+            self.hit_event = True
 
         if keys[pygame.K_l] and self.put_bomb:
             if self.gui_sprites.bomb != 0:
@@ -276,18 +327,20 @@ class Player(sprite.Sprite):
             if self.jump_speed >= 30:
                 self.jump_speed = 30
 
-        if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
-            while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
-                self.rect.y -= 1
-            self.jump_speed = 0
-            if self.timer - self.last_timer_damage >= 120:
-                self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
-                self.last_timer_damage = self.timer
+        if not self.hit_mode:
+            if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+                while sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
+                    self.rect.y -= 1
+                self.jump_speed = 0
+                if self.timer - self.last_timer_damage >= 120:
+                    self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+                    self.last_timer_damage = self.timer
 
-        if 15 < self.timer - self.last_timer_damage <= 30 or 45 < self.timer - self.last_timer_damage <= 60 \
-                or 75 < self.timer - self.last_timer_damage <= 90 or 105 < self.timer - self.last_timer_damage <= 120:
-            self.image = self.player_clear_img
-            self.image.set_colorkey((255, 255, 255))
+            if 15 < self.timer - self.last_timer_damage <= 30 or 45 < self.timer - self.last_timer_damage <= 60 \
+                    or 75 < self.timer - self.last_timer_damage <= 90 or 105 < self.timer - self.last_timer_damage <= 120 \
+                    and not self.hit_mode:
+                self.image = self.player_clear_img
+                self.image.set_colorkey((255, 255, 255))
 
         spr = sprite.spritecollideany(self, self.bonus_sprites)
         if spr:
@@ -336,12 +389,13 @@ class Player(sprite.Sprite):
                 self.dust_particle_sprites.add(spr)
         self.jump_speed_last = self.jump_speed
 
-        for i in self.enemies_sprites:
-            if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 \
-                    < self.rect_size * 3:
-                if sprite.collide_rect(self, i):
-                    if self.timer - self.last_timer_damage >= 120:
-                        self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
-                        self.last_timer_damage = self.timer
+        if not self.hit_mode:
+            for i in self.enemies_sprites:
+                if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 \
+                        < self.rect_size * 3:
+                    if sprite.collide_rect(self, i):
+                        if self.timer - self.last_timer_damage >= 120:
+                            self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
+                            self.last_timer_damage = self.timer
 
         self.timer += 1

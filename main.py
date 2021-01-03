@@ -140,9 +140,11 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return 'esc_menu'
             if event.type == 30:
-                return 'main_1'
+                return 'freeze'
             if event.type == 31:
-                return 'main_2'
+                return 'game_over'
+            if event.type == 32:
+                return 'boss_fight'
 
         render.render_funk()
 
@@ -150,7 +152,7 @@ def main():
         pygame.display.flip()
 
 
-def main_1():
+def freeze():
     timer = 0
     while True:
         # Держим цикл на правильной скорости
@@ -161,7 +163,7 @@ def main_1():
             if event.type == pygame.QUIT:
                 return 'exit'
 
-        render.render_funk_1()
+        render.freeze_render_funk()
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
         timer += 1
@@ -169,7 +171,7 @@ def main_1():
             return 'save'
 
 
-def main_2():
+def game_over():
     timer = 0
     can_exit = False
     while True:
@@ -183,7 +185,29 @@ def main_2():
             elif event.type == pygame.KEYDOWN and can_exit:
                 return 'menu'
 
-        render.render_funk_2()
+        render.game_over_render_funk()
+        # переворот изображения, это чтобы не отрисовывались отдльные части
+        pygame.display.flip()
+        timer += 1
+        if timer >= 50:
+            can_exit = True
+
+
+def boss_fight():
+    timer = 0
+    can_exit = False
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for event in pygame.event.get():
+            # проверка для закрытия окна
+            if event.type == pygame.QUIT:
+                return 'exit'
+            elif event.type == pygame.KEYDOWN and can_exit:
+                return 'menu'
+
+        render.boss_fight_render_funk()
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
         timer += 1
@@ -579,7 +603,9 @@ while True:
         t2.join()
         t1.join()
         result = 'menu'
-    elif result == 'main_1':
-        result = main_1()
-    elif result == 'main_2':
-        result = main_2()
+    elif result == 'freeze':
+        result = freeze()
+    elif result == 'game_over':
+        result = game_over()
+    elif result == 'boss_fight':
+        result = boss_fight()

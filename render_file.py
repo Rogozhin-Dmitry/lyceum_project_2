@@ -64,7 +64,7 @@ class Render:
         self.particle_sprites.draw(self.screen)
         self.gui_sprites.draw(self.screen)
 
-    def render_funk_1(self):
+    def freeze_render_funk(self):
         self.screen.fill((0, 255, 255))
         self.wall_sprites.update()
         self.decor_sprites.update()
@@ -90,7 +90,7 @@ class Render:
         self.particle_sprites.draw(self.screen)
         self.gui_sprites.draw(self.screen)
 
-    def render_funk_2(self):
+    def game_over_render_funk(self):
         self.screen.fill((0, 255, 255))
         self.wall_sprites.update()
         self.decor_sprites.update()
@@ -122,3 +122,6 @@ class Render:
             self.last_render_timer_2 = self.render_timer_2
 
         self.render_timer_2 += 1
+
+    def boss_fight_render_funk(self):
+        pass

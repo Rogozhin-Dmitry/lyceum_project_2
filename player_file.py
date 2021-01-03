@@ -255,9 +255,17 @@ class Player(sprite.Sprite):
         elif self.hit_mode and self.timer - self.hit_timer < 15 and not self.bunny_mode:
             for i in self.enemies_sprites:
                 if Rect.colliderect(self.hit_rect, i.rect):
-                    del self.wall_sprites.maps[tuple(i.cords)]
-                    i.kill()
-                    del i
+                    if 'boss' in i.image_name:
+                        i.get_damage()
+                        print(i.hp)
+                        if i.hp <= 0:
+                            del self.wall_sprites.maps[tuple(i.cords)]
+                            i.kill()
+                            del i
+                    else:
+                        del self.wall_sprites.maps[tuple(i.cords)]
+                        i.kill()
+                        del i
             if self.timer - self.hit_animation_timer >= self.hit_animation_timer_event:
                 if not self.rl:
                     self.image = self.player_hit_img_left[self.hit_animation_count]
@@ -270,9 +278,16 @@ class Player(sprite.Sprite):
             self.hit_mode = False
             for i in self.enemies_sprites:
                 if Rect.colliderect(self.hit_rect, i.rect):
-                    del self.wall_sprites.maps[tuple(i.cords)]
-                    i.kill()
-                    del i
+                    if 'boss' in i.image_name:
+                        i.get_damage()
+                        if i.hp <= 0:
+                            del self.wall_sprites.maps[tuple(i.cords)]
+                            i.kill()
+                            del i
+                    else:
+                        del self.wall_sprites.maps[tuple(i.cords)]
+                        i.kill()
+                        del i
             if self.rl:
                 self.rect.x += self.rect.w
                 self.image = self.player_img_left

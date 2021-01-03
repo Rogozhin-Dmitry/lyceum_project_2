@@ -42,11 +42,31 @@ class Boss(Enemy):
         self.bomb_sprites = bomb_sprites
         self.all_way_straight = 0
         self.is_standing = False
-        self.life = 10
+        self.hp = 5
         self.can_be_broken = False
+        self.invulnerable = False
+        self.clear_img = pygame.Surface(rect_size)
+        pygame.draw.rect(self.clear_img, (255, 255, 255), (0, 0, rect_size[0], rect_size[1]))
+        self.clear_img.set_colorkey((255, 255, 255))
+        self.invulnerable_count = 0
+        self.true_image = self.image
 
     def update(self):
+        print(self.hp)
         super().update()
+        if self.invulnerable:
+            self.invulnerable_count = self.invulnerable_count + 1
+            if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 \
+                    or 75 < self.invulnerable_count <= 90 or \
+                    105 < self.invulnerable_count < 120:
+                self.image = self.clear_img
+            elif self.invulnerable == 120:
+                self.invulnerable = False
+                self.image = self.true_image
+                self.invulnerable_count = 0
+            else:
+                self.image = self.true_image
+
         if self.is_standing:
             self.count = self.count + 1
             if self.count == 100:
@@ -142,6 +162,11 @@ class Boss(Enemy):
         bomb = Bomb(self.rect.center, (self.rect_size[0] // 2, self.rect_size[1] // 2), self.wall_sprites, self.player)
         bomb.change_mode_to_boss()
         self.bomb_sprites.add(bomb)
+
+    def get_damage(self):
+        if not self.invulnerable:
+            self.hp = self.hp - 1
+            self.invulnerable = True
 
 
 class Crash(Enemy):

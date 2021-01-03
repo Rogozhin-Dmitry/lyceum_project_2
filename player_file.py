@@ -337,7 +337,7 @@ class Player(sprite.Sprite):
                     self.last_timer_damage = self.timer
 
             if 15 < self.timer - self.last_timer_damage <= 30 or 45 < self.timer - self.last_timer_damage <= 60 \
-                    or 75 < self.timer - self.last_timer_damage <= 90 or\
+                    or 75 < self.timer - self.last_timer_damage <= 90 or \
                     105 < self.timer - self.last_timer_damage <= 120 and not self.hit_mode:
                 self.image = self.player_clear_img
                 self.image.set_colorkey((255, 255, 255))
@@ -390,8 +390,8 @@ class Player(sprite.Sprite):
             self.jump_speed_last = self.jump_speed
 
             for i in self.enemies_sprites:
-                if ((i.rect.center[0] - self.rect.center[0]) ** 2
-                    + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 < self.rect_size * 3:
+                if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2)\
+                        ** 0.5 < self.rect_size * 3:
                     if sprite.collide_rect(self, i):
                         if self.timer - self.last_timer_damage >= 120:
                             self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)

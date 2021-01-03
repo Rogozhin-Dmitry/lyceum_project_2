@@ -380,12 +380,28 @@ def new_game():
                 return 'exit'
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for but in diff_btns:
+                    print(but.is_clicked())
                     if but.is_clicked():
-                        if but.type == 'settings':
-                            for ob in diff_btns:
-                                if ob.type == 'menu':
-                                    ob.type = 'esc_menu'
-                        return but.type
+                        if but.type == 'diff_select':
+                            but.kill()
+                            text = font_sh.render('1', True, (245, 245, 245))
+                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 - 25,
+                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                                                 '1'))
+                            text = font_sh.render('2', True, (245, 245, 245))
+                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                                                 '2'))
+                            text = font_sh.render('3', True, (245, 245, 245))
+                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
+                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                                                 '3'))
+                            text = font_sh.render('_', True, (245, 245, 245))
+                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
+                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                                                 '_'))
+                        else:
+                            return but.type
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return 'main'
 
@@ -505,7 +521,7 @@ for i, j in [("Продолжить", 'main'), ("Загрузить игру", '
 # new_game func
 diff_btns = pygame.sprite.Group()
 count = 1
-for i, j in [("Начать", 'main'), ("Сложность", 'settings'), ("Выход в меню", 'menu')]:
+for i, j in [("Начать", 'main'), ("Сложность", 'diff_select'), ("Выход в меню", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                              y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
@@ -565,11 +581,7 @@ result = menu()
 name_of_save = ''
 while True:
     if result == 'new_game':
-        name_of_save = new_game()
-        if not result == 'menu':
-            pass
-        else:
-            result = name_of_save
+        result = new_game()
     elif result == 'load_game':
         name_of_save = load_func()
         if not name_of_save == 'menu':

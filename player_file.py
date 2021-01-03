@@ -280,7 +280,6 @@ class Player(sprite.Sprite):
                 self.image = self.player_img_right
             self.image.set_colorkey((255, 255, 255))
             self.last_timer = 0
-            # self.image.get_rect()
         elif not keys[pygame.K_q]:
             self.hit_event = True
 
@@ -294,9 +293,10 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_l]:
             self.put_bomb = True
 
-        self.rect.y += self.jump_speed + self.g // 2
 
         if not self.hit_mode:
+            self.rect.y += self.jump_speed + self.g // 2
+
             if sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
                 while sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
                     self.rect.y += 1
@@ -310,23 +310,23 @@ class Player(sprite.Sprite):
                     self.rect.y -= 1
                 self.jump_speed = 0
 
-        while self.rect.y + self.rect.h > self.down_scroll:
-            self.rect.y -= 1
-            self.wall_sprites.move(-1, 1)
+            while self.rect.y + self.rect.h > self.down_scroll:
+                self.rect.y -= 1
+                self.wall_sprites.move(-1, 1)
 
-        while self.rect.y < self.up_scroll:
-            self.rect.y += 1
-            self.wall_sprites.move(1, 1)
+            while self.rect.y < self.up_scroll:
+                self.rect.y += 1
+                self.wall_sprites.move(1, 1)
 
-        if self.jump:
-            self.jump_speed += self.g
-            if self.jump_speed >= 0:
-                self.jump = False
-                self.jump_speed = 0
-        else:
-            self.jump_speed += self.g
-            if self.jump_speed >= 30:
-                self.jump_speed = 30
+            if self.jump:
+                self.jump_speed += self.g
+                if self.jump_speed >= 0:
+                    self.jump = False
+                    self.jump_speed = 0
+            else:
+                self.jump_speed += self.g
+                if self.jump_speed >= 30:
+                    self.jump_speed = 30
 
         if not self.hit_mode:
             if sprite.spritecollideany(self, self.damage_sprites, collided=down_collision):
@@ -343,54 +343,53 @@ class Player(sprite.Sprite):
                 self.image = self.player_clear_img
                 self.image.set_colorkey((255, 255, 255))
 
-        spr = sprite.spritecollideany(self, self.bonus_sprites)
-        if spr:
-            if spr.image_name == 'tiles\\bonus\\heart_bonus.png':
-                self.gui_sprites.max_hp = self.gui_sprites.max_hp + 1
-                self.gui_sprites.set_hearts(self.gui_sprites.max_hp)
-            elif spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
-                self.gui_sprites.max_bomb = self.gui_sprites.max_bomb + 1
-                self.gui_sprites.set_bombs(self.gui_sprites.max_bomb)
-            cords = spr.rect.center
-            del self.wall_sprites.maps[tuple(spr.cords)]
-            spr.kill()
-            del spr
+            spr = sprite.spritecollideany(self, self.bonus_sprites)
+            if spr:
+                if spr.image_name == 'tiles\\bonus\\heart_bonus.png':
+                    self.gui_sprites.max_hp = self.gui_sprites.max_hp + 1
+                    self.gui_sprites.set_hearts(self.gui_sprites.max_hp)
+                elif spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
+                    self.gui_sprites.max_bomb = self.gui_sprites.max_bomb + 1
+                    self.gui_sprites.set_bombs(self.gui_sprites.max_bomb)
+                cords = spr.rect.center
+                del self.wall_sprites.maps[tuple(spr.cords)]
+                spr.kill()
+                del spr
 
-            for i in range(10):
-                cords = randint(cords[0] - 5, cords[0] + 5), randint(cords[1] - 5, cords[1] + 5)
-                spr = sprite.Sprite()
-                r = randint(9, 15)
-                spr.image = Surface([r, r])
-                draw.circle(spr.image, (120, 235, 255), (r // 2, r // 2), r // 2)
-                spr.image.set_colorkey((0, 0, 0))
-                spr.rect = spr.image.get_rect()
-                spr.rect.center = cords
-                spr.x, spr.y = cords
-                spr.down = cords[1] + self.rect_size * 0.5
-                spr.shift_up = 0.3
-                spr.shift, spr.shift_down = randint(-20, 20) / 10, -4
+                for i in range(10):
+                    cords = randint(cords[0] - 5, cords[0] + 5), randint(cords[1] - 5, cords[1] + 5)
+                    spr = sprite.Sprite()
+                    r = randint(9, 15)
+                    spr.image = Surface([r, r])
+                    draw.circle(spr.image, (120, 235, 255), (r // 2, r // 2), r // 2)
+                    spr.image.set_colorkey((0, 0, 0))
+                    spr.rect = spr.image.get_rect()
+                    spr.rect.center = cords
+                    spr.x, spr.y = cords
+                    spr.down = cords[1] + self.rect_size * 0.5
+                    spr.shift_up = 0.3
+                    spr.shift, spr.shift_down = randint(-20, 20) / 10, -4
 
-                self.particle_sprites.add(spr)
+                    self.particle_sprites.add(spr)
 
-        if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last):
-            cords = self.rect.center[0], self.rect.y + self.rect.h - 15
-            for i in range((self.jump_speed_last - self.jump_speed) // 2):
-                spr = sprite.Sprite()
-                r = randint(5, 9)
-                spr.image = Surface([r, r])
-                draw.circle(spr.image, (150, 75, 0), (r // 2, r // 2), r // 2)
-                spr.image.set_colorkey((0, 0, 0))
-                spr.rect = spr.image.get_rect()
-                spr.rect.center = cords
-                spr.rect.y = cords[1]
-                spr.x, spr.y = cords
-                spr.down = cords[1] + 15
-                spr.shift_up = 0.1
-                spr.shift, spr.shift_down = randint(-50, 50) / 20, -1
-                self.dust_particle_sprites.add(spr)
-        self.jump_speed_last = self.jump_speed
+            if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last):
+                cords = self.rect.center[0], self.rect.y + self.rect.h - 15
+                for i in range((self.jump_speed_last - self.jump_speed) // 2):
+                    spr = sprite.Sprite()
+                    r = randint(5, 9)
+                    spr.image = Surface([r, r])
+                    draw.circle(spr.image, (150, 75, 0), (r // 2, r // 2), r // 2)
+                    spr.image.set_colorkey((0, 0, 0))
+                    spr.rect = spr.image.get_rect()
+                    spr.rect.center = cords
+                    spr.rect.y = cords[1]
+                    spr.x, spr.y = cords
+                    spr.down = cords[1] + 15
+                    spr.shift_up = 0.1
+                    spr.shift, spr.shift_down = randint(-50, 50) / 20, -1
+                    self.dust_particle_sprites.add(spr)
+            self.jump_speed_last = self.jump_speed
 
-        if not self.hit_mode:
             for i in self.enemies_sprites:
                 if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 \
                         < self.rect_size * 3:

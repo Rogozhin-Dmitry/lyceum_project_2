@@ -76,7 +76,16 @@ class Bomb(Brick):  # общий класс всех врагов
         self.stay = False
         self.boom = transform.scale(image.load('tiles\\bomb\\boom.png').convert(), (round(1.5 * self.player.rect_size),
                                                                                     round(1.5 * self.player.rect_size)))
+        self.boss_bomb = transform.scale(image.load('tiles\\bomb\\boss_bomb.png').convert(),
+                                         (round(self.player.rect_size),
+                                          round(self.player.rect_size)))
+        self.boss_bomb.set_colorkey((255, 255, 255))
         self.boom.set_colorkey((255, 255, 255))
+        self.boss_mode = False
+
+    def change_mode_to_boss(self):
+        self.image = self.boss_bomb
+        self.boss_mode = True
 
     def update(self):
         if not self.stay:
@@ -99,9 +108,9 @@ class Bomb(Brick):  # общий класс всех врагов
         if self.timer - self.last_timer >= 5:
             self.vy += self.ay
             self.last_timer = self.timer
-        if not self.rl:
+        if not self.rl and not self.boss_bomb:
             self.rect.x += int(self.vx)
-        else:
+        elif not self.boss_bomb:
             self.rect.x -= int(self.vx)
         self.rect.y += int(self.vy)
         if sprite.spritecollideany(self, self.wall_sprites):

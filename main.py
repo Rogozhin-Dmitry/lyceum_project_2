@@ -111,6 +111,11 @@ def load_1(*name):
                                                round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                   'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
                                   data[obj_1]['can_be_broken'], shift=data[obj_1]['shift'])
+                    elif data[obj_1]['name'] == 'boss.png':
+                        obj = Boss([x_1, y_1], (round(SIZE_OF_RECT * data[obj_1]['size'][0]),
+                                                round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                                   'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
+                                   data[obj_1]['can_be_broken'], player, bomb_sprites, shift=data[obj_1]['shift'])
                 obj.delay = [x_1 + data[obj_1]['size'][0] + obj.shift[0] - 15,
                              y_1 + data[obj_1]['size'][1] + obj.shift[0] - 15]
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])
@@ -197,6 +202,7 @@ def boss_fight():
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
+        # boss = Boss()
         # Ввод процесса (события)
         for event in pygame.event.get():
             # проверка для закрытия окна

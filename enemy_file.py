@@ -39,7 +39,11 @@ class Crash(Enemy):
         else:
             self.standard()
         if self.rect.right >= 0 and self.rect.x <= WIDTH:
-            self.rect.x -= SIZE_OF_RECT - self.step * 2
+            if not self.rl:
+                self.rect.x -= SIZE_OF_RECT - self.step * 2
+            else:
+                self.rect.x += SIZE_OF_RECT - self.step * 2
+            rl = self.rl
             self.rect.y += self.step
             if sprite.spritecollideany(self, self.wall_sprites):
                 while sprite.spritecollideany(self, self.wall_sprites):
@@ -47,7 +51,10 @@ class Crash(Enemy):
             else:
                 self.rect.y -= self.step
                 self.rl = not self.rl
-            self.rect.x += SIZE_OF_RECT - self.step * 2
+            if not rl:
+                self.rect.x += SIZE_OF_RECT - self.step * 2
+            else:
+                self.rect.x -= SIZE_OF_RECT - self.step * 2
         elif self.rect.right < 0:
             self.kill()
             self.rl = True

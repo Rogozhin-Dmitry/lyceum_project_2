@@ -94,3 +94,61 @@ class Crash(Enemy):
                 self.cords_not_round[0] -= 1
                 self.shift[0] -= self.step_1
                 self.delay[0] -= self.step_1
+
+
+class Fly(Enemy):
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
+                 shift=(0, 0)):
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
+                         shift=shift)
+        self.step = 5
+        self.step_1 = self.step / SIZE_OF_RECT
+        self.rl = True
+        self.count = 0
+
+    def update(self):
+        super().update()
+        if self.is_target:
+            self.target()
+        else:
+            self.standard()
+        if self.rect.right < 0:
+            self.kill()
+            self.rl = True
+        elif self.rect.x > WIDTH:
+            self.kill()
+            self.rl = False
+
+    def target(self):
+        pass
+
+    def standard(self):
+        if self.rl:
+            self.rect.x += self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.x -= 1
+                self.rl = False
+            elif sprite.spritecollideany(self, self.damage_sprites):
+                while sprite.spritecollideany(self, self.damage_sprites):
+                    self.rect.x -= 1
+                self.rl = False
+            else:
+                self.cords_not_round[0] += 1
+                self.shift[0] += self.step_1
+                self.delay[0] += self.step_1
+        else:
+            self.rect.x -= self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.x += 1
+                self.rl = True
+            elif sprite.spritecollideany(self, self.damage_sprites):
+                while sprite.spritecollideany(self, self.damage_sprites):
+                    self.rect.x += 1
+                self.rl = True
+            else:
+                self.cords_not_round[0] -= 1
+                self.shift[0] -= self.step_1
+                self.delay[0] -= self.step_1
+

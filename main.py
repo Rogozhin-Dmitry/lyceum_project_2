@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 from player_file import *
 from wall_sprites_file import *
@@ -53,7 +54,7 @@ def save_1(*name):
         data[obj_1]['name'] = obj[0].image_name.split('\\')[-1]
         data[obj_1]['type'] = obj[1]
         data[obj_1]['size'] = [round(xy / SIZE_OF_RECT, 3) for xy in obj[0].rect_size]
-        data[obj_1]['can_be_broken'] = True
+        data[obj_1]['can_be_broken'] = obj[0].can_be_broken
         if obj[0].shift != (0, 0):
             data[obj_1]['shift'] = [round(sh, 3) for sh in obj[0].shift]
     for i in saves_sprites:
@@ -82,22 +83,22 @@ def load_1(*name):
                 if data[obj_1]['type'] == 'wall':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\grass\\' + data[obj_1]['name'], True)  # data[obj_1]['can_be_broken'])
+                                'tiles\\grass\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'decor':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\decaor\\' + data[obj_1]['name'], True)  #, data[obj_1]['can_be_broken'])
+                                'tiles\\decaor\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'bonus':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\bonus\\' + data[obj_1]['name'], True)  # data[obj_1]['can_be_broken'])
+                                'tiles\\bonus\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'save':
                     obj = SavePoint([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
                 elif data[obj_1]['type'] == 'damage':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\damage\\' + data[obj_1]['name'], True,  #  data[obj_1]['can_be_broken'],
+                                'tiles\\damage\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'],
                                 shift=data[obj_1]['shift'])
                 elif data[obj_1]['type'] == 'enemy':
                     if data[obj_1]['name'] == 'crash.png':
@@ -105,6 +106,11 @@ def load_1(*name):
                                                  round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                     'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
                                     data[obj_1]['can_be_broken'], shift=data[obj_1]['shift'])
+                    elif data[obj_1]['name'] == 'fly.png':
+                        obj = Fly([x_1, y_1], (round(SIZE_OF_RECT * data[obj_1]['size'][0]),
+                                               round(SIZE_OF_RECT * data[obj_1]['size'][1])),
+                                  'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
+                                  data[obj_1]['can_be_broken'], shift=data[obj_1]['shift'])
                 obj.delay = [x_1 + data[obj_1]['size'][0] + obj.shift[0] - 15,
                              y_1 + data[obj_1]['size'][1] + obj.shift[0] - 15]
                 maps[tuple([int(cord) for cord in obj_1.split(';')])] = (obj, data[obj_1]['type'])

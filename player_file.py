@@ -1,4 +1,4 @@
-from pygame import sprite, image, transform, key, Surface, draw
+from pygame import key, Surface, draw
 from random import randint
 import pygame
 from brick import *
@@ -56,6 +56,9 @@ class Player(sprite.Sprite):
             self.bun_image_left_run.append(transform.scale(
                 image.load('player\\mini_bun\\' + str(i + 1) + '.png').convert(), (rect_size - 5, rect_size - 5)))
             self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
+        self.player_hit_img_left = transform.scale(image.load('player\\hit.png').convert(),
+                                               (rect_size * 2 - 5, rect_size * 2 - 5))
+        self.player_hit_img_right = transform.flip(self.player_hit_img_left, True, False)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = cords
         self.sprite_group.add(self)
@@ -79,7 +82,9 @@ class Player(sprite.Sprite):
         self.put_bomb = True
         self.bunny_mode = False
         self.mode_changed = False
+        self.hit_mode = False
         self.last_timer_damage = -121
+        self.hit_timer = 0
 
         self.test_damage = True  # TODO удалить это
 
@@ -208,7 +213,27 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_k]:
             self.test_damage = True
 
-        if keys[pygame.K_l] and self.put_bomb:  # тестовая система жизней
+        # if keys[pygame.K_q] and self.timer - self.hit_timer > 25:
+        #     self.hit_mode = True
+        #     if not self.rl:
+        #         rect = Rect(self.rect.right, self.rect.y, self.rect.w, self.rect.h)
+        #         self.image = self.player_hit_img_left
+        #     else:
+        #         self.rect.x -= self.rect.w
+        #         rect = Rect(self.rect.x - self.rect.w, self.rect.y, self.rect.w, self.rect.h)
+        #         self.image = self.player_hit_img_right
+        #     self.image.set_colorkey((255, 255, 255))
+        #     for i in self.enemies_sprites:
+        #         if Rect.colliderect(rect, i.rect):
+        #             del self.wall_sprites.maps[tuple(i.cords)]
+        #             i.kill()
+        #             del i
+        #     self.hit_timer = self.timer
+        # elif self.hit_mode and self.timer - self.hit_timer > 25:
+        #     self.hit_mode = False
+        #     self.rect.x += self.rect.w
+
+        if keys[pygame.K_l] and self.put_bomb:
             if self.gui_sprites.bomb != 0:
                 bomb = Bomb(self.rect.center, (self.rect_size, self.rect_size), self.wall_sprites, self)
                 bomb.rl = self.rl
@@ -312,8 +337,8 @@ class Player(sprite.Sprite):
         self.jump_speed_last = self.jump_speed
 
         for i in self.enemies_sprites:
-            if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 < \
-                    self.rect_size * 3:
+            if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 \
+                    < self.rect_size * 3:
                 if sprite.collide_rect(self, i):
                     if self.timer - self.last_timer_damage >= 120:
                         self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)

@@ -31,9 +31,9 @@ def screen_saver():
         # Держим цикл на правильной скорости
         clock.tick(FPS // 16)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for ss_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT or event.type == 26:
+            if ss_ev_activity.type == pygame.QUIT or ss_ev_activity.type == 26:
                 return None
         screen.blit(background_image, (0, 0))
         screen.blit(text_loading[counter % len(text_loading)], (1650, 1000))
@@ -57,8 +57,8 @@ def save_1(*name):
         data[obj_1]['can_be_broken'] = obj[0].can_be_broken
         if obj[0].shift != (0, 0):
             data[obj_1]['shift'] = [round(sh, 3) for sh in obj[0].shift]
-    for i in saves_sprites:
-        data['cords'] = [i.cords[0] + 1, i.cords[1] - 2]
+    for each_sprite in saves_sprites:
+        data['cords'] = [each_sprite.cords[0] + 1, each_sprite.cords[1] - 2]
     data['hp'] = gui_sprites.hp
     data['bombs'] = gui_sprites.bomb
     with open(name, "w") as write_file:
@@ -133,17 +133,17 @@ def main():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if ev_activity.type == pygame.QUIT:
                 return 'exit'
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if ev_activity.type == pygame.KEYDOWN and ev_activity.key == pygame.K_ESCAPE:
                 return 'esc_menu'
-            if event.type == 30:
+            if ev_activity.type == 30:
                 return 'freeze'
-            if event.type == 31:
+            if ev_activity.type == 31:
                 return 'game_over'
-            if event.type == 32:
+            if ev_activity.type == 32:
                 return 'boss_fight'
 
         render.render_funk()
@@ -158,9 +158,9 @@ def freeze():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for fr_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if fr_ev_activity.type == pygame.QUIT:
                 return 'exit'
 
         render.freeze_render_funk()
@@ -178,11 +178,11 @@ def game_over():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for go_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if go_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            elif event.type == pygame.KEYDOWN and can_exit:
+            elif go_ev_activity.type == pygame.KEYDOWN and can_exit:
                 return 'menu'
 
         render.game_over_render_funk()
@@ -198,13 +198,13 @@ def boss_fight():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for bf_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if bf_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if bf_ev_activity.type == pygame.KEYDOWN and bf_ev_activity.key == pygame.K_ESCAPE:
                 return 'esc_menu'
-            if event.type == 31:
+            if bf_ev_activity.type == 31:
                 return 'game_over'
 
         render.boss_fight_render_funk()
@@ -218,11 +218,11 @@ def menu():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for menu_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if menu_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif menu_ev_activity.type == pygame.MOUSEBUTTONDOWN:
                 for but in menu_buttons_sprites:
                     if but.is_clicked():
                         return but.type
@@ -240,11 +240,11 @@ def esc_menu():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for esc_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if esc_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if esc_ev_activity.type == pygame.MOUSEBUTTONDOWN:
                 for but in esc_menu_buttons_sprites:
                     if but.is_clicked():
                         if but.type == 'settings':
@@ -252,7 +252,7 @@ def esc_menu():
                                 if ob.type == 'menu':
                                     ob.type = 'esc_menu'
                         return but.type
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if esc_ev_activity.type == pygame.KEYDOWN and esc_ev_activity.key == pygame.K_ESCAPE:
                 return 'main'
 
         screen.blit(settings_background_image, (0, 0))
@@ -309,11 +309,11 @@ def settings():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for settings_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if settings_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif settings_ev_activity.type == pygame.MOUSEBUTTONDOWN:
                 for obj in settings_buttons_sprites:
                     if obj.is_clicked():
                         if obj.type == 'menu' or obj.type == 'esc_menu':
@@ -329,18 +329,18 @@ def settings():
                             elif obj_1.type == '-':
                                 if sound_count != 0:
                                     sound_count -= 1
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
+            elif settings_ev_activity.type == pygame.KEYDOWN:
+                if settings_ev_activity.key == pygame.K_DOWN:
                     if cursor_position + 1 < len(settings_buttons_sprites.sprites()):
                         cursor_position += 1
                     else:
                         cursor_position = 0
-                elif event.key == pygame.K_UP:
+                elif settings_ev_activity.key == pygame.K_UP:
                     if cursor_position - 1 >= 0:
                         cursor_position -= 1
                     else:
                         cursor_position = len(settings_buttons_sprites.sprites()) - 1
-                elif event.key == pygame.K_RETURN:
+                elif settings_ev_activity.key == pygame.K_RETURN:
                     obj = settings_buttons_sprites.sprites()[cursor_position]
                     if obj.type == 'menu' or obj.type == 'esc_menu':
                         return obj.type
@@ -374,35 +374,39 @@ def new_game():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for ng_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if ng_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if ng_ev_activity.type == pygame.MOUSEBUTTONDOWN:
                 for but in diff_btns:
                     print(but.is_clicked())
                     if but.is_clicked():
                         if but.type == 'diff_select':
                             but.kill()
-                            text = font_sh.render('1', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 - 25,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                            one_btn = font_sh.render('1', True, (245, 245, 245))
+                            y1_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
+                            diff_btns.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15 - 25,
+                                                                           y=y1_params),
                                                  '1'))
-                            text = font_sh.render('2', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                            two_btn = font_sh.render('2', True, (245, 245, 245))
+                            y2_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
+                            diff_btns.add(Button(two_btn, two_btn.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                                           y=y2_params),
                                                  '2'))
-                            text = font_sh.render('3', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                            three_btn = font_sh.render('3', True, (245, 245, 245))
+                            y3_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
+                            diff_btns.add(Button(three_btn, three_btn.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
+                                                                               y=y3_params),
                                                  '3'))
-                            text = font_sh.render('_', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
+                            underline_btn = font_sh.render('_', True, (245, 245, 245))
+                            y_underline_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
+                            diff_btns.add(Button(underline_btn, underline_btn.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
+                                                                                       y=y_underline_params),
                                                  '_'))
                         else:
                             return but.type
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if ng_ev_activity.type == pygame.KEYDOWN and ng_ev_activity.key == pygame.K_ESCAPE:
                 return 'main'
 
         screen.blit(dif_set_image, (0, 0))
@@ -427,11 +431,11 @@ def load_func():
         # Держим цикл на правильной скорости
         clock.tick(FPS)
         # Ввод процесса (события)
-        for event in pygame.event.get():
+        for load_ev_activity in pygame.event.get():
             # проверка для закрытия окна
-            if event.type == pygame.QUIT:
+            if load_ev_activity.type == pygame.QUIT:
                 return 'exit'
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif load_ev_activity.type == pygame.MOUSEBUTTONDOWN:
                 for but in load_btn_sprites:
                     if but.is_clicked():
                         return but.type

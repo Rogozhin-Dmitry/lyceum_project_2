@@ -53,10 +53,11 @@ def save_1(*name):
         data[obj_1]['name'] = obj[0].image_name.split('\\')[-1]
         data[obj_1]['type'] = obj[1]
         data[obj_1]['size'] = [round(xy / SIZE_OF_RECT, 3) for xy in obj[0].rect_size]
-        data[obj_1]['can_be_broken'] = False
+        data[obj_1]['can_be_broken'] = True
         if obj[0].shift != (0, 0):
             data[obj_1]['shift'] = [round(sh, 3) for sh in obj[0].shift]
-    data['cords'] = wall_sprites.cords
+    for i in saves_sprites:
+        data['cords'] = [i.cords[0] + 1, i.cords[1] - 2]
     data['hp'] = gui_sprites.hp
     data['bombs'] = gui_sprites.bomb
     with open(name, "w") as write_file:
@@ -69,6 +70,9 @@ def load_1(*name):
     global map_dict
     particle_sprites.empty()
     dust_particle_sprites.empty()
+    bomb_sprites.empty()
+    hp = 10
+    bombs = 10
     with open(name, "r") as read_file:
         data = json.load(read_file)
         maps = {}
@@ -78,22 +82,22 @@ def load_1(*name):
                 if data[obj_1]['type'] == 'wall':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\grass\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
+                                'tiles\\grass\\' + data[obj_1]['name'], True)  # data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'decor':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\decaor\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
+                                'tiles\\decaor\\' + data[obj_1]['name'], True)  #, data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'bonus':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\bonus\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
+                                'tiles\\bonus\\' + data[obj_1]['name'], True)  # data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'save':
                     obj = SavePoint([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])))
                 elif data[obj_1]['type'] == 'damage':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\damage\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'],
+                                'tiles\\damage\\' + data[obj_1]['name'], True,  #  data[obj_1]['can_be_broken'],
                                 shift=data[obj_1]['shift'])
                 elif data[obj_1]['type'] == 'enemy':
                     if data[obj_1]['name'] == 'crash.png':
@@ -430,16 +434,18 @@ particle_sprites = pygame.sprite.Group()
 dust_particle_sprites = pygame.sprite.Group()
 damage_sprites = pygame.sprite.Group()
 enemies_sprites = pygame.sprite.Group()
+bomb_sprites = pygame.sprite.Group()
 wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
-                          saves_sprites, damage_sprites, enemies_sprites, screen)
+                          saves_sprites, damage_sprites, enemies_sprites, bomb_sprites, screen)
 player_sprites = pygame.sprite.Group()
 gui_sprites = Gui(SIZE_OF_RECT)
 gui_sprites.set_hearts(6)
 render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
-                dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites, enemies_sprites)
+                dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites, enemies_sprites, bomb_sprites)
 
 player = Player((SIZE_OF_RECT * 14, SIZE_OF_RECT * 8), player_sprites, wall_sprites, bonus_sprites, gui_sprites,
-                particle_sprites, dust_particle_sprites, saves_sprites, damage_sprites, enemies_sprites, SIZE_OF_RECT)
+                particle_sprites, dust_particle_sprites, saves_sprites, damage_sprites, enemies_sprites, bomb_sprites,
+                SIZE_OF_RECT)
 map_dict = []
 
 # menu func

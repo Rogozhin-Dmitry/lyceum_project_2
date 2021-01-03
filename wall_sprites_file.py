@@ -3,7 +3,7 @@ from brick import *
 
 class Wal_sprite(sprite.Group):
     def __init__(self, rect_size, decor_sprites, bonus_sprites, particle_sprites, dust_particle_sprites,
-                 saves_sprites, damage_sprites, enemies_sprites, screen):
+                 saves_sprites, damage_sprites, enemies_sprites, bomb_sprites, screen):
         super().__init__()
         self.rect_size = rect_size
         self.decor_sprites = decor_sprites
@@ -13,13 +13,14 @@ class Wal_sprite(sprite.Group):
         self.dust_particle_sprites = dust_particle_sprites
         self.damage_sprites = damage_sprites
         self.enemies_sprites = enemies_sprites
+        self.bomb_sprites = bomb_sprites
         self.screen = screen
         self.cords = [0, 0]
         self.cords_not_round = [self.cords[0] * rect_size, self.cords[1] * rect_size]
         self.maps = {}
 
     def load(self, maps, cords):
-        self.cords = cords
+        self.cords = [cords[0] - 14, cords[1] - 7]
         self.cords_not_round = [self.cords[0] * self.rect_size, self.cords[1] * self.rect_size]
         self.maps = maps
         self.render()
@@ -27,12 +28,14 @@ class Wal_sprite(sprite.Group):
     def move(self, param, x_or_y):
         if x_or_y:
             for i in [*self, *self.decor_sprites, *self.bonus_sprites, *self.particle_sprites,
-                      *self.dust_particle_sprites, *self.saves_sprites, *self.damage_sprites, *self.enemies_sprites]:
+                      *self.dust_particle_sprites, *self.saves_sprites, *self.damage_sprites, *self.enemies_sprites,
+                      *self.bomb_sprites]:
                 i.rect.y += param
             self.cords_not_round[1] -= param
         else:
             for i in [*self, *self.decor_sprites, *self.bonus_sprites, *self.particle_sprites,
-                      *self.dust_particle_sprites, *self.saves_sprites, *self.damage_sprites, *self.enemies_sprites]:
+                      *self.dust_particle_sprites, *self.saves_sprites, *self.damage_sprites, *self.enemies_sprites,
+                      *self.bomb_sprites]:
                 i.rect.x += param
             self.cords_not_round[0] -= param
 

@@ -1,6 +1,7 @@
 from pygame import sprite, image, transform, key, Surface, draw
 from random import randint
 import pygame
+from brick import *
 
 
 def up_collision(obj_1, obj_2):
@@ -19,7 +20,7 @@ def down_collision(obj_1, obj_2):
 
 class Player(sprite.Sprite):
     def __init__(self, cords, sprites, wall_sprites, bonus_sprites, gui_sprites, particle_sprites,
-                 dust_particle_sprites, saves_sprites, damage_sprites, enemies_sprites, rect_size):
+                 dust_particle_sprites, saves_sprites, damage_sprites, enemies_sprites, bomb_sprites, rect_size):
         super().__init__()
         self.rect_size = rect_size
         self.sprite_group = sprites
@@ -31,6 +32,7 @@ class Player(sprite.Sprite):
         self.saves_sprites = saves_sprites
         self.damage_sprites = damage_sprites
         self.enemies_sprites = enemies_sprites
+        self.bomb_sprites = bomb_sprites
         self.player_img_left_run = []
         self.player_img_right_run = []
         self.player_clear_img = pygame.Surface((rect_size - 5, rect_size * 2 - 5))
@@ -74,10 +76,12 @@ class Player(sprite.Sprite):
         self.timer = 0
         self.last_timer = 0
         self.jump_speed_last = self.jump_speed
-        self.test_damage = True  # TODO удалить это
+        self.put_bomb = True
         self.bunny_mode = False
         self.mode_changed = False
         self.last_timer_damage = -121
+
+        self.test_damage = True  # TODO удалить это
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -204,10 +208,24 @@ class Player(sprite.Sprite):
         elif not keys[pygame.K_k]:
             self.test_damage = True
 
+        if keys[pygame.K_l] and self.put_bomb:  # тестовая система жизней
+            if self.gui_sprites.bomb != 0:
+                bomb = Bomb(self.rect.center, (self.rect_size, self.rect_size), self.wall_sprites, self)
+                bomb.rl = self.rl
+                self.bomb_sprites.add(bomb)
+                self.gui_sprites.set_bombs(self.gui_sprites.bomb - 1)
+                self.put_bomb = False
+        elif not keys[pygame.K_l]:
+            self.put_bomb = True
+
         self.rect.y += self.jump_speed + self.g // 2
 
         if sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
             while sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
+                self.rect.y += 1
+            self.jump_speed = self.jump_speed
+        if sprite.spritecollideany(self, self.damage_sprites, collided=up_collision):
+            while sprite.spritecollideany(self, self.damage_sprites, collided=up_collision):
                 self.rect.y += 1
             self.jump_speed = self.jump_speed
         if sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
@@ -241,7 +259,7 @@ class Player(sprite.Sprite):
                 self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
                 self.last_timer_damage = self.timer
 
-        if 15 < self.timer - self.last_timer_damage <= 30 or 45 < self.timer - self.last_timer_damage <= 60\
+        if 15 < self.timer - self.last_timer_damage <= 30 or 45 < self.timer - self.last_timer_damage <= 60 \
                 or 75 < self.timer - self.last_timer_damage <= 90 or 105 < self.timer - self.last_timer_damage <= 120:
             self.image = self.player_clear_img
             self.image.set_colorkey((255, 255, 255))
@@ -294,7 +312,7 @@ class Player(sprite.Sprite):
         self.jump_speed_last = self.jump_speed
 
         for i in self.enemies_sprites:
-            if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 <\
+            if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) ** 0.5 < \
                     self.rect_size * 3:
                 if sprite.collide_rect(self, i):
                     if self.timer - self.last_timer_damage >= 120:

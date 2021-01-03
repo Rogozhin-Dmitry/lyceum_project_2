@@ -11,7 +11,7 @@ HEIGHT = SIZE_OF_RECT * 17
 
 class Render:
     def __init__(self, screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
-                 dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites, enemies_sprites):
+                 dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites, enemies_sprites, bomb_sprites):
         self.screen = screen
         self.player_sprites = player_sprites
         self.wall_sprites = wall_sprites
@@ -23,6 +23,7 @@ class Render:
         self.saves_sprites = saves_sprites
         self.damage_sprites = damage_sprites
         self.enemies_sprites = enemies_sprites
+        self.bomb_sprites = bomb_sprites
         font_sh = font.Font('fonts\\f1.ttf', 150)
         self.game_over_text = font_sh.render('Game Over', True, (25, 25, 25))
         self.game_over_text_rect = self.game_over_text.get_rect(centerx=WIDTH // 2, centery=HEIGHT // 2)
@@ -40,6 +41,7 @@ class Render:
         self.saves_sprites.update()
         self.damage_sprites.update()
         self.enemies_sprites.update()
+        self.bomb_sprites.update()
         for i in [*self.particle_sprites, *self.dust_particle_sprites]:
             i.x += i.shift
             i.y += i.shift_down
@@ -56,6 +58,7 @@ class Render:
         self.decor_sprites.draw(self.screen)
         self.dust_particle_sprites.draw(self.screen)
         self.damage_sprites.draw(self.screen)
+        self.bomb_sprites.draw(self.screen)
         self.enemies_sprites.draw(self.screen)
         self.player_sprites.draw(self.screen)
         self.particle_sprites.draw(self.screen)

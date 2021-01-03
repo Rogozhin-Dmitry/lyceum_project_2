@@ -33,6 +33,18 @@ class Gui(sprite.Group):
                 spr.rect.center = (int(self.rect_size * 1.5) * (i + 1), self.rect_size)
                 self.heart_sprites.add(spr)
         elif num <= 0:
+            self.hp = num
+            self.heart_sprites.empty()
+            for i in range(self.max_hp):
+                spr = sprite.Sprite()
+                if i < self.hp:
+                    spr.image = self.heart
+                else:
+                    spr.image = self.heart_pass
+                spr.image.set_colorkey((255, 255, 255))
+                spr.rect = spr.image.get_rect()
+                spr.rect.center = (int(self.rect_size * 1.5) * (i + 1), self.rect_size)
+                self.heart_sprites.add(spr)
             event.post(event.Event(31, {}))
 
     def set_bombs(self, num):

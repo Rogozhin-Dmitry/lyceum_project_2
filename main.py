@@ -369,45 +369,7 @@ def settings():
         pygame.display.flip()
 
 
-def new_game():
-    while True:
-        # Держим цикл на правильной скорости
-        clock.tick(FPS)
-        # Ввод процесса (события)
-        for event in pygame.event.get():
-            # проверка для закрытия окна
-            if event.type == pygame.QUIT:
-                return 'exit'
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for but in diff_btns:
-                    print(but.is_clicked())
-                    if but.is_clicked():
-                        if but.type == 'diff_select':
-                            but.kill()
-                            text = font_sh.render('1', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 - 25,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
-                                                 '1'))
-                            text = font_sh.render('2', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
-                                                 '2'))
-                            text = font_sh.render('3', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
-                                                 '3'))
-                            text = font_sh.render('_', True, (245, 245, 245))
-                            diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
-                                                                     y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
-                                                 '_'))
-                        else:
-                            return but.type
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                return 'main'
 
-        screen.blit(dif_set_image, (0, 0))
-        diff_btns.draw(screen)
-        pygame.display.flip()
 
 
 def load_func():

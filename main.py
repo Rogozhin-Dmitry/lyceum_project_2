@@ -505,8 +505,7 @@ for i, j in [("Продолжить", 'main'), ("Загрузить игру", '
 # new_game func
 diff_btns = pygame.sprite.Group()
 count = 1
-for i, j in [("Начать", 'main'), ("Сложность", 'load_game'), ("Доп", 'settings'),
-             ("Выход в меню", 'menu')]:
+for i, j in [("Начать", 'main'), ("Сложность", 'settings'), ("Выход в меню", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                              y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
@@ -566,7 +565,11 @@ result = menu()
 name_of_save = ''
 while True:
     if result == 'new_game':
-        result = new_game()
+        name_of_save = new_game()
+        if not result == 'menu':
+            pass
+        else:
+            result = name_of_save
     elif result == 'load_game':
         name_of_save = load_func()
         if not name_of_save == 'menu':

@@ -91,7 +91,6 @@ class Player(sprite.Sprite):
         self.hit_timer = 0
         self.hit_animation_timer = 0
         self.hit_animation_timer_event = 15 // len(self.player_hit_img_left) + 1
-        print(self.hit_animation_timer_event)
         self.hit_event = True
         self.hit_animation_count = 0
         self.hit_rect = Rect(0, 0, 0, 0)
@@ -281,6 +280,7 @@ class Player(sprite.Sprite):
                 self.image = self.player_img_right
             self.image.set_colorkey((255, 255, 255))
             self.last_timer = 0
+            # self.image.get_rect()
         elif not keys[pygame.K_q]:
             self.hit_event = True
 
@@ -296,20 +296,21 @@ class Player(sprite.Sprite):
 
         self.rect.y += self.jump_speed + self.g // 2
 
-        if sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
-            while sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
-                self.rect.y += 1
-            self.jump_speed = self.jump_speed
-        if sprite.spritecollideany(self, self.damage_sprites, collided=up_collision):
-            while sprite.spritecollideany(self, self.damage_sprites, collided=up_collision):
-                self.rect.y += 1
-            self.jump_speed = self.jump_speed
-        if sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
-            while sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
-                self.rect.y -= 1
-            self.jump_speed = 0
+        if not self.hit_mode:
+            if sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
+                while sprite.spritecollideany(self, self.wall_sprites, collided=up_collision):
+                    self.rect.y += 1
+                self.jump_speed = self.jump_speed
+            if sprite.spritecollideany(self, self.damage_sprites, collided=up_collision):
+                while sprite.spritecollideany(self, self.damage_sprites, collided=up_collision):
+                    self.rect.y += 1
+                self.jump_speed = self.jump_speed
+            if sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
+                while sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
+                    self.rect.y -= 1
+                self.jump_speed = 0
 
-        while self.rect.y + self.rect.h > self.down_scroll:  # TODO плавное передвижение камеры
+        while self.rect.y + self.rect.h > self.down_scroll:
             self.rect.y -= 1
             self.wall_sprites.move(-1, 1)
 

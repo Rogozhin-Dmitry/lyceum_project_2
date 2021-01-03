@@ -1,14 +1,14 @@
 import pygame
-
+import shutil
+import sys
+import os
+import json
+import threading
 pygame.init()
 from player_file import *
 from wall_sprites_file import *
 from render_file import *
-import sys
-import os
 from gui_file import *
-import threading
-import json
 from enemy_file import *
 
 
@@ -376,6 +376,11 @@ def settings():
 
 
 def new_game():
+    global dif
+    diff_select_open = False
+    diff_btns = pygame.sprite.Group()
+    for i in standard_diff_btns:
+        diff_btns.add(i)
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -386,35 +391,49 @@ def new_game():
                 return 'exit'
             if ng_ev_activity.type == pygame.MOUSEBUTTONDOWN:
                 for but in diff_btns:
-                    print(but.is_clicked())
                     if but.is_clicked():
                         if but.type == 'diff_select':
-                            but.kill()
-                            one_btn = font_sh.render('1', True, (245, 245, 245))
-                            y1_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
-                            diff_btns.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15 - 25,
-                                                                           y=y1_params),
-                                                 '1'))
-                            two_btn = font_sh.render('2', True, (245, 245, 245))
-                            y2_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
-                            diff_btns.add(Button(two_btn, two_btn.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                                           y=y2_params),
-                                                 '2'))
-                            three_btn = font_sh.render('3', True, (245, 245, 245))
-                            y3_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
-                            diff_btns.add(Button(three_btn, three_btn.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
-                                                                               y=y3_params),
-                                                 '3'))
-                            underline_btn = font_sh.render('_', True, (245, 245, 245))
-                            y_underline_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
-                            diff_btns.add(Button(underline_btn, underline_btn.get_rect(centerx=SIZE_OF_RECT * 15 + 25,
-                                                                                       y=y_underline_params),
-                                                 '_'))
+                            diff_btns.empty()
+                            for i, j in [('1', -25), ('2', 0), ('3', 25), ('_', 25 * (dif - 1))]:
+                                one_btn = font_sh.render(i, True, (245, 245, 245))
+                                y1_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
+                                diff_btns.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15 + j,
+                                                                               y=y1_params), i))
+                                count_1 = 1
+                                for i, j in [("Сложность", ''), ("Назад", 'back')]:
+                                    one_btn = font_sh.render(i, True, (245, 245, 245))
+                                    diff_btns.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                                                   y=SIZE_OF_RECT * 17 // 15 +
+                                                                                     SIZE_OF_RECT * (2 + count_1)), j))
+                                    count_1 += 2
+                            diff_select_open = True
                         else:
-                            return but.type
-            if ng_ev_activity.type == pygame.KEYDOWN and ng_ev_activity.key == pygame.K_ESCAPE:
-                return 'main'
-
+                            if diff_select_open:
+                                if but.type == '1':
+                                    for but_1 in diff_btns:
+                                        if but_1.type == '_':
+                                            but_1.rect.centerx = SIZE_OF_RECT * 15 - 25
+                                        dif = 0
+                                elif but.type == '2':
+                                    for but_1 in diff_btns:
+                                        if but_1.type == '_':
+                                            but_1.rect.centerx = SIZE_OF_RECT * 15
+                                        dif = 1
+                                elif but.type == '3':
+                                    for but_1 in diff_btns:
+                                        if but_1.type == '_':
+                                            but_1.rect.centerx = SIZE_OF_RECT * 15 + 25
+                                        dif = 2
+                                elif but.type == 'back':
+                                    diff_select_open = False
+                                    diff_btns.empty()
+                                    for i in standard_diff_btns:
+                                        diff_btns.add(i)
+                            else:
+                                if but.type == 'new_game':
+                                    return 'dif ' + str(dif)
+                                elif but.type == 'menu':
+                                    return 'menu'
         screen.blit(dif_set_image, (0, 0))
         diff_btns.draw(screen)
         pygame.display.flip()
@@ -422,6 +441,7 @@ def new_game():
 
 def load_func():
     closed_mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
+    closed_mass.remove('saves\\new_game')
     saves_names = []
     for elem in closed_mass:
         saves_names.append(f"Точка сохранения №{closed_mass.index(elem) + 1}")
@@ -461,14 +481,12 @@ if x > y:
     SIZE_OF_RECT = int(y)
 else:
     SIZE_OF_RECT = int(x)
-# SIZE_OF_RECT //= 2
 WIDTH = SIZE_OF_RECT * 30
 HEIGHT = SIZE_OF_RECT * 17
 WIDTH_SHIFT = inf.current_w - WIDTH
 HEIGHT_SHIFT = inf.current_h - HEIGHT
 FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
-# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
 clock = pygame.time.Clock()
 
 #  общие константы
@@ -529,12 +547,13 @@ for i, j in [("Продолжить", 'main'), ("Загрузить игру", '
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
 # new_game func
-diff_btns = pygame.sprite.Group()
+dif = 0
+standard_diff_btns = pygame.sprite.Group()
 count = 1
-for i, j in [("Начать", 'main'), ("Сложность", 'diff_select'), ("Выход в меню", 'menu')]:
+for i, j in [("Начать", 'new_game'), ("Сложность", 'diff_select'), ("Выход в меню", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
-    diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
-                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
+    standard_diff_btns.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                      y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
     count += 1
 
 #  settings funk
@@ -591,17 +610,33 @@ result = menu()
 name_of_save = ''
 while True:
     if result == 'new_game':
-        result = new_game()
+        name_of_save = new_game()
+        if name_of_save.startswith('dif'):
+            mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
+            mass.remove('saves\\new_game')
+            if len(mass) <= 8:
+                result = 'new'
+        else:
+            result = name_of_save
+    elif result == 'new':
+        mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
+        mass.remove('saves\\new_game')
+        mass.sort()
+        name_of_save = 'saves\\data_file_' + str(int(mass[-1].split('.')[0][-1]) + 1) + '.json'
+        shutil.copy('saves\\new_game\\' + str(dif) + '.json', name_of_save)
+        result = 'load'
+    elif result == 'load':
+        t1 = threading.Thread(target=screen_saver)
+        t2 = threading.Thread(target=load_1, args=name_of_save)
+        t1.start()
+        t2.start()
+        t2.join()
+        t1.join()
+        result = 'main'
     elif result == 'load_game':
         name_of_save = load_func()
         if not name_of_save == 'menu':
-            t1 = threading.Thread(target=screen_saver)
-            t2 = threading.Thread(target=load_1, args=name_of_save)
-            t1.start()
-            t2.start()
-            t2.join()
-            t1.join()
-            result = 'main'
+            result = 'load'
         else:
             result = name_of_save
     elif result == 'menu':

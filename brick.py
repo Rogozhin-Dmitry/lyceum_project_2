@@ -61,7 +61,7 @@ class SavePoint(sprite.Sprite):
         self.image.set_colorkey((255, 255, 255))
 
 
-class Bomb(Brick):  # общий класс всех врагов
+class Bomb(Brick):
     def __init__(self, cords, rect_size, wall_sprites, player):
         super().__init__(cords, rect_size, 'tiles\\bomb\\bomb.png', False)
         self.player = player
@@ -74,22 +74,13 @@ class Bomb(Brick):  # общий класс всех врагов
         self.timer = 0
         self.last_timer = 0
         self.stay = False
-        self.boom = transform.scale(image.load('tiles\\bomb\\boom.png').convert(), (self.player.rect_size,
-                                                                                    self.player.rect_size))
-        self.boss_bomb = transform.scale(image.load('tiles\\bomb\\boss_bomb.png').convert(),
-                                         (round(self.player.rect_size),
-                                          round(self.player.rect_size)))
-        self.boss_boom = transform.scale(image.load('tiles\\bomb\\boss_boom.png').convert(),
-                                         (round(1.5 * self.player.rect_size),
-                                          round(1.5 * self.player.rect_size)))
-        self.boss_boom.set_colorkey((255, 255, 255))
-        self.boss_bomb.set_colorkey((255, 255, 255))
+        self.boom = transform.scale(image.load('tiles\\bomb\\boom.png').convert(), (round(1.5 * self.player.rect_size),
+                                                                                    round(1.5 * self.player.rect_size)))
         self.boom.set_colorkey((255, 255, 255))
-        self.boss_mode = False
+        self.init()
 
-    def change_mode_to_boss(self):
-        self.image = self.boss_bomb
-        self.boss_mode = True
+    def init(self):
+        pass
 
     def update(self):
         if not self.stay:
@@ -112,9 +103,9 @@ class Bomb(Brick):  # общий класс всех врагов
         if self.timer - self.last_timer >= 5:
             self.vy += self.ay
             self.last_timer = self.timer
-        if not self.rl and not self.boss_bomb:
+        if not self.rl:
             self.rect.x += int(self.vx)
-        elif not self.boss_bomb:
+        else:
             self.rect.x -= int(self.vx)
         self.rect.y += int(self.vy)
         if sprite.spritecollideany(self, self.wall_sprites):
@@ -126,11 +117,56 @@ class Bomb(Brick):  # общий класс всех врагов
                 self.last_timer = self.timer
 
                 cords = self.rect.center
-                if not self.boss_mode:
-                    self.image = self.boom
-                else:
-                    self.image = self.boss_boom
+                self.image = self.boom
                 self.rect = self.image.get_rect()
                 self.rect.center = cords
+        if self.rect.bottom <= 0:
+            self.kill()
+
+
+class Boss_Bomb(Bomb):
+    def init(self):
+        self.image = transform.scale(image.load('tiles\\bomb\\boss_bomb.png').convert(),
+                                     (round(self.player.rect_size),
+                                      round(self.player.rect_size)))
+        cords = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = cords
+        self.image.set_colorkey((255, 255, 255))
+        self.boom = transform.scale(image.load('tiles\\bomb\\boss_boom.png').convert(),
+                                    (round(1.5 * self.player.rect_size), round(1.5 * self.player.rect_size)))
+        self.boom.set_colorkey((255, 255, 255))
+
+    def update(self):
+        if not self.stay:
+            self.move()
+        else:
+            if self.timer - self.last_timer >= 30:
+                self.kill()
+                for spr in [*self.wall_sprites, *self.wall_sprites.bonus_sprites, *self.wall_sprites.saves_sprites,
+                            *self.wall_sprites.damage_sprites, *self.wall_sprites.enemies_sprites]:
+                    if sprite.collide_rect(self, spr) and spr.can_be_broken:
+                        del self.wall_sprites.maps[tuple(spr.cords)]
+                        spr.kill()
+
+                if sprite.collide_rect(self, self.player):
+                    self.player.gui_sprites.set_hearts(self.player.gui_sprites.hp - 1)
+
+        self.timer += 1
+
+    def move(self):
+        if self.timer - self.last_timer >= 5:
+            self.vy += self.ay
+            self.last_timer = self.timer
+        self.rect.y += int(self.vy)
+        if sprite.spritecollideany(self, self.wall_sprites):
+            self.rect.y -= int(self.vy)
+            self.stay = True
+            self.last_timer = self.timer
+
+            cords = self.rect.center
+            self.image = self.boom
+            self.rect = self.image.get_rect()
+            self.rect.center = cords
         if self.rect.bottom <= 0:
             self.kill()

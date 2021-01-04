@@ -58,9 +58,7 @@ class Boss(Enemy):
         self.animation.append(transform.scale(new_animation, rect_size))
         self.animation.append(self.image)
 
-
     def update(self):
-        print(self.hp)
         super().update()
         self.image = self.animation[(self.count // 10) % 5]
         self.image.set_colorkey((255, 255, 255))
@@ -96,7 +94,7 @@ class Boss(Enemy):
                     while sprite.spritecollideany(self, self.damage_sprites):
                         self.rect.x = self.rect.x - 1
                     self.rl = False
-                elif self.all_way_straight > 750:
+                elif self.all_way_straight > 2000:
                     self.rl = False
                 else:
                     self.cords_not_round[0] += 1
@@ -115,7 +113,7 @@ class Boss(Enemy):
                         self.rect.x = self.rect.x + 1
                     self.rl = True
                     self.all_way_straight = 0
-                elif self.all_way_straight < -750:
+                elif self.all_way_straight < -2000:
                     self.rl = True
                 else:
                     self.cords_not_round[0] -= 1
@@ -166,9 +164,8 @@ class Boss(Enemy):
                     self.delay[1] -= self.step_1
 
     def throw_bomb(self):
-        bomb = Bomb(self.rect.center, (self.rect_size[0] // 2, self.rect_size[1] // 2), self.wall_sprites, self.player)
-        bomb.change_mode_to_boss()
-        self.bomb_sprites.add(bomb)
+        self.bomb_sprites.add(Boss_Bomb(self.rect.center, (self.rect_size[0] // 2, self.rect_size[1] // 2),
+                                        self.wall_sprites, self.player))
 
     def get_damage(self):
         if not self.invulnerable:

@@ -264,19 +264,23 @@ class Player(sprite.Sprite):
                             del i
                     else:
                         del self.wall_sprites.maps[tuple(i.cords)]
-                        # random_bonus = choice(['heart', None, 'bomb'])
-                        # random_bonus = choice(['heart', 'bomb'])
-                        # if random_bonus == 'heart':
-                            # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
-                                          # 'tiles\\bonus\\little_heart.png', False, shift=i.shift)
-                        # elif random_bonus == 'bomb':
-                            # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
-                                          # 'tiles\\bonus\\little_bomb.png', False, shift=i.shift)
-                        # if random_bonus is not None:
-                            # print(bonus.cords)
-                            # self.bonus_sprites.add(bonus)
-                            # self.wall_sprites.maps[tuple(bonus.cords)] = bonus
-                            # print(bonus.rect.x, bonus.rect.y)
+                        random_bonus = choice(['heart', None, 'bomb'])
+                        bonus = ''
+                        if random_bonus == 'heart':
+                            bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
+                                          'tiles\\bonus\\little_heart.png', True, shift=i.shift)
+                            bonus.delay = [bonus.cords[0] + 0.5 + i.shift[0] - 15,
+                                           bonus.cords[1] + 0.5 + i.shift[1] - 15]
+                        elif random_bonus == 'bomb':
+                            bonus = Brick(i.cords, (round(0.7 * self.rect_size), round(0.7 * self.rect_size)),
+                                          'tiles\\bonus\\little_bomb.png', True, shift=i.shift)
+                            bonus.delay = [bonus.cords[0] + 0.7 + i.shift[0] - 15,
+                                           bonus.cords[1] + 0.7 + i.shift[1] - 15]
+                        if bonus:
+                            self.bonus_sprites.add(bonus)
+                            self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
+                            bonus.rect.center = i.rect.center
+
                         i.kill()
                         del i
 
@@ -397,25 +401,26 @@ class Player(sprite.Sprite):
                 elif spr.image_name == 'tiles\\bonus\\little_heart.png':
                     self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
                 cords = spr.rect.center
+
+                if spr.image_name == 'tiles\\bonus\\heart_bonus.png' or spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
+                    for i in range(10):
+                        cords = randint(cords[0] - 5, cords[0] + 5), randint(cords[1] - 5, cords[1] + 5)
+                        spr = sprite.Sprite()
+                        r = randint(9, 15)
+                        spr.image = Surface([r, r])
+                        draw.circle(spr.image, (120, 235, 255), (r // 2, r // 2), r // 2)
+                        spr.image.set_colorkey((0, 0, 0))
+                        spr.rect = spr.image.get_rect()
+                        spr.rect.center = cords
+                        spr.x, spr.y = cords
+                        spr.down = cords[1] + self.rect_size * 0.5
+                        spr.shift_up = 0.3
+                        spr.shift, spr.shift_down = randint(-20, 20) / 10, -4
+
+                        self.particle_sprites.add(spr)
                 del self.wall_sprites.maps[tuple(spr.cords)]
                 spr.kill()
                 del spr
-
-                for i in range(10):
-                    cords = randint(cords[0] - 5, cords[0] + 5), randint(cords[1] - 5, cords[1] + 5)
-                    spr = sprite.Sprite()
-                    r = randint(9, 15)
-                    spr.image = Surface([r, r])
-                    draw.circle(spr.image, (120, 235, 255), (r // 2, r // 2), r // 2)
-                    spr.image.set_colorkey((0, 0, 0))
-                    spr.rect = spr.image.get_rect()
-                    spr.rect.center = cords
-                    spr.x, spr.y = cords
-                    spr.down = cords[1] + self.rect_size * 0.5
-                    spr.shift_up = 0.3
-                    spr.shift, spr.shift_down = randint(-20, 20) / 10, -4
-
-                    self.particle_sprites.add(spr)
 
             if not (self.jump_speed == self.jump_speed_last) and (self.jump_speed == 1 and self.jump_speed_last):
                 cords = self.rect.center[0], self.rect.y + self.rect.h - 15

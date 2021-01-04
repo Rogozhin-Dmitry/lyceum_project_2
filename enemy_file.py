@@ -178,24 +178,17 @@ class Boss(Enemy):
 class Crash(Enemy):
     def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, 'tiles\\enemy\\crash1.png', wall_sprites, damage_sprites, can_be_broken,
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                          mask=mask,
                          shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
         self.count = 0
-        # self.bun_image_left_run = []
-        self.image_right_run = [self.image]
-        for i in range(2):
-            if i <= 2:
-                self.image_right_run.append(transform.scale(
-                    image.load('tiles\\enemy\\crash' + str(i + 1) + '.png').convert(), rect_size))
-            else:
-                self.image_right_run.append(transform.scale(
-                    image.load('tiles\\enemy\\crash' + str(5 - i) + '.png').convert(), rect_size))
-            # self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
-        self.image_right_run.append(self.image)
+        self.image_run = [self.image]
+        for i in range(19):
+            self.image_run.append(transform.scale(
+                image.load('tiles\\enemy\\crash_animation\\' + str(i + 1) + '.png').convert(), rect_size))
         self.last_timer = 0
         self.timer = 0
 
@@ -205,12 +198,9 @@ class Crash(Enemy):
             self.target()
         else:
             self.standard()
-            if self.timer - self.last_timer >= 15:
-                # if self.rl:
-                #     self.image = self.player_img_right_run[self.count % 2]
-                # else:
-                # self.image = self.image_right_run[self.count % 2]
-                # self.image.set_colorkey((255, 255, 255))
+            if self.timer - self.last_timer >= 2:
+                self.image = self.image_run[self.count % 20]
+                self.image.set_colorkey((255, 255, 255))
                 self.count += 1
                 self.last_timer = self.timer
         if self.rect.right >= 0 and self.rect.x <= WIDTH:

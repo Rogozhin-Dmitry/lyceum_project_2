@@ -107,7 +107,7 @@ def load_1(*name):
                                     'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
                                     data[obj_1]['can_be_broken'], shift=data[obj_1]['shift'])
                     elif data[obj_1]['name'] == 'fly.png':
-                        obj = Fly([x_1, y_1], (round(SIZE_OF_RECT *   data[obj_1]['size'][0]),
+                        obj = Fly([x_1, y_1], (round(SIZE_OF_RECT * data[obj_1]['size'][0]),
                                                round(SIZE_OF_RECT * data[obj_1]['size'][1])),
                                   'tiles\\enemy\\' + data[obj_1]['name'], wall_sprites, damage_sprites,
                                   data[obj_1]['can_be_broken'], shift=data[obj_1]['shift'])

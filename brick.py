@@ -74,11 +74,15 @@ class Bomb(Brick):  # общий класс всех врагов
         self.timer = 0
         self.last_timer = 0
         self.stay = False
-        self.boom = transform.scale(image.load('tiles\\bomb\\boom.png').convert(), (round(1.5 * self.player.rect_size),
-                                                                                    round(1.5 * self.player.rect_size)))
+        self.boom = transform.scale(image.load('tiles\\bomb\\boom.png').convert(), (self.player.rect_size,
+                                                                                    self.player.rect_size))
         self.boss_bomb = transform.scale(image.load('tiles\\bomb\\boss_bomb.png').convert(),
                                          (round(self.player.rect_size),
                                           round(self.player.rect_size)))
+        self.boss_boom = transform.scale(image.load('tiles\\bomb\\boss_boom.png').convert(),
+                                         (round(1.5 * self.player.rect_size),
+                                          round(1.5 * self.player.rect_size)))
+        self.boss_boom.set_colorkey((255, 255, 255))
         self.boss_bomb.set_colorkey((255, 255, 255))
         self.boom.set_colorkey((255, 255, 255))
         self.boss_mode = False
@@ -122,7 +126,10 @@ class Bomb(Brick):  # общий класс всех врагов
                 self.last_timer = self.timer
 
                 cords = self.rect.center
-                self.image = self.boom
+                if not self.boss_mode:
+                    self.image = self.boom
+                else:
+                    self.image = self.boss_boom
                 self.rect = self.image.get_rect()
                 self.rect.center = cords
         if self.rect.bottom <= 0:

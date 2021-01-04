@@ -50,10 +50,20 @@ class Boss(Enemy):
         self.clear_img.set_colorkey((255, 255, 255))
         self.invulnerable_count = 0
         self.true_image = self.image
+        self.animation = [self.image]
+        for i in range(2):
+            new_animation = image.load('tiles\\enemy\\boss_animation\\' + str(i + 1) + '.png').convert()
+            self.animation.append(transform.scale(new_animation, rect_size))
+        new_animation = image.load('tiles\\enemy\\boss_animation\\1.png').convert()
+        self.animation.append(transform.scale(new_animation, rect_size))
+        self.animation.append(self.image)
+
 
     def update(self):
         print(self.hp)
         super().update()
+        self.image = self.animation[(self.count // 10) % 5]
+        self.image.set_colorkey((255, 255, 255))
         if self.invulnerable:
             self.invulnerable_count = self.invulnerable_count + 1
             if 15 < self.invulnerable_count <= 30 or 45 < self.invulnerable_count <= 60 \
@@ -64,9 +74,6 @@ class Boss(Enemy):
                 self.invulnerable = False
                 self.image = self.true_image
                 self.invulnerable_count = 0
-            else:
-                self.image = self.true_image
-
         if self.is_standing:
             self.count = self.count + 1
             if self.count == 100:

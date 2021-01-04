@@ -2,6 +2,7 @@ from pygame import key, Surface, draw
 from random import randint
 import pygame
 from brick import *
+from random import choice
 
 
 def up_collision(obj_1, obj_2):
@@ -257,15 +258,28 @@ class Player(sprite.Sprite):
                 if Rect.colliderect(self.hit_rect, i.rect):
                     if 'boss' in i.image_name:
                         i.get_damage()
-                        print(i.hp)
                         if i.hp <= 0:
                             del self.wall_sprites.maps[tuple(i.cords)]
                             i.kill()
                             del i
                     else:
                         del self.wall_sprites.maps[tuple(i.cords)]
+                        # random_bonus = choice(['heart', None, 'bomb'])
+                        # random_bonus = choice(['heart', 'bomb'])
+                        # if random_bonus == 'heart':
+                            # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
+                                          # 'tiles\\bonus\\little_heart.png', False, shift=i.shift)
+                        # elif random_bonus == 'bomb':
+                            # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
+                                          # 'tiles\\bonus\\little_bomb.png', False, shift=i.shift)
+                        # if random_bonus is not None:
+                            # print(bonus.cords)
+                            # self.bonus_sprites.add(bonus)
+                            # self.wall_sprites.maps[tuple(bonus.cords)] = bonus
+                            # print(bonus.rect.x, bonus.rect.y)
                         i.kill()
                         del i
+
             if self.timer - self.hit_animation_timer >= self.hit_animation_timer_event:
                 if not self.rl:
                     self.image = self.player_hit_img_left[self.hit_animation_count]
@@ -286,6 +300,19 @@ class Player(sprite.Sprite):
                             del i
                     else:
                         del self.wall_sprites.maps[tuple(i.cords)]
+                        # random_bonus = choice(['heart', None, 'bomb'])
+                        # random_bonus = choice(['heart', 'bomb'])
+                        # if random_bonus == 'heart':
+                        # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
+                        # 'tiles\\bonus\\little_heart.png', False, shift=i.shift)
+                        # elif random_bonus == 'bomb':
+                        # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
+                        # 'tiles\\bonus\\little_bomb.png', False, shift=i.shift)
+                        # if random_bonus is not None:
+                        # print(bonus.cords)
+                        # self.bonus_sprites.add(bonus)
+                        # self.wall_sprites.maps[tuple(bonus.cords)] = bonus
+                        # print(bonus.rect.x, bonus.rect.y)
                         i.kill()
                         del i
             if self.rl:
@@ -365,6 +392,10 @@ class Player(sprite.Sprite):
                 elif spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
                     self.gui_sprites.max_bomb = self.gui_sprites.max_bomb + 1
                     self.gui_sprites.set_bombs(self.gui_sprites.max_bomb)
+                elif spr.image_name == 'tiles\\bonus\\little_bomb.png':
+                    self.gui_sprites.set_bombs(self.gui_sprites.bomb + 1)
+                elif spr.image_name == 'tiles\\bonus\\little_heart.png':
+                    self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
                 cords = spr.rect.center
                 del self.wall_sprites.maps[tuple(spr.cords)]
                 spr.kill()
@@ -405,7 +436,7 @@ class Player(sprite.Sprite):
             self.jump_speed_last = self.jump_speed
 
             for i in self.enemies_sprites:
-                if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2)\
+                if ((i.rect.center[0] - self.rect.center[0]) ** 2 + (i.rect.center[1] - self.rect.center[1]) ** 2) \
                         ** 0.5 < self.rect_size * 3:
                     if sprite.collide_rect(self, i):
                         if self.timer - self.last_timer_damage >= 120:

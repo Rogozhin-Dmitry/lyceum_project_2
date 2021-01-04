@@ -87,7 +87,7 @@ def load_1(*name):
                 elif data[obj_1]['type'] == 'decor':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),
-                                'tiles\\decaor\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
+                                'tiles\\decor\\' + data[obj_1]['name'], data[obj_1]['can_be_broken'])
                 elif data[obj_1]['type'] == 'bonus':
                     obj = Brick([x_1, y_1], (
                         round(SIZE_OF_RECT * data[obj_1]['size'][0]), round(SIZE_OF_RECT * data[obj_1]['size'][1])),

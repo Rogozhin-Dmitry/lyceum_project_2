@@ -183,11 +183,16 @@ class Crash(Enemy):
         self.rl = True
         self.count = 0
         # self.bun_image_left_run = []
-        self.image_right_run = []
-        for i in range(2):
-            self.image_right_run.append(transform.scale(
-                image.load('tiles\\enemy\\crash' + str(i + 1) + '.png').convert(), rect_size))
+        self.image_right_run = [self.image]
+        for i in range(5):
+            if i <= 2:
+                self.image_right_run.append(transform.scale(
+                image.load('tiles\\enemy\\crash_animation\\crashtank_ani_' + str(i + 1) + '.png').convert(), rect_size))
+            else:
+                self.image_right_run.append(transform.scale(
+                image.load('tiles\\enemy\\crash_animation\\crashtank_ani_' + str(5 - i) + '.png').convert(), rect_size))
             # self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
+        self.image_right_run.append(self.image)
         self.last_timer = 0
         self.timer = 0
 
@@ -201,8 +206,8 @@ class Crash(Enemy):
                 # if self.rl:
                 #     self.image = self.player_img_right_run[self.count % 2]
                 # else:
-                self.image = self.image_right_run[self.count % 2]
-                self.image.set_colorkey((255, 255, 255))
+                # self.image = self.image_right_run[self.count % 2]
+                # self.image.set_colorkey((255, 255, 255))
                 self.count += 1
                 self.last_timer = self.timer
         if self.rect.right >= 0 and self.rect.x <= WIDTH:
@@ -273,6 +278,7 @@ class Fly(Enemy):
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
         self.count = 0
+        self.all_way_straight = 0
 
     def update(self):
         super().update()
@@ -293,6 +299,7 @@ class Fly(Enemy):
     def standard(self):
         if self.rl:
             self.rect.x += self.step
+            self.all_way_straight = self.all_way_straight + self.step
             if sprite.spritecollideany(self, self.wall_sprites):
                 while sprite.spritecollideany(self, self.wall_sprites):
                     self.rect.x -= 1
@@ -300,6 +307,8 @@ class Fly(Enemy):
             elif sprite.spritecollideany(self, self.damage_sprites):
                 while sprite.spritecollideany(self, self.damage_sprites):
                     self.rect.x -= 1
+                self.rl = False
+            elif self.all_way_straight > 750:
                 self.rl = False
             else:
                 self.cords_not_round[0] += 1
@@ -307,6 +316,7 @@ class Fly(Enemy):
                 self.delay[0] += self.step_1
         else:
             self.rect.x -= self.step
+            self.all_way_straight = self.all_way_straight - self.step
             if sprite.spritecollideany(self, self.wall_sprites):
                 while sprite.spritecollideany(self, self.wall_sprites):
                     self.rect.x += 1
@@ -314,6 +324,8 @@ class Fly(Enemy):
             elif sprite.spritecollideany(self, self.damage_sprites):
                 while sprite.spritecollideany(self, self.damage_sprites):
                     self.rect.x += 1
+                self.rl = True
+            elif self.all_way_straight < -750:
                 self.rl = True
             else:
                 self.cords_not_round[0] -= 1

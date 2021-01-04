@@ -304,19 +304,22 @@ class Player(sprite.Sprite):
                             del i
                     else:
                         del self.wall_sprites.maps[tuple(i.cords)]
-                        # random_bonus = choice(['heart', None, 'bomb'])
-                        # random_bonus = choice(['heart', 'bomb'])
-                        # if random_bonus == 'heart':
-                        # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
-                        # 'tiles\\bonus\\little_heart.png', False, shift=i.shift)
-                        # elif random_bonus == 'bomb':
-                        # bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
-                        # 'tiles\\bonus\\little_bomb.png', False, shift=i.shift)
-                        # if random_bonus is not None:
-                        # print(bonus.cords)
-                        # self.bonus_sprites.add(bonus)
-                        # self.wall_sprites.maps[tuple(bonus.cords)] = bonus
-                        # print(bonus.rect.x, bonus.rect.y)
+                        random_bonus = choice(['heart', None, 'bomb'])
+                        bonus = ''
+                        if random_bonus == 'heart':
+                            bonus = Brick(i.cords, (round(0.5 * self.rect_size), round(0.5 * self.rect_size)),
+                                          'tiles\\bonus\\little_heart.png', True, shift=i.shift)
+                            bonus.delay = [bonus.cords[0] + 0.5 + i.shift[0] - 15,
+                                           bonus.cords[1] + 0.5 + i.shift[1] - 15]
+                        elif random_bonus == 'bomb':
+                            bonus = Brick(i.cords, (round(0.7 * self.rect_size), round(0.7 * self.rect_size)),
+                                          'tiles\\bonus\\little_bomb.png', True, shift=i.shift)
+                            bonus.delay = [bonus.cords[0] + 0.7 + i.shift[0] - 15,
+                                           bonus.cords[1] + 0.7 + i.shift[1] - 15]
+                        if bonus:
+                            self.bonus_sprites.add(bonus)
+                            self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
+                            bonus.rect.center = i.rect.center
                         i.kill()
                         del i
             if self.rl:

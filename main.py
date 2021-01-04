@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import threading
+
 pygame.init()
 from player_file import *
 from wall_sprites_file import *
@@ -194,7 +195,12 @@ def game_over():
         if timer >= 50:
             can_exit = True
 
+pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
 def menu():
+    if not pygame.mixer.get_busy() or pygame.mixer.music.get_volume() != sound_count * 10 / 100:
+
+        pygame.mixer.music.set_volume(sound_count * 10 / 100)
+        pygame.mixer.music.play()
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)

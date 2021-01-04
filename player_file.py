@@ -1,8 +1,11 @@
-from pygame import key, Surface, draw
+from pygame import key, Surface, draw, mixer
 from random import randint
 import pygame
 from brick import *
 from random import choice
+
+mixer.init()
+sound2 = mixer.Sound('music&effects/effects/klonk.mp3')
 
 
 def up_collision(obj_1, obj_2):
@@ -243,6 +246,7 @@ class Player(sprite.Sprite):
                 self.hit_timer = self.timer
                 self.hit_event = False
                 self.hit_mode = True
+                sound2.play()
             else:
                 self.rect.y -= 1
         elif self.hit_mode and self.timer - self.hit_timer < 15 and not self.bunny_mode:

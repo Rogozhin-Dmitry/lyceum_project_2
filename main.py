@@ -148,9 +148,6 @@ def main():
                 return 'freeze'
             if ev_activity.type == 31:
                 return 'game_over'
-            if ev_activity.type == 32:
-                return 'boss_fight'
-
         render.render_funk()
 
         # переворот изображения, это чтобы не отрисовывались отдльные части
@@ -196,28 +193,6 @@ def game_over():
         timer += 1
         if timer >= 50:
             can_exit = True
-
-
-def boss_fight():
-    while True:
-        # Держим цикл на правильной скорости
-        clock.tick(FPS)
-        # boss = Boss()
-        # Ввод процесса (события)
-        for bf_ev_activity in pygame.event.get():
-            # проверка для закрытия окна
-            if bf_ev_activity.type == pygame.QUIT:
-                return 'exit'
-            if bf_ev_activity.type == pygame.KEYDOWN and bf_ev_activity.key == pygame.K_ESCAPE:
-                return 'esc_menu'
-            if bf_ev_activity.type == 31:
-                return 'game_over'
-
-        render.boss_fight_render_funk()
-
-        # переворот изображения, это чтобы не отрисовывались отдльные части
-        pygame.display.flip()
-
 
 def menu():
     while True:
@@ -665,5 +640,3 @@ while True:
         result = freeze()
     elif result == 'game_over':
         result = game_over()
-    elif result == 'boss_fight':
-        result = boss_fight()

@@ -21,6 +21,7 @@ class Enemy(Brick):  # общий класс всех врагов
         self.cords = cords
         self.is_target = False
         self.can_target = False
+        self.is_boss = False
         self.cords_not_round = [self.cords[0] * SIZE_OF_RECT, self.cords[1] * SIZE_OF_RECT]
         self.delay = (0, 0)
 
@@ -32,6 +33,7 @@ class Boss(Enemy):
         super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
                          shift=shift)
         self.step = 5
+        self.is_boss = True
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
         self.down = True
@@ -176,7 +178,8 @@ class Boss(Enemy):
 class Crash(Enemy):
     def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, 'tiles\\enemy\\crash1.png', wall_sprites, damage_sprites, can_be_broken, mask=mask,
+        super().__init__(cords, rect_size, 'tiles\\enemy\\crash1.png', wall_sprites, damage_sprites, can_be_broken,
+                         mask=mask,
                          shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
@@ -184,13 +187,13 @@ class Crash(Enemy):
         self.count = 0
         # self.bun_image_left_run = []
         self.image_right_run = [self.image]
-        for i in range(5):
+        for i in range(2):
             if i <= 2:
                 self.image_right_run.append(transform.scale(
-                image.load('tiles\\enemy\\crash_animation\\crashtank_ani_' + str(i + 1) + '.png').convert(), rect_size))
+                    image.load('tiles\\enemy\\crash' + str(i + 1) + '.png').convert(), rect_size))
             else:
                 self.image_right_run.append(transform.scale(
-                image.load('tiles\\enemy\\crash_animation\\crashtank_ani_' + str(5 - i) + '.png').convert(), rect_size))
+                    image.load('tiles\\enemy\\crash' + str(5 - i) + '.png').convert(), rect_size))
             # self.bun_image_right_run.append(transform.flip(self.bun_image_left_run[i], True, False))
         self.image_right_run.append(self.image)
         self.last_timer = 0

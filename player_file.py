@@ -96,8 +96,6 @@ class Player(sprite.Sprite):
         self.hit_animation_count = 0
         self.hit_rect = Rect(0, 0, 0, 0)
 
-        self.test_damage = True  # TODO удалить это
-
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
         super().update()
@@ -217,12 +215,6 @@ class Player(sprite.Sprite):
                 self.jump = True
                 self.jump_speed = -17
             self.rect.y -= 1
-
-        if keys[pygame.K_k] and self.test_damage:  # тестовая система жизней
-            self.gui_sprites.set_hearts(self.gui_sprites.hp - 1)
-            self.test_damage = False
-        elif not keys[pygame.K_k]:
-            self.test_damage = True
 
         if keys[pygame.K_q] and self.timer - self.hit_timer > 15 and self.hit_event and not self.bunny_mode:
             self.rect.y += 1

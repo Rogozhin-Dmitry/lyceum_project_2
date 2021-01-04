@@ -70,7 +70,7 @@ class Boss(Enemy):
                     or 75 < self.invulnerable_count <= 90 or \
                     105 < self.invulnerable_count < 120:
                 self.image = self.clear_img
-            elif self.invulnerable == 120:
+            elif self.invulnerable_count == 120:
                 self.invulnerable = False
                 self.image = self.true_image
                 self.invulnerable_count = 0

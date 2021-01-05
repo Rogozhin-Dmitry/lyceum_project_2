@@ -149,8 +149,9 @@ def main():
                 return 'freeze'
             if ev_activity.type == 31:
                 return 'game_over'
+            if ev_activity.type == 35:
+                pass
         render.render_funk()
-
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
 
@@ -196,11 +197,10 @@ def game_over():
             can_exit = True
 
 pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
+klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
 def menu():
-    if not pygame.mixer.get_busy() or pygame.mixer.music.get_volume() != sound_count * 10 / 100:
-
-        pygame.mixer.music.set_volume(sound_count * 10 / 100)
-        pygame.mixer.music.play()
+    if not pygame.mixer.get_busy() or pygame.mixer.music.get_volume() != Music_Volume * 10 / 100:
+        pygame.mixer.music.set_volume(Music_Volume * 10 / 100)
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -252,7 +252,7 @@ def esc_menu():
 
 def settings_processor(obj):
     global type_of_btn, sound_open, cursor_position
-    if obj.type == 'sound':
+    if obj.type == 'music_volume':
         sound_open = True
         for obj_1 in settings_buttons_sprites:
             if obj_1.type == 'menu' or obj_1.type == 'esc_menu':
@@ -263,6 +263,33 @@ def settings_processor(obj):
                     Button(text_but, text_but.get_rect(centerx=SIZE_OF_RECT * 15,
                                                        y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 5), 'close'))
                 break
+            if obj_1.type == 'effects_volume':
+                obj_1.kill()
+        cursor_position = 0
+        cursor.rect.right = \
+            settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
+        cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
+    elif obj.type == 'effects_volume':
+        sound_open = True
+        for obj_1 in settings_buttons_sprites:
+            if obj_1.type == 'menu' or obj_1.type == 'esc_menu':
+                obj_1.kill()
+                type_of_btn = obj_1.type
+                text_but = font_sh.render('Готово', True, (245, 245, 245))
+                settings_buttons_sprites.add(
+                    Button(text_but, text_but.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                       y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 5), 'close'))
+                break
+            if obj_1.type == 'music_volume':
+                obj_1.kill()
+            if obj_1.type == 'effects_volume':
+                obj_1.kill()
+                text_but = font_sh.render('Громкость эффектов', True, (245, 245, 245))
+                settings_buttons_sprites.add(
+                    Button(text_but,
+                           text_but.get_rect(centerx=SIZE_OF_RECT * 15,
+                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 3),
+                           'effects_volume'))
         cursor_position = 0
         cursor.rect.right = \
             settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
@@ -270,13 +297,15 @@ def settings_processor(obj):
     elif obj.type == 'close':
         for obj_1 in settings_buttons_sprites:
             if obj_1.type == 'close':
-                obj_1.kill()
-                text_but = font_sh.render('Назад', True, (245, 245, 245))
-                settings_buttons_sprites.add(
-                    Button(text_but,
-                           text_but.get_rect(centerx=SIZE_OF_RECT * 15,
-                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4),
-                           type_of_btn))
+                settings_buttons_sprites.empty()
+                count = 1
+                for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'),
+                             ("Назад", 'menu')]:
+                    text = font_sh.render(i, True, (245, 245, 245))
+                    settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (
+                                                                                        2 + count)), j))
+                    count += 1
                 break
         sound_open = False
         cursor_position = 0
@@ -286,7 +315,7 @@ def settings_processor(obj):
 
 
 def settings():
-    global cursor_position, sound_count, type_of_btn, sound_open
+    global cursor_position, Music_Volume, type_of_btn, sound_open, Effects_Volume
     cursor_position = 0
     cursor.rect.right = settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
     cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
@@ -311,11 +340,12 @@ def settings():
                         if obj_1.rect.x <= pygame.mouse.get_pos()[0] <= obj_1.rect.x + obj_1.rect.w and (
                                 obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h):
                             if obj_1.type == '+':
-                                if sound_count != 10:
-                                    sound_count += 1
+                                if Music_Volume != 10:
+                                    Music_Volume += 1
                             elif obj_1.type == '-':
-                                if sound_count != 0:
-                                    sound_count -= 1
+                                if Music_Volume != 0:
+                                    Music_Volume -= 1
+                            pygame.mixer.music.set_volume(Music_Volume * 10 / 100)
             elif settings_ev_activity.type == pygame.KEYDOWN:
                 if settings_ev_activity.key == pygame.K_DOWN:
                     if cursor_position + 1 < len(settings_buttons_sprites.sprites()):
@@ -343,11 +373,11 @@ def settings():
         settings_buttons_sprites.draw(screen)
         cursor_sprites.draw(screen)
         if sound_open:
-            for obj_1 in range(sound_count):
+            for obj_1 in range(Music_Volume):
                 pygame.draw.rect(screen, (255, 255, 255), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
                                                            SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
                                                            small_size_2, small_size_1))
-            for obj_1 in range(sound_count, 10):
+            for obj_1 in range(Music_Volume, 10):
                 pygame.draw.rect(screen, (120, 120, 120), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
                                                            SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
                                                            small_size_2, small_size_1))
@@ -543,7 +573,8 @@ settings_background_image = pygame.transform.scale(pygame.image.load('fons\\opti
 settings_decoration_image = pygame.transform.scale(pygame.image.load('fons\\menu_illustration.png').convert(),
                                                    (SIZE_OF_RECT * 12, SIZE_OF_RECT * 3))
 settings_decoration_image.set_colorkey((0, 0, 0))
-sound_count = 5
+Music_Volume = 3
+Effects_Volume = 3
 type_of_btn = ''
 sound_open = False
 small_size_2 = SIZE_OF_RECT // 8
@@ -571,7 +602,7 @@ spr.type = '-'
 settings_buttons_sprites_sound.add(spr)
 
 count = 1
-for i, j in [("Звук", 'sound'), ("Назад", 'menu')]:
+for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'), ("Назад", 'menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
@@ -580,6 +611,7 @@ for i, j in [("Звук", 'sound'), ("Назад", 'menu')]:
 cursor_position = 0
 cursor = pygame.sprite.Sprite()
 cursor.image = pygame.transform.scale(pygame.image.load('fons\\cursor.png').convert(), (SIZE_OF_RECT, SIZE_OF_RECT))
+pygame.mixer.music.play()
 cursor.image.set_colorkey((255, 255, 255))
 cursor.rect = cursor.image.get_rect()
 cursor.rect.x = settings_buttons_sprites.sprites()[cursor_position].rect.x - settings_buttons_sprites.sprites()[

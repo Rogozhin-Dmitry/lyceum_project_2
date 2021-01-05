@@ -285,7 +285,7 @@ class Player(sprite.Sprite):
                 self.image.set_colorkey((255, 255, 255))
                 self.hit_animation_count += 1
                 self.hit_animation_timer = self.timer
-        elif self.hit_mode and self.timer - self.hit_timer > 15:
+        elif self.hit_mode and self.timer - self.hit_timer >= 15:
             self.hit_mode = False
             for i in self.enemies_sprites:
                 if Rect.colliderect(self.hit_rect, i.rect):

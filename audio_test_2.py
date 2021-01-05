@@ -4,11 +4,12 @@ import sys
 pg.init()
 sc = pg.display.set_mode((400, 300))
 
-pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
-pygame.mixer.music.play()
+pg.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
+pg.mixer.music.play()
 
 sound1 = pg.mixer.Sound('music&effects/music/boss_fight/NGAHHH!! (from Undertale).mp3')
 sound2 = pg.mixer.Sound('music&effects/effects/klonk.mp3')
+sound2.set_volume(0.8)
 
 while 1:
     for i in pg.event.get():

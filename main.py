@@ -149,8 +149,14 @@ def main():
                 return 'freeze'
             if ev_activity.type == 31:
                 return 'game_over'
-            if ev_activity.type == 35:
-                pass
+            if ev_activity.type == 50:
+                klonk_sound.play()
+            if ev_activity.type == 51:
+                anti_klonk.play()
+            if ev_activity.type == 52:
+                hopp.play()
+
+
         render.render_funk()
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
@@ -196,8 +202,8 @@ def game_over():
         if timer >= 50:
             can_exit = True
 
-pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
-klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
+
+
 def menu():
     if not pygame.mixer.get_busy() or pygame.mixer.music.get_volume() != Music_Volume * 10 / 100:
         pygame.mixer.music.set_volume(Music_Volume * 10 / 100)
@@ -251,8 +257,9 @@ def esc_menu():
 
 
 def settings_processor(obj):
-    global type_of_btn, sound_open, cursor_position
+    global type_of_btn, sound_open, cursor_position, music_vloume_en_edit, effects_vloume_en_edit
     if obj.type == 'music_volume':
+        music_vloume_en_edit = True
         sound_open = True
         for obj_1 in settings_buttons_sprites:
             if obj_1.type == 'menu' or obj_1.type == 'esc_menu':
@@ -269,7 +276,9 @@ def settings_processor(obj):
         cursor.rect.right = \
             settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
         cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
+
     elif obj.type == 'effects_volume':
+        effects_vloume_en_edit = True
         sound_open = True
         for obj_1 in settings_buttons_sprites:
             if obj_1.type == 'menu' or obj_1.type == 'esc_menu':
@@ -304,7 +313,8 @@ def settings_processor(obj):
                     text = font_sh.render(i, True, (245, 245, 245))
                     settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (
-                                                                                        2 + count)), j))
+                                                                                    2 + count)), j))
+                    effects_vloume_en_edit, music_vloume_en_edit = False, False
                     count += 1
                 break
         sound_open = False
@@ -315,7 +325,8 @@ def settings_processor(obj):
 
 
 def settings():
-    global cursor_position, Music_Volume, type_of_btn, sound_open, Effects_Volume
+    global cursor_position, Music_Volume, type_of_btn, sound_open, Effects_Volume, music_vloume_en_edit, \
+        effects_vloume_en_edit, mixer_sounds
     cursor_position = 0
     cursor.rect.right = settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
     cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
@@ -338,7 +349,8 @@ def settings():
                 if sound_open:
                     for obj_1 in settings_buttons_sprites_sound:
                         if obj_1.rect.x <= pygame.mouse.get_pos()[0] <= obj_1.rect.x + obj_1.rect.w and (
-                                obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h):
+                                obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h) \
+                                and music_vloume_en_edit:
                             if obj_1.type == '+':
                                 if Music_Volume != 10:
                                     Music_Volume += 1
@@ -346,6 +358,18 @@ def settings():
                                 if Music_Volume != 0:
                                     Music_Volume -= 1
                             pygame.mixer.music.set_volume(Music_Volume * 10 / 100)
+                        elif obj_1.rect.x <= pygame.mouse.get_pos()[0] <= obj_1.rect.x + obj_1.rect.w and (
+                                obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h) \
+                                and effects_vloume_en_edit:
+                            if obj_1.type == '+':
+                                if Effects_Volume != 10:
+                                    Effects_Volume += 1
+                            elif obj_1.type == '-':
+                                if Effects_Volume != 0:
+                                    Effects_Volume -= 1
+                            for eff in mixer_sounds:
+                                eff.set_volume(Effects_Volume * 10 / 100)
+
             elif settings_ev_activity.type == pygame.KEYDOWN:
                 if settings_ev_activity.key == pygame.K_DOWN:
                     if cursor_position + 1 < len(settings_buttons_sprites.sprites()):
@@ -373,11 +397,11 @@ def settings():
         settings_buttons_sprites.draw(screen)
         cursor_sprites.draw(screen)
         if sound_open:
-            for obj_1 in range(Music_Volume):
+            for obj_1 in range(Music_Volume if music_vloume_en_edit else Effects_Volume):
                 pygame.draw.rect(screen, (255, 255, 255), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
                                                            SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
                                                            small_size_2, small_size_1))
-            for obj_1 in range(Music_Volume, 10):
+            for obj_1 in range(Music_Volume if music_vloume_en_edit else Effects_Volume, 10):
                 pygame.draw.rect(screen, (120, 120, 120), (int(SIZE_OF_RECT * 13.3) + obj_1 * small_size_1 * 2,
                                                            SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4,
                                                            small_size_2, small_size_1))
@@ -600,6 +624,16 @@ spr.rect.centery = SIZE_OF_RECT * 17 // 13 + SIZE_OF_RECT * 4 + small_size_1 // 
 pygame.draw.rect(spr.image, (255, 255, 255), (0, SIZE_OF_RECT // 6, SIZE_OF_RECT, SIZE_OF_RECT // 6))
 spr.type = '-'
 settings_buttons_sprites_sound.add(spr)
+
+# music and effects settings
+music_vloume_en_edit = False
+effects_vloume_en_edit = False
+pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
+klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
+anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.mp3')
+hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.mp3')
+mixer_sounds = [klonk_sound, anti_klonk, hopp]
+
 
 count = 1
 for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'), ("Назад", 'menu')]:

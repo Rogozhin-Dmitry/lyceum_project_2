@@ -95,6 +95,7 @@ class Player(sprite.Sprite):
         self.hit_event = True
         self.hit_animation_count = 0
         self.hit_rect = Rect(0, 0, 0, 0)
+        self.dmg_counter = 0
 
     def update(self):  # метод вызываемы при обновлении (каждый кадр),
         # убью если загрузите какими-либо долгими вычислениями, долгими считаются больше 1/60 секунды
@@ -214,9 +215,12 @@ class Player(sprite.Sprite):
             if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
                 self.jump = True
                 self.jump_speed = -17
+                pygame.event.post(pygame.event.Event(52, {}))
             self.rect.y -= 1
 
+
         if keys[pygame.K_q] and self.timer - self.hit_timer > 15 and self.hit_event and not self.bunny_mode:
+            self.dmg_counter = 0
             self.rect.y += 1
             if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
                 self.rect.y -= 1
@@ -243,12 +247,13 @@ class Player(sprite.Sprite):
                 self.hit_timer = self.timer
                 self.hit_event = False
                 self.hit_mode = True
-                pygame.event.post(pygame.event.Event(35, {}))
             else:
                 self.rect.y -= 1
         elif self.hit_mode and self.timer - self.hit_timer < 15 and not self.bunny_mode:
             for i in self.enemies_sprites:
                 if Rect.colliderect(self.hit_rect, i.rect):
+                    self.dmg_counter += 1
+                    pygame.event.post(pygame.event.Event(50, {}))
                     if 'boss' in i.image_name:
                         i.get_damage()
                         if i.hp <= 0:
@@ -274,10 +279,11 @@ class Player(sprite.Sprite):
                             self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
                             bonus.rect.center = i.rect.center
                             self.wall_sprites.render()
-
                         i.kill()
                         del i
-
+            if not self.dmg_counter:
+                pygame.event.post(pygame.event.Event(51, {}))
+                self.dmg_counter += 1
             if self.timer - self.hit_animation_timer >= self.hit_animation_timer_event:
                 if not self.rl:
                     self.image = self.player_hit_img_left[self.hit_animation_count]
@@ -362,6 +368,7 @@ class Player(sprite.Sprite):
                 self.wall_sprites.move(1, 1)
 
             if self.jump:
+
                 self.jump_speed += self.g
                 if self.jump_speed >= 0:
                     self.jump = False
@@ -400,7 +407,7 @@ class Player(sprite.Sprite):
                     self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
                 cords = spr.rect.center
 
-                if spr.image_name == 'tiles\\bonus\\heart_bonus.png'\
+                if spr.image_name == 'tiles\\bonus\\heart_bonus.png' \
                         or spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
                     for i in range(10):
                         cords = randint(cords[0] - 5, cords[0] + 5), randint(cords[1] - 5, cords[1] + 5)

@@ -276,6 +276,7 @@ class Player(sprite.Sprite):
                             self.bonus_sprites.add(bonus)
                             self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
                             bonus.rect.center = i.rect.center
+                            self.wall_sprites.render()
 
                         i.kill()
                         del i
@@ -288,7 +289,7 @@ class Player(sprite.Sprite):
                 self.image.set_colorkey((255, 255, 255))
                 self.hit_animation_count += 1
                 self.hit_animation_timer = self.timer
-        elif self.hit_mode and self.timer - self.hit_timer > 15:
+        elif self.hit_mode and self.timer - self.hit_timer >= 15:
             self.hit_mode = False
             for i in self.enemies_sprites:
                 if Rect.colliderect(self.hit_rect, i.rect):
@@ -316,6 +317,7 @@ class Player(sprite.Sprite):
                             self.bonus_sprites.add(bonus)
                             self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
                             bonus.rect.center = i.rect.center
+                            self.wall_sprites.render()
                         i.kill()
                         del i
             if self.rl:
@@ -401,22 +403,23 @@ class Player(sprite.Sprite):
                     self.gui_sprites.set_hearts(self.gui_sprites.hp + 1)
                 cords = spr.rect.center
 
-                if spr.image_name == 'tiles\\bonus\\heart_bonus.png' or spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
+                if spr.image_name == 'tiles\\bonus\\heart_bonus.png'\
+                        or spr.image_name == 'tiles\\bonus\\bomb_bonus.png':
                     for i in range(10):
                         cords = randint(cords[0] - 5, cords[0] + 5), randint(cords[1] - 5, cords[1] + 5)
-                        spr = sprite.Sprite()
+                        spr_1 = sprite.Sprite()
                         r = randint(9, 15)
-                        spr.image = Surface([r, r])
-                        draw.circle(spr.image, (120, 235, 255), (r // 2, r // 2), r // 2)
-                        spr.image.set_colorkey((0, 0, 0))
-                        spr.rect = spr.image.get_rect()
-                        spr.rect.center = cords
-                        spr.x, spr.y = cords
-                        spr.down = cords[1] + self.rect_size * 0.5
-                        spr.shift_up = 0.3
-                        spr.shift, spr.shift_down = randint(-20, 20) / 10, -4
+                        spr_1.image = Surface([r, r])
+                        draw.circle(spr_1.image, (120, 235, 255), (r // 2, r // 2), r // 2)
+                        spr_1.image.set_colorkey((0, 0, 0))
+                        spr_1.rect = spr_1.image.get_rect()
+                        spr_1.rect.center = cords
+                        spr_1.x, spr_1.y = cords
+                        spr_1.down = cords[1] + self.rect_size * 0.5
+                        spr_1.shift_up = 0.3
+                        spr_1.shift, spr_1.shift_down = randint(-20, 20) / 10, -4
 
-                        self.particle_sprites.add(spr)
+                        self.particle_sprites.add(spr_1)
                 del self.wall_sprites.maps[tuple(spr.cords)]
                 spr.kill()
                 del spr

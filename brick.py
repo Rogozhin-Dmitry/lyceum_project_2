@@ -99,6 +99,7 @@ class Bomb(Brick):
 
                 if sprite.collide_rect(self, self.player):
                     self.player.gui_sprites.set_hearts(self.player.gui_sprites.hp - 1)
+                    self.player.last_timer_damage = self.player.timer
 
         self.timer += 1
 
@@ -154,6 +155,7 @@ class Boss_Bomb(Bomb):
 
                 if sprite.collide_rect(self, self.player):
                     self.player.gui_sprites.set_hearts(self.player.gui_sprites.hp - 1)
+                    self.player.last_timer_damage = self.player.timer
 
         self.timer += 1
 

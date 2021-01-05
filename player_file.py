@@ -272,6 +272,7 @@ class Player(sprite.Sprite):
                             self.bonus_sprites.add(bonus)
                             self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
                             bonus.rect.center = i.rect.center
+                            self.wall_sprites.render()
 
                         i.kill()
                         del i
@@ -312,6 +313,7 @@ class Player(sprite.Sprite):
                             self.bonus_sprites.add(bonus)
                             self.wall_sprites.maps[tuple(bonus.cords)] = [bonus, 'bonus']
                             bonus.rect.center = i.rect.center
+                            self.wall_sprites.render()
                         i.kill()
                         del i
             if self.rl:

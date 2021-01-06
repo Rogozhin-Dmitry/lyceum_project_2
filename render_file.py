@@ -1,12 +1,12 @@
 from pygame import font, display, transform, image
 inf = display.Info()
-x, y = inf.current_w // 30, inf.current_h // 17
+x, y = inf.current_w / 30, inf.current_h / 17
 if x > y:
     SIZE_OF_RECT = int(y)
 else:
     SIZE_OF_RECT = int(x)
-WIDTH = SIZE_OF_RECT * 30
-HEIGHT = SIZE_OF_RECT * 17
+WIDTH = inf.current_w
+HEIGHT = inf.current_h
 
 
 class Render:
@@ -35,8 +35,8 @@ class Render:
         self.game_bg_image = transform.scale(image.load('fons\\bg_with_lights.jpg').convert(), (WIDTH, HEIGHT))
 
     def render_funk(self):
-        #self.screen.blit(self.game_bg_image, (0, 0))
-        self.screen.fill((0, 255, 255))
+        self.screen.blit(self.game_bg_image, (0, 0))
+        # self.screen.fill((0, 255, 255))
         self.player_sprites.update()
         self.wall_sprites.update()
         self.decor_sprites.update()

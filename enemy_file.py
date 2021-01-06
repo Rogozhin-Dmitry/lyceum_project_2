@@ -1,14 +1,14 @@
 from brick import *
-import pygame
+from pygame import Surface, draw, display
 
-inf = pygame.display.Info()
-x, y = inf.current_w // 30, inf.current_h // 17
+inf = display.Info()
+x, y = inf.current_w / 30, inf.current_h / 17
 if x > y:
     SIZE_OF_RECT = int(y)
 else:
     SIZE_OF_RECT = int(x)
-WIDTH = SIZE_OF_RECT * 30
-HEIGHT = SIZE_OF_RECT * 17
+WIDTH = inf.current_w
+HEIGHT = inf.current_h
 
 
 class Enemy(Brick):  # общий класс всех врагов
@@ -47,8 +47,8 @@ class Boss(Enemy):
         self.hp = 5
         self.can_be_broken = False
         self.invulnerable = False
-        self.clear_img = pygame.Surface(rect_size)
-        pygame.draw.rect(self.clear_img, (255, 255, 255), (0, 0, rect_size[0], rect_size[1]))
+        self.clear_img = Surface(rect_size)
+        draw.rect(self.clear_img, (255, 255, 255), (0, 0, rect_size[0], rect_size[1]))
         self.clear_img.set_colorkey((255, 255, 255))
         self.invulnerable_count = 0
         self.true_image = self.image

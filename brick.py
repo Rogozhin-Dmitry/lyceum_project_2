@@ -1,7 +1,7 @@
 from pygame import sprite, image, transform, Rect, display
 
 inf = display.Info()
-x, y = inf.current_w // 30, inf.current_h // 17
+x, y = inf.current_w / 30, inf.current_h / 17
 if x > y:
     SIZE_OF_RECT = int(y)
 else:

@@ -156,7 +156,6 @@ def main():
             if ev_activity.type == 52:
                 hopp.play()
 
-
         render.render_funk()
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
@@ -201,7 +200,6 @@ def game_over():
         timer += 1
         if timer >= 50:
             can_exit = True
-
 
 
 def menu():
@@ -511,15 +509,13 @@ def load_func():
 pygame.mixer.init()
 
 inf = pygame.display.Info()
-x, y = inf.current_w // 30, inf.current_h // 17
+x, y = inf.current_w / 30, inf.current_h / 17
 if x > y:
     SIZE_OF_RECT = int(y)
 else:
     SIZE_OF_RECT = int(x)
-WIDTH = SIZE_OF_RECT * 30
-HEIGHT = SIZE_OF_RECT * 17
-WIDTH_SHIFT = inf.current_w - WIDTH
-HEIGHT_SHIFT = inf.current_h - HEIGHT
+WIDTH = inf.current_w
+HEIGHT = inf.current_h
 FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 clock = pygame.time.Clock()
@@ -629,11 +625,11 @@ settings_buttons_sprites_sound.add(spr)
 music_vloume_en_edit = False
 effects_vloume_en_edit = False
 pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
-klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
-anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.mp3')
-hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.mp3')
-mixer_sounds = [klonk_sound, anti_klonk, hopp]
-
+# klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
+# anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.mp3')
+# hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.mp3')
+# mixer_sounds = [klonk_sound, anti_klonk, hopp]
+mixer_sounds = []
 
 count = 1
 for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'), ("Назад", 'menu')]:

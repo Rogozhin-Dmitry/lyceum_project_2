@@ -272,6 +272,12 @@ class Fly(Enemy):
         self.rl = True
         self.count = 0
         self.all_way_straight = 0
+        self.image_run = [self.image]
+        for i in range(4):
+            self.image_run.append(transform.scale(
+                image.load('tiles\\enemy\\fly_animation\\' + str(i + 1) + '.png').convert(), rect_size))
+        self.last_timer = 0
+        self.timer = 0
 
     def update(self):
         super().update()
@@ -279,12 +285,18 @@ class Fly(Enemy):
             self.target()
         else:
             self.standard()
+            if self.timer - self.last_timer >= 20:
+                self.image = self.image_run[self.count % 5]
+                self.image.set_colorkey((255, 255, 255))
+                self.count += 1
+                self.last_timer = self.timer
         if self.rect.right < 0:
             self.kill()
             self.rl = True
         elif self.rect.x > WIDTH:
             self.kill()
             self.rl = False
+        self.timer += 1
 
     def target(self):
         pass

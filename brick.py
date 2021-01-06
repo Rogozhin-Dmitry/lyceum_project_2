@@ -13,8 +13,7 @@ class Brick(sprite.Sprite):
         super().__init__()
         self.rect_size = rect_size
         self.cords = cords
-        self.player_img = image.load(image_name).convert()
-        self.image = transform.scale(self.player_img, rect_size)
+        self.image = transform.scale(image.load(image_name).convert(), rect_size)
         self.image.set_colorkey((255, 255, 255))
         self.rect = Rect(0, 0, *rect_size)
         self.image_name = image_name

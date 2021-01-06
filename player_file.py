@@ -1,8 +1,7 @@
 from pygame import key, Surface, draw
-from random import randint
+from random import randint, choice
 import pygame
 from brick import *
-from random import choice
 
 
 def up_collision(obj_1, obj_2):

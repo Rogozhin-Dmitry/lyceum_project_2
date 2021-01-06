@@ -1,5 +1,5 @@
 import pygame
-import shutil
+from shutil import copy
 import sys
 import os
 import json
@@ -132,6 +132,40 @@ def load_1(*name):
     gui_sprites.set_hearts(hp)
     gui_sprites.set_bombs(bombs)
     pygame.event.post(pygame.event.Event(26, {}))
+
+
+def name_tag():
+    if not pygame.mixer.get_busy() or pygame.mixer.music.get_volume() != Music_Volume * 10 / 100:
+        pygame.mixer.music.set_volume(Music_Volume * 10 / 100)
+    font_n = pygame.font.Font('fonts\\f1.ttf', 150)
+    txt_surf = font_n.render('Adventure of Kyo', True, (25, 25, 25))
+    txt_surf_rect = txt_surf.get_rect(centerx=SIZE_OF_RECT * 15, centery=SIZE_OF_RECT * 9)
+    alpha_surf = Surface(txt_surf.get_size(), pygame.SRCALPHA)
+    timer = 0
+    last_timer = 0
+    while True:
+        # Держим цикл на правильной скорости
+        clock.tick(FPS)
+        # Ввод процесса (события)
+        for ev_activity in pygame.event.get():
+            # проверка для закрытия окна
+            if ev_activity.type == pygame.QUIT:
+                return 'exit'
+            elif ev_activity.type == pygame.KEYDOWN:
+                return 'menu'
+
+        if timer - last_timer >= 2:
+            alpha_surf.fill((255, 255, 255, max(255 - 4, 0)))
+            txt_surf.blit(alpha_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+            last_timer = timer
+
+        screen.fill((30, 30, 30))
+        screen.blit(txt_surf, txt_surf_rect)
+        # переворот изображения, это чтобы не отрисовывались отдльные части
+        pygame.display.flip()
+        timer += 1
+        if timer >= 240:
+            return 'menu'
 
 
 def main():
@@ -544,7 +578,6 @@ wall_sprites = Wal_sprite(SIZE_OF_RECT, decor_sprites, bonus_sprites, particle_s
                           saves_sprites, damage_sprites, enemies_sprites, bomb_sprites, screen)
 player_sprites = pygame.sprite.Group()
 gui_sprites = Gui(SIZE_OF_RECT)
-gui_sprites.set_hearts(6)
 render = Render(screen, player_sprites, wall_sprites, decor_sprites, bonus_sprites, gui_sprites,
                 dust_particle_sprites, particle_sprites, saves_sprites, damage_sprites, enemies_sprites, bomb_sprites)
 
@@ -651,6 +684,7 @@ cursor.rect.x = settings_buttons_sprites.sprites()[cursor_position].rect.x - set
 cursor.rect.y = settings_buttons_sprites.sprites()[cursor_position].rect.y
 cursor_sprites = pygame.sprite.Group(cursor)
 
+name_tag()
 result = menu()
 name_of_save = ''
 while True:
@@ -668,7 +702,7 @@ while True:
         mass.remove('saves\\new_game')
         mass.sort()
         name_of_save = 'saves\\data_file_' + str(int(mass[-1].split('.')[0][-1]) + 1) + '.json'
-        shutil.copy('saves\\new_game\\' + str(dif) + '.json', name_of_save)
+        copy('saves\\new_game\\' + str(dif) + '.json', name_of_save)
         result = 'load'
     elif result == 'load':
         t1 = threading.Thread(target=screen_saver)

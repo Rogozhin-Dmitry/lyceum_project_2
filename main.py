@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 from shutil import copy
 import sys
 import os
@@ -6,6 +7,7 @@ import json
 import threading
 
 pygame.init()
+pygame.mixer.init()
 from player_file import *
 from wall_sprites_file import *
 from render_file import *
@@ -660,10 +662,10 @@ settings_buttons_sprites_sound.add(spr)
 music_vloume_en_edit = False
 effects_volume_en_edit = False
 pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
-# klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
-# anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.mp3')
-# hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.mp3')
-# mixer_sounds = [klonk_sound, anti_klonk, hopp]
+klonk_sound = mixer.Sound('music&effects/effects/klonk.wav')
+anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
+hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
+mixer_sounds = [klonk_sound, anti_klonk, hopp]
 mixer_sounds = []
 
 count = 1

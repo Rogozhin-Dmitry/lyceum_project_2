@@ -1,4 +1,4 @@
-from pygame import key, Surface, draw, mixer
+from pygame import key, Surface, draw
 from random import randint
 import pygame
 from brick import *
@@ -217,7 +217,6 @@ class Player(sprite.Sprite):
                 self.jump_speed = -17
                 pygame.event.post(pygame.event.Event(52, {}))
             self.rect.y -= 1
-
 
         if keys[pygame.K_q] and self.timer - self.hit_timer > 15 and self.hit_event and not self.bunny_mode:
             self.dmg_counter = 0

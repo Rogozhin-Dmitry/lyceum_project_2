@@ -255,7 +255,7 @@ def esc_menu():
 
 
 def settings_processor(obj):
-    global type_of_btn, sound_open, cursor_position, music_vloume_en_edit, effects_vloume_en_edit
+    global type_of_btn, sound_open, cursor_position, music_vloume_en_edit, effects_volume_en_edit
     if obj.type == 'music_volume':
         music_vloume_en_edit = True
         sound_open = True
@@ -271,12 +271,11 @@ def settings_processor(obj):
             if obj_1.type == 'effects_volume':
                 obj_1.kill()
         cursor_position = 0
-        cursor.rect.right = \
-            settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
+        cursor.rect.right = settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
         cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
 
     elif obj.type == 'effects_volume':
-        effects_vloume_en_edit = True
+        effects_volume_en_edit = True
         sound_open = True
         for obj_1 in settings_buttons_sprites:
             if obj_1.type == 'menu' or obj_1.type == 'esc_menu':
@@ -305,15 +304,16 @@ def settings_processor(obj):
         for obj_1 in settings_buttons_sprites:
             if obj_1.type == 'close':
                 settings_buttons_sprites.empty()
-                count = 1
-                for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'),
-                             ("Назад", 'menu')]:
-                    text = font_sh.render(i, True, (245, 245, 245))
-                    settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (
-                                                                                    2 + count)), j))
-                    effects_vloume_en_edit, music_vloume_en_edit = False, False
-                    count += 1
+                count_2 = 1
+                for name, returner in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'),
+                                       ("Назад", 'menu')]:
+                    btn_text = font_sh.render(name, True, (245, 245, 245))
+                    settings_buttons_sprites.add(
+                        Button(btn_text,
+                               btn_text.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                 y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count_2)), returner))
+                    effects_volume_en_edit, music_vloume_en_edit = False, False
+                    count_2 += 1
                 break
         sound_open = False
         cursor_position = 0
@@ -324,7 +324,7 @@ def settings_processor(obj):
 
 def settings():
     global cursor_position, Music_Volume, type_of_btn, sound_open, Effects_Volume, music_vloume_en_edit, \
-        effects_vloume_en_edit, mixer_sounds
+        effects_volume_en_edit, mixer_sounds
     cursor_position = 0
     cursor.rect.right = settings_buttons_sprites.sprites()[cursor_position].rect.x - 5
     cursor.rect.centery = settings_buttons_sprites.sprites()[cursor_position].rect.centery
@@ -358,7 +358,7 @@ def settings():
                             pygame.mixer.music.set_volume(Music_Volume * 10 / 100)
                         elif obj_1.rect.x <= pygame.mouse.get_pos()[0] <= obj_1.rect.x + obj_1.rect.w and (
                                 obj_1.rect.y <= pygame.mouse.get_pos()[1] <= obj_1.rect.y + obj_1.rect.h) \
-                                and effects_vloume_en_edit:
+                                and effects_volume_en_edit:
                             if obj_1.type == '+':
                                 if Effects_Volume != 10:
                                     Effects_Volume += 1
@@ -411,9 +411,9 @@ def settings():
 def new_game():
     global dif
     diff_select_open = False
-    diff_btns = pygame.sprite.Group()
-    for i in standard_diff_btns:
-        diff_btns.add(i)
+    diff_btn = pygame.sprite.Group()
+    for elem in standard_diff_btns:
+        diff_btn.add(elem)
     while True:
         # Держим цикл на правильной скорости
         clock.tick(FPS)
@@ -423,57 +423,59 @@ def new_game():
             if ng_ev_activity.type == pygame.QUIT:
                 return 'exit'
             if ng_ev_activity.type == pygame.MOUSEBUTTONDOWN:
-                for but in diff_btns:
+                for but in diff_btn:
                     if but.is_clicked():
                         if but.type == 'diff_select':
-                            diff_btns.empty()
-                            for i, j in [('1', -25), ('2', 0), ('3', 25), ('_', 25 * (dif - 1))]:
-                                one_btn = font_sh.render(i, True, (245, 245, 245))
+                            diff_btn.empty()
+                            for name, returner in [('1', -25), ('2', 0), ('3', 25), ('_', 25 * (dif - 1))]:
+                                one_btn = font_sh.render(name, True, (245, 245, 245))
                                 y1_params = SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * 4
-                                diff_btns.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15 + j,
-                                                                               y=y1_params), i))
-                                count_1 = 1
-                                for i, j in [("Сложность", ''), ("Назад", 'back')]:
-                                    one_btn = font_sh.render(i, True, (245, 245, 245))
-                                    diff_btns.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15,
-                                                                                   y=SIZE_OF_RECT * 17 // 15 +
-                                                                                     SIZE_OF_RECT * (2 + count_1)), j))
-                                    count_1 += 2
+                                diff_btn.add(Button(one_btn, one_btn.get_rect(centerx=SIZE_OF_RECT * 15 + returner,
+                                                                              y=y1_params), name))
+                            count_1 = 1
+                            for name, returner in [("Сложность", ''), ("Назад", 'back')]:
+                                one_btn = font_sh.render(name, True, (245, 245, 245))
+                                diff_btn.add(
+                                    Button(one_btn,
+                                           one_btn.get_rect(centerx=SIZE_OF_RECT * 15,
+                                                            y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count_1)),
+                                           returner))
+                                count_1 += 2
                             diff_select_open = True
                         else:
                             if diff_select_open:
                                 if but.type == '1':
-                                    for but_1 in diff_btns:
+                                    for but_1 in diff_btn:
                                         if but_1.type == '_':
                                             but_1.rect.centerx = SIZE_OF_RECT * 15 - 25
                                         dif = 0
                                 elif but.type == '2':
-                                    for but_1 in diff_btns:
+                                    for but_1 in diff_btn:
                                         if but_1.type == '_':
                                             but_1.rect.centerx = SIZE_OF_RECT * 15
                                         dif = 1
                                 elif but.type == '3':
-                                    for but_1 in diff_btns:
+                                    for but_1 in diff_btn:
                                         if but_1.type == '_':
                                             but_1.rect.centerx = SIZE_OF_RECT * 15 + 25
                                         dif = 2
                                 elif but.type == 'back':
                                     diff_select_open = False
-                                    diff_btns.empty()
-                                    for i in standard_diff_btns:
-                                        diff_btns.add(i)
+                                    diff_btn.empty()
+                                    for elem in standard_diff_btns:
+                                        diff_btn.add(elem)
                             else:
                                 if but.type == 'new_game':
                                     return 'dif ' + str(dif)
                                 elif but.type == 'menu':
                                     return 'menu'
         screen.blit(dif_set_image, (0, 0))
-        diff_btns.draw(screen)
+        diff_btn.draw(screen)
         pygame.display.flip()
 
 
 def load_func():
-    closed_mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
+    closed_mass = [f"saves\\{f_name}" for f_name in os.listdir(path=f"{os.getcwd()}\\saves")]
     closed_mass.remove('saves\\new_game')
     saves_names = []
     for elem in closed_mass:
@@ -623,7 +625,7 @@ settings_buttons_sprites_sound.add(spr)
 
 # music and effects settings
 music_vloume_en_edit = False
-effects_vloume_en_edit = False
+effects_volume_en_edit = False
 pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
 # klonk_sound = mixer.Sound('music&effects/effects/klonk.mp3')
 # anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.mp3')

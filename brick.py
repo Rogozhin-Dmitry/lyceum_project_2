@@ -20,6 +20,7 @@ class Brick(sprite.Sprite):
         self.image_name = image_name
         self.shift = shift
         self.can_be_broken = can_be_broken
+        self.mask = mask
 
 
 class SavePoint(sprite.Sprite):

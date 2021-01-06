@@ -666,7 +666,6 @@ klonk_sound = mixer.Sound('music&effects/effects/klonk.wav')
 anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
 hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
 mixer_sounds = [klonk_sound, anti_klonk, hopp]
-mixer_sounds = []
 
 count = 1
 for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'), ("Назад", 'menu')]:

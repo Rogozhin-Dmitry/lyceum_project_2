@@ -147,7 +147,7 @@ def name_tag():
     last_timer = 0
     while True:
         # Держим цикл на правильной скорости
-        clock.tick(FPS)
+        clock.tick(255)
         # Ввод процесса (события)
         for ev_activity in pygame.event.get():
             # проверка для закрытия окна
@@ -157,7 +157,7 @@ def name_tag():
                 return 'menu'
 
         if timer - last_timer >= 2:
-            alpha_surf.fill((255, 255, 255, max(255 - 4, 0)))
+            alpha_surf.fill((255, 255, 255, max(255 - 2, 0)))
             txt_surf.blit(alpha_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
             last_timer = timer
 
@@ -166,7 +166,7 @@ def name_tag():
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
         timer += 1
-        if timer >= 240:
+        if timer >= 275:
             return 'menu'
 
 

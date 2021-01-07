@@ -11,6 +11,13 @@ WIDTH = inf.current_w
 HEIGHT = inf.current_h
 
 
+def down_collision(obj_1, obj_2):
+    return (obj_2.rect.x < obj_1.rect.x < obj_2.rect.x + obj_2.rect.w or obj_2.rect.x
+            < obj_1.rect.x + obj_1.rect.w < obj_2.rect.x + obj_2.rect.w or obj_2.rect.x == obj_1.rect.x
+            or obj_2.rect.x + obj_2.rect.w == obj_1.rect.x + obj_1.rect.w) and \
+           (obj_2.rect.y < obj_1.rect.y + obj_1.rect.h < obj_2.rect.y + obj_2.rect.w)
+
+
 class Enemy(Brick):  # общий класс всех врагов
     def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                  mask=False,
@@ -210,8 +217,8 @@ class Crash(Enemy):
                 self.rect.x += SIZE_OF_RECT - self.step * 2
             rl = self.rl
             self.rect.y += self.step
-            if sprite.spritecollideany(self, self.wall_sprites):
-                while sprite.spritecollideany(self, self.wall_sprites):
+            if sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
+                while sprite.spritecollideany(self, self.wall_sprites, collided=down_collision):
                     self.rect.y -= 1
             else:
                 self.rect.y -= self.step

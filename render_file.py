@@ -67,7 +67,7 @@ class Render:
         self.gui_sprites.draw(self.screen)
 
     def freeze_render_funk(self):
-        self.screen.fill((0, 255, 255))
+        self.screen.blit(self.game_bg_image, (0, 0))
         self.wall_sprites.update()
         self.decor_sprites.update()
         self.saves_sprites.update()
@@ -93,7 +93,7 @@ class Render:
         self.gui_sprites.draw(self.screen)
 
     def game_over_render_funk(self):
-        self.screen.fill((0, 255, 255))
+        self.screen.blit(self.game_bg_image, (0, 0))
         self.wall_sprites.update()
         self.decor_sprites.update()
         self.saves_sprites.update()

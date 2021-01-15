@@ -191,6 +191,9 @@ def main():
                 anti_klonk.play()
             if ev_activity.type == 52:
                 hopp.play()
+            if ev_activity.type == 53:
+                incoming_damage_sound.play()
+
 
         render.render_funk()
         # переворот изображения, это чтобы не отрисовывались отдльные части
@@ -665,6 +668,7 @@ pygame.mixer.music.load('music&effects/music/menu/Florian Christl - Close Your E
 klonk_sound = mixer.Sound('music&effects/effects/klonk.wav')
 anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
 hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
+incoming_damage_sound = mixer.Sound('music&effects/effects/incoming_damage.wav')
 mixer_sounds = [klonk_sound, anti_klonk, hopp]
 
 count = 1

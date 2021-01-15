@@ -104,6 +104,8 @@ class Player(sprite.Sprite):
         keys = key.get_pressed()
 
         if sprite.spritecollideany(self, self.saves_sprites) and keys[pygame.K_e]:
+            self.gui_sprites.set_hearts(self.gui_sprites.max_hp // 2)
+            self.gui_sprites.set_bombs(self.gui_sprites.max_bomb // 2)
             pygame.event.post(pygame.event.Event(30, {}))
             for save in self.saves_sprites.sprites():
                 if sprite.collide_rect(self, save):
@@ -212,7 +214,7 @@ class Player(sprite.Sprite):
 
         if (keys[32] or keys[pygame.K_z]) and not self.jump and not self.hit_mode:
             self.rect.y += 1
-            if sprite.spritecollideany(self, self.wall_sprites):  # проверка что персоонаж на полу
+            if sprite.spritecollideany(self, self.wall_sprites) or sprite.spritecollideany(self, self.damage_sprites):  # проверка что персоонаж на полу
                 self.jump = True
                 self.jump_speed = -17
                 pygame.event.post(pygame.event.Event(52, {}))

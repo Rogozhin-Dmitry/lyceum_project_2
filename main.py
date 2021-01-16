@@ -193,8 +193,16 @@ def main():
                 hopp.play()
             if ev_activity.type == 53:
                 incoming_damage_sound.play()
-
-
+            if ev_activity.type == 60:
+                mixer.music.stop()
+                mixer.music.unload()
+                mixer.music.load('music&effects/music/world/To The Abyss.mp3')
+                mixer.music.play()
+            if ev_activity.type == 61:
+                mixer.music.stop()
+                mixer.music.unload()
+                mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
+                mixer.music.play()
         render.render_funk()
         # переворот изображения, это чтобы не отрисовывались отдльные части
         pygame.display.flip()
@@ -724,6 +732,10 @@ while True:
         else:
             result = name_of_save
     elif result == 'menu':
+        mixer.music.stop()
+        mixer.music.unload()
+        mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
+        mixer.music.play()
         result = menu()
     elif result == 'settings':
         result = settings()
@@ -731,6 +743,7 @@ while True:
             if i.type == 'esc_menu':
                 i.type = 'menu'
     elif result == 'main':
+        pygame.event.post(pygame.event.Event(60, {}))
         result = main()
     elif result == 'esc_menu':
         result = esc_menu()

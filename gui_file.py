@@ -20,6 +20,8 @@ class Gui(sprite.Group):
 
     def set_hearts(self, num):
         if 0 < num <= self.max_hp:
+            if self.hp - 1 == num:
+                event.post(event.Event(53, {}))
             self.hp = num
             self.heart_sprites.empty()
             for i in range(self.max_hp):

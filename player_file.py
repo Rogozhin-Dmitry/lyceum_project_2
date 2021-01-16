@@ -104,8 +104,10 @@ class Player(sprite.Sprite):
         keys = key.get_pressed()
 
         if sprite.spritecollideany(self, self.saves_sprites) and keys[pygame.K_e]:
-            self.gui_sprites.set_hearts(self.gui_sprites.max_hp // 2)
-            self.gui_sprites.set_bombs(self.gui_sprites.max_bomb // 2)
+            if self.gui_sprites.hp < self.gui_sprites.max_hp // 2:
+                self.gui_sprites.set_hearts(self.gui_sprites.max_hp // 2)
+            if self.gui_sprites.bomb < self.gui_sprites.max_bomb // 2:
+                self.gui_sprites.set_bombs(self.gui_sprites.max_bomb // 2)
             pygame.event.post(pygame.event.Event(30, {}))
             for save in self.saves_sprites.sprites():
                 if sprite.collide_rect(self, save):
@@ -214,7 +216,8 @@ class Player(sprite.Sprite):
 
         if (keys[32] or keys[pygame.K_z]) and not self.jump and not self.hit_mode:
             self.rect.y += 1
-            if sprite.spritecollideany(self, self.wall_sprites) or sprite.spritecollideany(self, self.damage_sprites):  # проверка что персоонаж на полу
+            if sprite.spritecollideany(self, self.wall_sprites) or sprite.spritecollideany(self,
+                                                                                           self.damage_sprites):  # проверка что персоонаж на полу
                 self.jump = True
                 self.jump_speed = -17
                 pygame.event.post(pygame.event.Event(52, {}))
@@ -254,13 +257,15 @@ class Player(sprite.Sprite):
             for i in self.enemies_sprites:
                 if Rect.colliderect(self.hit_rect, i.rect):
                     self.dmg_counter += 1
-                    pygame.event.post(pygame.event.Event(50, {}))
+                    if 'boss' not in i.image_name:
+                        pygame.event.post(pygame.event.Event(50, {}))
                     if 'boss' in i.image_name:
                         i.get_damage()
                         if i.hp <= 0:
                             del self.wall_sprites.maps[tuple(i.cords)]
                             i.kill()
                             del i
+
                     else:
                         del self.wall_sprites.maps[tuple(i.cords)]
                         random_bonus = choice(['heart', None, 'bomb'])
@@ -282,7 +287,7 @@ class Player(sprite.Sprite):
                             self.wall_sprites.render()
                         i.kill()
                         del i
-            if not self.dmg_counter:
+            if not self.dmg_counter:  # and ('boss' not in i.image_name)
                 pygame.event.post(pygame.event.Event(51, {}))
                 self.dmg_counter += 1
             if self.timer - self.hit_animation_timer >= self.hit_animation_timer_event:
@@ -301,6 +306,7 @@ class Player(sprite.Sprite):
                         i.get_damage()
                         if i.hp <= 0:
                             del self.wall_sprites.maps[tuple(i.cords)]
+
                             i.kill()
                             del i
                     else:

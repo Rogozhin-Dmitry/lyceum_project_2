@@ -1,5 +1,5 @@
 from brick import *
-from pygame import Surface, draw, display
+from pygame import Surface, draw, display, event
 
 inf = display.Info()
 x, y = inf.current_w / 30, inf.current_h / 17
@@ -178,8 +178,11 @@ class Boss(Enemy):
 
     def get_damage(self):
         if not self.invulnerable:
+            event.post(event.Event(50, {}))
             self.hp = self.hp - 1
             self.invulnerable = True
+        else:
+            event.post(event.Event(51, {}))
 
 
 class Crash(Enemy):

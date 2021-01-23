@@ -24,8 +24,6 @@ class Enemy(Brick):  # общий класс всех врагов
         self.wall_sprites = wall_sprites
         self.damage_sprites = damage_sprites
         self.cords = cords
-        self.is_target = False
-        self.can_target = False
         self.is_boss = False
         self.cords_not_round = [self.cords[0] * SIZE_OF_RECT, self.cords[1] * SIZE_OF_RECT]
         self.delay = (0, 0)
@@ -198,15 +196,12 @@ class Crash(Enemy):
 
     def update(self):
         super().update()
-        if self.is_target:
-            self.target()
-        else:
-            self.standard()
-            if self.timer - self.last_timer >= 2:
-                self.image = self.image_run[self.count % 20]
-                self.image.set_colorkey((255, 255, 255))
-                self.count += 1
-                self.last_timer = self.timer
+        self.standard()
+        if self.timer - self.last_timer >= 2:
+            self.image = self.image_run[self.count % 20]
+            self.image.set_colorkey((255, 255, 255))
+            self.count += 1
+            self.last_timer = self.timer
         if self.rect.right >= 0 and self.rect.x <= WIDTH:
             if not self.rl:
                 self.rect.x -= SIZE_OF_RECT - self.step * 2
@@ -231,9 +226,6 @@ class Crash(Enemy):
             self.kill()
             self.rl = False
         self.timer += 1
-
-    def target(self):
-        pass
 
     def standard(self):
         if self.rl:
@@ -285,15 +277,12 @@ class Fly(Enemy):
 
     def update(self):
         super().update()
-        if self.is_target:
-            self.target()
-        else:
-            self.standard()
-            if self.timer - self.last_timer >= 20:
-                self.image = self.image_run[self.count % 5]
-                self.image.set_colorkey((255, 255, 255))
-                self.count += 1
-                self.last_timer = self.timer
+        self.standard()
+        if self.timer - self.last_timer >= 20:
+            self.image = self.image_run[self.count % 5]
+            self.image.set_colorkey((255, 255, 255))
+            self.count += 1
+            self.last_timer = self.timer
         if self.rect.right < 0:
             self.kill()
             self.rl = True
@@ -301,9 +290,6 @@ class Fly(Enemy):
             self.kill()
             self.rl = False
         self.timer += 1
-
-    def target(self):
-        pass
 
     def standard(self):
         if self.rl:

@@ -217,7 +217,8 @@ class Player(sprite.Sprite):
         if (keys[32] or keys[pygame.K_z]) and not self.jump and not self.hit_mode:
             self.rect.y += 1
             if sprite.spritecollideany(self, self.wall_sprites) or sprite.spritecollideany(self,
-                                                                                           self.damage_sprites):  # проверка что персоонаж на полу
+                                                                                           self.damage_sprites):
+                # проверка что персоонаж на полу
                 self.jump = True
                 self.jump_speed = -17
                 pygame.event.post(pygame.event.Event(52, {}))

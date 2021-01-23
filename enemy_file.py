@@ -19,15 +19,11 @@ def down_collision(obj_1, obj_2):
 
 
 class Enemy(Brick):  # общий класс всех врагов
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
-                 mask=False,
-                 shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, can_be_broken, mask=mask, shift=shift)
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, shift=(0, 0)):
+        super().__init__(cords, rect_size, image_name, can_be_broken, shift=shift)
         self.wall_sprites = wall_sprites
         self.damage_sprites = damage_sprites
         self.cords = cords
-        self.is_target = False
-        self.can_target = False
         self.is_boss = False
         self.cords_not_round = [self.cords[0] * SIZE_OF_RECT, self.cords[1] * SIZE_OF_RECT]
         self.delay = (0, 0)
@@ -35,10 +31,8 @@ class Enemy(Brick):  # общий класс всех врагов
 
 class Boss(Enemy):
     def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, player, bomb_sprites,
-                 mask=False,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
-                         shift=shift)
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, shift=shift)
         self.step = 5
         self.is_boss = True
         self.step_1 = self.step / SIZE_OF_RECT
@@ -186,11 +180,9 @@ class Boss(Enemy):
 
 
 class Crash(Enemy):
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
-                         mask=mask,
-                         shift=shift)
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
@@ -204,15 +196,12 @@ class Crash(Enemy):
 
     def update(self):
         super().update()
-        if self.is_target:
-            self.target()
-        else:
-            self.standard()
-            if self.timer - self.last_timer >= 2:
-                self.image = self.image_run[self.count % 20]
-                self.image.set_colorkey((255, 255, 255))
-                self.count += 1
-                self.last_timer = self.timer
+        self.standard()
+        if self.timer - self.last_timer >= 2:
+            self.image = self.image_run[self.count % 20]
+            self.image.set_colorkey((255, 255, 255))
+            self.count += 1
+            self.last_timer = self.timer
         if self.rect.right >= 0 and self.rect.x <= WIDTH:
             if not self.rl:
                 self.rect.x -= SIZE_OF_RECT - self.step * 2
@@ -237,9 +226,6 @@ class Crash(Enemy):
             self.kill()
             self.rl = False
         self.timer += 1
-
-    def target(self):
-        pass
 
     def standard(self):
         if self.rl:
@@ -273,9 +259,9 @@ class Crash(Enemy):
 
 
 class Fly(Enemy):
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                          shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
@@ -291,15 +277,12 @@ class Fly(Enemy):
 
     def update(self):
         super().update()
-        if self.is_target:
-            self.target()
-        else:
-            self.standard()
-            if self.timer - self.last_timer >= 20:
-                self.image = self.image_run[self.count % 5]
-                self.image.set_colorkey((255, 255, 255))
-                self.count += 1
-                self.last_timer = self.timer
+        self.standard()
+        if self.timer - self.last_timer >= 20:
+            self.image = self.image_run[self.count % 5]
+            self.image.set_colorkey((255, 255, 255))
+            self.count += 1
+            self.last_timer = self.timer
         if self.rect.right < 0:
             self.kill()
             self.rl = True
@@ -307,9 +290,6 @@ class Fly(Enemy):
             self.kill()
             self.rl = False
         self.timer += 1
-
-    def target(self):
-        pass
 
     def standard(self):
         if self.rl:

@@ -19,10 +19,8 @@ def down_collision(obj_1, obj_2):
 
 
 class Enemy(Brick):  # общий класс всех врагов
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
-                 mask=False,
-                 shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, can_be_broken, mask=mask, shift=shift)
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, shift=(0, 0)):
+        super().__init__(cords, rect_size, image_name, can_be_broken, shift=shift)
         self.wall_sprites = wall_sprites
         self.damage_sprites = damage_sprites
         self.cords = cords
@@ -35,10 +33,8 @@ class Enemy(Brick):  # общий класс всех врагов
 
 class Boss(Enemy):
     def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, player, bomb_sprites,
-                 mask=False,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
-                         shift=shift)
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, shift=shift)
         self.step = 5
         self.is_boss = True
         self.step_1 = self.step / SIZE_OF_RECT
@@ -186,11 +182,9 @@ class Boss(Enemy):
 
 
 class Crash(Enemy):
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
-                         mask=mask,
-                         shift=shift)
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT
         self.rl = True
@@ -273,9 +267,9 @@ class Crash(Enemy):
 
 
 class Fly(Enemy):
-    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=False,
+    def __init__(self, cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                  shift=(0, 0)):
-        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken, mask=mask,
+        super().__init__(cords, rect_size, image_name, wall_sprites, damage_sprites, can_be_broken,
                          shift=shift)
         self.step = 5
         self.step_1 = self.step / SIZE_OF_RECT

@@ -90,9 +90,7 @@ class Bomb(Brick):
             for spr in [*self.wall_sprites, *self.wall_sprites.bonus_sprites, *self.wall_sprites.saves_sprites,
                         *self.wall_sprites.damage_sprites, *self.wall_sprites.enemies_sprites]:
                 if sprite.collide_rect(self, spr):
-                    print('wtf')
                     if spr.can_be_broken:
-                        print('wtf')
                         del self.wall_sprites.maps[tuple(spr.cords)]
                         spr.kill()
                     elif self.wall_sprites.maps[tuple(spr.cords)][1] == 'enemy' and spr.is_boss:

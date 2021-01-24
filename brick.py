@@ -87,16 +87,19 @@ class Bomb(Brick):
         else:
             if self.timer - self.last_timer >= 30:
                 self.kill()
-                for spr in [*self.wall_sprites, *self.wall_sprites.bonus_sprites, *self.wall_sprites.saves_sprites,
-                            *self.wall_sprites.damage_sprites, *self.wall_sprites.enemies_sprites]:
-                    if sprite.collide_rect(self, spr):
-                        if spr.can_be_broken:
-                            del self.wall_sprites.maps[tuple(spr.cords)]
-                            spr.kill()
-                        elif self.wall_sprites.maps[tuple(spr.cords)][1] == 'enemy' and spr.is_boss:
-                            spr.get_damage()
+            for spr in [*self.wall_sprites, *self.wall_sprites.bonus_sprites, *self.wall_sprites.saves_sprites,
+                        *self.wall_sprites.damage_sprites, *self.wall_sprites.enemies_sprites]:
+                if sprite.collide_rect(self, spr):
+                    print('wtf')
+                    if spr.can_be_broken:
+                        print('wtf')
+                        del self.wall_sprites.maps[tuple(spr.cords)]
+                        spr.kill()
+                    elif self.wall_sprites.maps[tuple(spr.cords)][1] == 'enemy' and spr.is_boss:
+                        spr.get_damage()
 
-                if sprite.collide_rect(self, self.player):
+            if sprite.collide_rect(self, self.player):
+                if self.player.timer - self.player.last_timer_damage >= 120:
                     self.player.gui_sprites.set_hearts(self.player.gui_sprites.hp - 1)
                     self.player.last_timer_damage = self.player.timer
 

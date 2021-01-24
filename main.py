@@ -380,7 +380,10 @@ def settings():
                 for obj in settings_buttons_sprites:
                     if obj.is_clicked():
                         if obj.type == 'menu' or obj.type == 'esc_menu':
-                            return obj.type
+                            if curr_song == "menu_song":
+                                return 'menu'
+                            else:
+                                return obj.type
                         settings_processor(obj)
                 if sound_open:
                     for obj_1 in settings_buttons_sprites_sound:
@@ -669,11 +672,10 @@ anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
 hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
 incoming_damage_sound = mixer.Sound('music&effects/effects/incoming_damage.wav')
 curr_song = ''
-mixer_sounds = [klonk_sound, anti_klonk, hopp]
+mixer_sounds = [klonk_sound, anti_klonk, hopp, incoming_damage_sound]
 
 count = 1
-for i, j in [ ("Громкость музыки", 'music_volume'), #("Возврат в игру", 'esc_menu'),
-             ("Громкость эффектов", 'effects_volume'), ("Назад", 'esc_menu')]:
+for i, j in [ ("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'), ("Назад", 'esc_menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))

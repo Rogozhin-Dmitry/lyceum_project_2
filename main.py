@@ -669,7 +669,7 @@ anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
 hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
 incoming_damage_sound = mixer.Sound('music&effects/effects/incoming_damage.wav')
 curr_song = ''
-mixer_sounds = [klonk_sound, anti_klonk, hopp]
+mixer_sounds = [klonk_sound, anti_klonk, hopp, incoming_damage_sound]
 
 count = 1
 for i, j in [ ("Громкость музыки", 'music_volume'), #("Возврат в игру", 'esc_menu'),

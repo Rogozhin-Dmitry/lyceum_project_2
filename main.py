@@ -342,8 +342,9 @@ def settings_processor(obj):
             if obj_1.type == 'close':
                 settings_buttons_sprites.empty()
                 count_2 = 1
-                for name, returner in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'),
-                                       ("Назад", 'menu')]:
+                for name, returner in [("Громкость музыки", 'music_volume'),
+                                       ("Громкость эффектов", 'effects_volume'),
+                                       ("Назад", 'esc_menu')]:
                     btn_text = font_sh.render(name, True, (245, 245, 245))
                     settings_buttons_sprites.add(
                         Button(btn_text,
@@ -667,10 +668,12 @@ klonk_sound = mixer.Sound('music&effects/effects/klonk.wav')
 anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
 hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
 incoming_damage_sound = mixer.Sound('music&effects/effects/incoming_damage.wav')
+curr_song = ''
 mixer_sounds = [klonk_sound, anti_klonk, hopp]
 
 count = 1
-for i, j in [("Громкость музыки", 'music_volume'), ("Громкость эффектов", 'effects_volume'), ("Назад", 'menu')]:
+for i, j in [ ("Громкость музыки", 'music_volume'), #("Возврат в игру", 'esc_menu'),
+             ("Громкость эффектов", 'effects_volume'), ("Назад", 'esc_menu')]:
     text = font_sh.render(i, True, (245, 245, 245))
     settings_buttons_sprites.add(Button(text, text.get_rect(centerx=SIZE_OF_RECT * 15,
                                                             y=SIZE_OF_RECT * 17 // 15 + SIZE_OF_RECT * (2 + count)), j))
@@ -690,14 +693,14 @@ cursor_sprites = pygame.sprite.Group(cursor)
 name_tag()
 result = menu()
 name_of_save = ''
+last_result = ''
 while True:
     if result == 'new_game':
         name_of_save = new_game()
         if name_of_save.startswith('dif'):
             mass = [f"saves\\{fname}" for fname in os.listdir(path=f"{os.getcwd()}\\saves")]
             mass.remove('saves\\new_game')
-            if len(mass) <= 8:
-                result = 'new'
+            if len(mass) <= 8: result = 'new'
         else:
             result = name_of_save
     elif result == 'new':
@@ -718,22 +721,22 @@ while True:
         mixer.music.stop()
         mixer.music.unload()
         mixer.music.load('music&effects/music/world/To The Abyss.mp3')
+        curr_song = 'world_song'
         mixer.music.play()
     elif result == 'load_game':
-        mixer.music.stop()
-        mixer.music.unload()
-        mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
-        mixer.music.play()
         name_of_save = load_func()
         if not name_of_save == 'menu':
             result = 'load'
         else:
             result = name_of_save
     elif result == 'menu':
-        mixer.music.stop()
-        mixer.music.unload()
-        mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
-        mixer.music.play()
+        if mixer.music.get_busy():
+            if curr_song == 'world_song':
+                mixer.music.stop()
+                mixer.music.unload()
+                mixer.music.load('music&effects/music/menu/Florian Christl - Close Your Eyes.mp3')
+                mixer.music.play()
+                curr_song = 'menu_song'
         result = menu()
     elif result == 'settings':
         result = settings()

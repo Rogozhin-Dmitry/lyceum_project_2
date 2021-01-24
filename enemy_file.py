@@ -61,6 +61,94 @@ class Boss(Enemy):
         self.animation.append(transform.scale(new_animation, rect_size))
         self.animation.append(self.image)
 
+    def to_go_forward(self):
+        self.count = self.count + 1
+        if self.count == 300:
+            self.count = 0
+            self.is_lifting = True
+        if self.count % 60 == 0 and self.count != 0:
+            self.throw_bomb()
+        if self.rl:
+            self.rect.x = self.rect.x + self.step
+            self.all_way_straight = self.all_way_straight + self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.x = self.rect.x - 1
+                self.rl = False
+            elif sprite.spritecollideany(self, self.damage_sprites):
+                while sprite.spritecollideany(self, self.damage_sprites):
+                    self.rect.x = self.rect.x - 1
+                self.rl = False
+            elif self.all_way_straight > 2000:
+                self.rl = False
+            else:
+                self.cords_not_round[0] += 1
+                self.shift[0] += self.step_1
+                self.delay[0] += self.step_1
+        else:
+            self.rect.x = self.rect.x - self.step
+            self.all_way_straight = self.all_way_straight - self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.x = self.rect.x + 1
+                self.rl = True
+                self.all_way_straight = 0
+            elif sprite.spritecollideany(self, self.damage_sprites):
+                while sprite.spritecollideany(self, self.damage_sprites):
+                    self.rect.x = self.rect.x + 1
+                self.rl = True
+                self.all_way_straight = 0
+            elif self.all_way_straight < -2000:
+                self.rl = True
+            else:
+                self.cords_not_round[0] -= 1
+                self.shift[0] -= self.step_1
+                self.delay[0] -= self.step_1
+
+    def to_lift(self):
+        if self.down:
+            self.rect.y = self.rect.y + self.step
+            self.all_way_down = self.all_way_down + self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.y = self.rect.y - 1
+                    self.all_way_down = self.all_way_down - 1
+                self.down = False
+                self.is_standing = True
+            elif sprite.spritecollideany(self, self.damage_sprites):
+                while sprite.spritecollideany(self, self.damage_sprites):
+                    self.rect.y = self.rect.y - 1
+                    self.all_way_down = self.all_way_down - 1
+                self.down = False
+                self.is_standing = True
+            else:
+                self.cords_not_round[1] += 1
+                self.shift[1] += self.step_1
+                self.delay[1] += self.step_1
+        else:
+            self.rect.y = self.rect.y - self.step
+            self.all_way_down = self.all_way_down - self.step
+            if sprite.spritecollideany(self, self.wall_sprites):
+                while sprite.spritecollideany(self, self.wall_sprites):
+                    self.rect.y = self.rect.y + 1
+                self.down = True
+                self.is_lifting = False
+                self.all_way_down = 0
+            elif sprite.spritecollideany(self, self.damage_sprites):
+                while sprite.spritecollideany(self, self.damage_sprites):
+                    self.rect.y = self.rect.y + 1
+                self.down = True
+                self.is_lifting = False
+                self.all_way_down = 0
+            elif self.all_way_down <= 0:
+                self.all_way_down = 0
+                self.down = True
+                self.is_lifting = False
+            else:
+                self.cords_not_round[1] -= 1
+                self.shift[1] -= self.step_1
+                self.delay[1] -= self.step_1
+
     def update(self):
         super().update()
         self.image = self.animation[(self.count // 10) % 5]
@@ -80,91 +168,9 @@ class Boss(Enemy):
             if self.count == 100:
                 self.is_standing = False
         elif not self.is_lifting:
-            self.count = self.count + 1
-            if self.count == 300:
-                self.count = 0
-                self.is_lifting = True
-            if self.count % 60 == 0 and self.count != 0:
-                self.throw_bomb()
-            if self.rl:
-                self.rect.x = self.rect.x + self.step
-                self.all_way_straight = self.all_way_straight + self.step
-                if sprite.spritecollideany(self, self.wall_sprites):
-                    while sprite.spritecollideany(self, self.wall_sprites):
-                        self.rect.x = self.rect.x - 1
-                    self.rl = False
-                elif sprite.spritecollideany(self, self.damage_sprites):
-                    while sprite.spritecollideany(self, self.damage_sprites):
-                        self.rect.x = self.rect.x - 1
-                    self.rl = False
-                elif self.all_way_straight > 2000:
-                    self.rl = False
-                else:
-                    self.cords_not_round[0] += 1
-                    self.shift[0] += self.step_1
-                    self.delay[0] += self.step_1
-            else:
-                self.rect.x = self.rect.x - self.step
-                self.all_way_straight = self.all_way_straight - self.step
-                if sprite.spritecollideany(self, self.wall_sprites):
-                    while sprite.spritecollideany(self, self.wall_sprites):
-                        self.rect.x = self.rect.x + 1
-                    self.rl = True
-                    self.all_way_straight = 0
-                elif sprite.spritecollideany(self, self.damage_sprites):
-                    while sprite.spritecollideany(self, self.damage_sprites):
-                        self.rect.x = self.rect.x + 1
-                    self.rl = True
-                    self.all_way_straight = 0
-                elif self.all_way_straight < -2000:
-                    self.rl = True
-                else:
-                    self.cords_not_round[0] -= 1
-                    self.shift[0] -= self.step_1
-                    self.delay[0] -= self.step_1
+            self.to_go_forward()
         else:
-            if self.down:
-                self.rect.y = self.rect.y + self.step
-                self.all_way_down = self.all_way_down + self.step
-                if sprite.spritecollideany(self, self.wall_sprites):
-                    while sprite.spritecollideany(self, self.wall_sprites):
-                        self.rect.y = self.rect.y - 1
-                        self.all_way_down = self.all_way_down - 1
-                    self.down = False
-                    self.is_standing = True
-                elif sprite.spritecollideany(self, self.damage_sprites):
-                    while sprite.spritecollideany(self, self.damage_sprites):
-                        self.rect.y = self.rect.y - 1
-                        self.all_way_down = self.all_way_down - 1
-                    self.down = False
-                    self.is_standing = True
-                else:
-                    self.cords_not_round[1] += 1
-                    self.shift[1] += self.step_1
-                    self.delay[1] += self.step_1
-            else:
-                self.rect.y = self.rect.y - self.step
-                self.all_way_down = self.all_way_down - self.step
-                if sprite.spritecollideany(self, self.wall_sprites):
-                    while sprite.spritecollideany(self, self.wall_sprites):
-                        self.rect.y = self.rect.y + 1
-                    self.down = True
-                    self.is_lifting = False
-                    self.all_way_down = 0
-                elif sprite.spritecollideany(self, self.damage_sprites):
-                    while sprite.spritecollideany(self, self.damage_sprites):
-                        self.rect.y = self.rect.y + 1
-                    self.down = True
-                    self.is_lifting = False
-                    self.all_way_down = 0
-                elif self.all_way_down <= 0:
-                    self.all_way_down = 0
-                    self.down = True
-                    self.is_lifting = False
-                else:
-                    self.cords_not_round[1] -= 1
-                    self.shift[1] -= self.step_1
-                    self.delay[1] -= self.step_1
+            self.to_lift()
 
     def throw_bomb(self):
         self.bomb_sprites.add(Boss_Bomb(self.rect.center, (self.rect_size[0] // 2, self.rect_size[1] // 2),

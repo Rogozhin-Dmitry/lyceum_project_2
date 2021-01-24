@@ -423,7 +423,10 @@ def settings():
                 elif settings_ev_activity.key == pygame.K_RETURN:
                     obj = settings_buttons_sprites.sprites()[cursor_position]
                     if obj.type == 'menu' or obj.type == 'esc_menu':
-                        return obj.type
+                        if curr_song == "menu_song":
+                            return 'menu'
+                        else:
+                            return obj.type
                     settings_processor(obj)
 
                 cursor.rect.right = \
@@ -671,7 +674,7 @@ klonk_sound = mixer.Sound('music&effects/effects/klonk.wav')
 anti_klonk = mixer.Sound('music&effects/effects/miss_sound_cutted.wav')
 hopp = mixer.Sound('music&effects/effects/ez_jump_st_boosted.wav')
 incoming_damage_sound = mixer.Sound('music&effects/effects/incoming_damage.wav')
-curr_song = ''
+curr_song = 'menu_song'
 mixer_sounds = [klonk_sound, anti_klonk, hopp, incoming_damage_sound]
 
 count = 1
